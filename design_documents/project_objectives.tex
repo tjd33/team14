@@ -1,0 +1,104 @@
+\documentclass[letterpaper,11pt]{texMemo} % Set the paper size (letterpaper, a4paper, etc) and font size (10pt, 11pt or 12pt)
+
+\usepackage{parskip} % Adds spacing between paragraphs
+\setlength{\parindent}{15pt} % Indent paragraphs
+
+%----------------------------------------------------------------------------------------
+%   MEMO INFORMATION
+%----------------------------------------------------------------------------------------
+
+\memoto{Professor Michmerhuizen} % Recipient(s)
+
+% Setup of the document
+\memosubject{Project Objectives and Requirements}
+\memofrom{Daniel DeHoog, T.J. DeVries
+    Paul Griffioen, Ryan Siekman}
+
+\memodate{\today}
+
+% Now the writing of the document can begin
+\begin{document}
+
+\maketitle
+
+\section{Project Objectives}
+
+Create a system that will allow people, both clients and administrators, to interact with gyms in a modern and smart way.
+This system will allow users to view what machines are currently open, 
+    and it will also allow users to reserve systems for personal use. 
+\textit{In addition, users would be able to view their historical fitness data.}
+The system will also provide gym administrators the ability to understand more clearly what machines get used,
+    along with how often and when they are used.
+
+\section{Project Requirements}
+
+\begin{itemize}
+    \item{\textbf{Accessibility:}}
+    \begin{itemize}
+        \item{Data should be accessible via a web interface (available via mobile device and personal computer).}
+        \item{Data should be accessible for gym managers (equipment data)}
+        \item{Data should be accessible for personal use (fitness data)}
+        \item{\textit{NFC/Bluetooth communication with mobile device for gathering fitness data}}
+    \end{itemize}
+
+    \item{\textbf{User-friendly:}}
+    \begin{itemize}
+        \item{Sensors should not impede use of machinery or weights}
+        \item{Web interface should be simple and easy to use}
+    \end{itemize}
+
+    \item{\textbf{Reservation System:}}
+    \begin{itemize}
+        \item{By machine, time, and user}
+        \item{Rules about making reservations and cancelling them (idiot-proof)}
+        \item{Display reservation information on each machine}
+        \begin{itemize}
+            \item{\textit{Allow user to interface with the display to edit the reservation}}
+        \end{itemize}
+        \item{No power supply required for reservation display or sensors}
+        \begin{itemize}
+            \item{\textit{Ability to turn off and on sensors, displays from smart hub (to save energy)}}
+        \end{itemize}
+        \item{\textit{Bulk reservations (over multiple periods of time)}}
+        \item{\textit{Electronic calendar integration}}
+    \end{itemize}
+
+    \item{\textbf{"Real-time" updates of what machines are in use:}}
+    \begin{itemize}
+        \item{“Real-time” meaning within 1 minute update}
+        \item{Based on (multiple) sensors, not reservations}
+    \end{itemize}
+
+    \item{\textbf{Generic:}}
+    \begin{itemize}
+        \item{Ability to install the system in a typical existing gym}
+        \item{Transferability - ability to transfer sensors from one type of machine/equipment to another}
+        \item{Ability to install on (most) any type of stationary equipment}
+        \item{\textit{Ability to install on free weights, weight sets, etc.}}
+        \item{\textit{Open API to connect to any existing fitness apps that we could work with}}
+    \end{itemize}
+
+    \item{\textbf{General:}}
+    \begin{itemize}
+        \item{Ability to run for 24 consecutive hours without the system crashing}
+        \item{Small enough that gyms would be willing to buy the system}
+        \item{\textit{Ability for gyms to only use parts of the system}}
+        \item{\textit{Ability to add or remove parts after initial setup}}
+    \end{itemize}
+
+    \item{\textbf{Central Management:}}
+    \begin{itemize}
+        \item{Smart Hub to collect data from sensors}
+        \begin{itemize}
+            \item{Data will be colated by the Web Server}
+        \end{itemize}
+        \item{Web Server to manage reservation system and web interface}
+        \begin{itemize}
+            \item{\textit{Smart Hub will cache daily schedules for sending to the displays}}
+        \end{itemize}
+    \end{itemize}
+
+
+\end{itemize}
+
+\end{document}
