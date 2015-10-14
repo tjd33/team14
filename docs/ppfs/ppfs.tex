@@ -20,6 +20,8 @@
 \usepackage{graphicx} % Required to insert images
 \usepackage{listings} % Required for insertion of code
 \usepackage{courier} % Required for the courier font
+\usepackage{template/subfiles} % This is used to create standalone sub files, so that we can compile them by themselves,
+                        % but does not mess with the fact that we want to put them into one file
 
 % Margins
 \topmargin=-0.45in
@@ -201,6 +203,7 @@
     \subsection{Method of Approach}
 
 \section{Requirements}
+\subfile{requirements}
 
 \section{Research}
 
