@@ -1,5 +1,7 @@
 \documentclass[letterpaper,11pt]{./templates/texMemo} % Set the paper size (letterpaper, a4paper, etc) and font size (10pt, 11pt or 12pt)
 
+\usepackage{graphicx}
+\graphicspath{ {../img/} }
 \usepackage[parfill]{parskip} % Adds spacing between paragraphs
 \setlength{\parindent}{0pt} % Indent paragraphs
 
@@ -20,6 +22,12 @@
 \begin{document}
 
 \maketitle 
+
+\section{Team Members}
+
+% Include the team members
+\centerline{\includegraphics[width=0.25\textwidth]{dan.jpg} \includegraphics[width=0.25\textwidth]{tj.jpg} \includegraphics[width=0.25\textwidth]{paul.jpg} \includegraphics[width=0.25\textwidth]{ryan.jpg}}
+\centerline{Daniel DeHoog, TJ DeVries, Paul Griffioen, Ryan Siekman}
 
 \section{Project Description}
 
