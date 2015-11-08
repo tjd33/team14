@@ -1,0 +1,47 @@
+\documentclass[ppfs.tex]{template/subfiles}
+\begin{document}
+%--------------------------------------------------------
+%	REQUIREMENTS
+%--------------------------------------------------------
+\section{Requirements}
+
+\subsection{System Requirements}
+General system requirements, spanning the system as a whole, are needed to ensure each piece of the system operates correctly and works well with other pieces of the system.
+
+\subsubsection{Generic}
+The designed system must be able to be installed in a typical existing gym, where each sensor and each display can be installed on (most) any type of stationary equipment. If possible, each sensor should be able to be installed on free weights, weight sets, and other moving equipment. The system must also be transferable in that the sensors and displays must be able to be transferred from one type of machine or piece of equipment to another and still operate effectively.
+
+\subsubsection{General}
+The implemented system must be able to run continuously for 24 hours without crashing, and the price of the system must be small enough that existing gyms would be willing to invest in buying it. Gyms must also be able to use only parts of the system if desired, and they must be able to easily add or remove parts after the initial setup and installation.
+
+\subsubsection{Accessibility}
+The data collected during operation must be accessible via a web interface (mobile device and personal computer). More detailed data about equipment use must be available for gym managers, and if possible, fitness data should be available for personal use.
+
+\subsubsection{User-Friendly}
+The sensors implemented should not impede the use of any machinery or weights, and the web interface and mobile application should be simple and easy to use.
+
+\subsubsection{Reservation System}
+The reservation system must be organized according to machine, user, and time. Rules should be implemented within the reservation system about making and canceling reservations in order to protect against system abusers. The reservation information for a specific machine should appear on the display for that machine, and the user must be able to interact with the display to edit the reservation. If possible, bulk reservations (over multiple periods of time) should be available in addition to electronic calendar integration.
+
+\subsubsection{Real-Time Updates}
+Real-time updates of which machines are currently being used, where each update occurs within one minute, are necessary, and these updates should be based on data acquired from the sensors, not data used from the reservation system.
+
+\subsubsection{Central Management}
+A smart hub, located within the gym, must be able to collect data from the sensors and communicate data to the displays. All of this data will be collated by a central server, which manages the reservation system, the web interface, and the mobile application. If possible, the smart hub will cache daily schedules that can be sent to the displays in case the smart hub loses connection to the internet.
+
+\subsection{Hardware Requirements}
+The requirements for this project are divided into four parts based on the necessary hardware. The four parts of hardware necessary to implement the project include sensors used to determine whether or not a machine is in use, a display interface used to display machine reservations, a central hub placed within the gym to communicate with the sensors and display interfaces, and a server used to communicate with the hub and host the website and mobile application.
+
+\subsubsection{Sensors}
+The sensors used in determining whether or not a machine is in use must be movement sensors (accelerometer, gyroscope, or magnetometer) on a single board. Long battery life, on the order of years, is necessary in addition to the sensors being relatively small (less than 5 in$^2$). The sensors must also have network capabilities and be able to form a mesh network, where the sensors can communicate with and pass data to one another. Lastly, the sensors must be able to make strong yet removable physical connections to each machine.
+
+\subsubsection{Display Interfaces}
+The display interfaces used to display machine reservations must have long battery life, on the order of months. They must display information, such as a name and the reservation time, in a user-friendly manner and be able to handle sweat that may fall on the displays. They must also have network capabilities and be able to form a mesh network, where the displays can communicate with and pass data to one another. In addition, each display must be compatible with the mesh network, and it must be relatively small (approximately 2 in by 3 in) with at least two push buttons and one LED for making reservations.
+
+\subsubsection{Hub}
+The hub that is placed within the gym must be a small yet powerful computer, such as a raspberry pi. It must be capable of running multiple operating systems (Linux and Windows), and it must have an ethernet connection so that it can be reliably connected to the internet. In addition, the hub must be able to communicate with the mesh network of sensors and displays through some means (wifi, zigbee, bluetooth). If possible, the hub should be able to turn on and off the sensors and displays in order to save energy.
+
+\subsubsection{Server}
+The server must be a reliable computer that is able to communicate with the hub. It also must host the website and mobile application that users employ for reservations and seeing which machines are currently in use. In addition, the server must store the database of information for reservations and data collected from the sensors.
+
+\end{document}
