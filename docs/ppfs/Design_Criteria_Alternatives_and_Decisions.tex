@@ -5,10 +5,12 @@
 %--------------------------------------------------------------------------------
 \section{Design Criteria, Alternatives, and Decisions}
 
-% Paul
+% Paul - I'll probably insert some tables and figures to make the design decision clearer
 \subsection{Sensor Systems}
 
 \subsubsection{Design Criteria}
+
+The design criteria for the sensors used to gather machine usage information include a few characteristics. One criteria is that the sensors are capable of gathering movement data (like an accelerometer, gyroscope, or magnetometer) because each sensor will be mounted on a moving part of the machine. Another criteria is that the sensors be relatively small (less than 5 in$^2$) so that they do not impede the use of the machine. Long battery life, on the order of years, is also a criterion for the sensors because it becomes inconvenient to replace the sensors for a whole gym. Additionally, a criteria is the ability of the sensors to operate in a mesh network, since this will decrease the amount of communication the hub has to do and will allow for shorter data transmission to and from each sensor. Lastly, the price of the sensor network must not be too high so that a gym owner could feasibly purchase it.
 
 \subsubsection{Design Alternatives}
 
@@ -26,9 +28,11 @@ Bluetooth SensorBugs are also an option. They contain the desired sensors, are v
 
 Yet another option for wireless sensors is the CSRmesh development board. This board operates reliably within a wireless mesh network. However, it is expensive and does not include the sensors desired for the project (its main application is for lighting). \cite{9}
 
-Another option for sensors are TI SensorTags,
+Another option for sensors are TI SensorTags, which contain all of the desired sensors, operate reliably within a mesh network at low power, and are not too expensive. Because TI SensorTags satisfied all of the design criteria, they were chosen as the best design alternative. A more detailed description about this design alternative may be found in the section below.
 
 \subsubsection{Design Decisions}
+
+As seen in the previous section, each one of the design alternatives lacked one of the three main characteristics desired for the sensors with the exception of the TI SensorTags. The TI SensorTags possess the desired sensors in addition to many other sensors. These include a 9-axis motion sensor, a temperature sensor, a humidity sensor, an altimeter/pressure sensor, and an ambient light sensor. In addition, the TI SensorTags have the ability to communicate in a mesh network using Bluetooth, Zigbee, or 6LoWPAN. The battery lifetime for these sensors is about one year, and the data collection rate from the sensors can be modified as desired. In addition, the price per SensorTag is \$29, which is much lower than some of the other design alternatives. Because the TI SensorTags satisfied the criteria of having the desired sensors, operating reliably in a mesh network at low power, and having a lower cost, they are chosen to be implemented in the design. Each of the other design alternatives lacks one of the desired design criteria. \cite{10}
 
 % Dan (and Paul)
 \subsection{Display Interfaces}
@@ -42,41 +46,41 @@ The objective for the display interface is to have small simple battery powered 
 The four alternative are: a Raspberry Pi, an Arduino, a CC3200 Launchpad, or a TI SensorTag. These boards would use either an E-Ink display, or a memory LCD display.
 
 The Raspberry Pi is a credit card sized computer that runs a full OS such as Linux or windows 10, with USB ports and HDMI output. Most importantly, it has 40 GPIO pins that can be used to connect the display or other features like buttons and a wireless communication device.
-The advantage of this board is that it has the most community developed libraries, including already built libraries for mesh networking and for controlling E-Ink displays, which would make the display interface very easy to build. Breakout boards for E-Ink displays are available for the Raspberry Pi are well priced, which would make adding the display simpler. This board is also cheap, a $20 model would easily fit the requirements.
+The advantage of this board is that it has the most community developed libraries, including already built libraries for mesh networking and for controlling E-Ink displays, which would make the display interface very easy to build. Breakout boards for E-Ink displays are available for the Raspberry Pi are well priced, which would make adding the display simpler. This board is also cheap, a \$20 model would easily fit the requirements.
 However, the Raspberry PI has much more functionality than needed and with the fact that it is running an OS, it uses much more power than any of the other options, making it virtually impossible to run off battery. There are some batteries that might work for a few days, but they are expensive and rather large for this board. Along with the fact that it is not an open source board, the complexity of the Raspberry Pi would make it hard to go from one to an actual product.
-The price of a display interface with this board would likely be about $90: $20 for the board, $30 for display and breakout board, $30 for a high capacity battery and $10 for a network communication device.
+The price of a display interface with this board would likely be about \$90: \$20 for the board, \$30 for display and breakout board, \$30 for a high capacity battery and \$10 for a network communication device.
 
 The Arduino is an open-source prototyping board that runs a single program. It also has GPIO pins for controlling the display, and connecting a wireless communication device.
 Some basic Arduino boards are pretty low priced and there is also a big community behind it. The fact that it runs only a single program can make it very power efficient, thus making operating it by battery over several months plausible, even using AA batteries. There is at least one reasonably priced E-Paper breakout board for it to ease the process of adding a display. 
 However, the only mesh network library found was for an RF radio, though that may not a disadvantage as it would probably be more power efficient than some other solution. Also, a lot of libraries use code that does not take power efficiency into account, which limits either the battery life of the libraries available.
-The price of a display interface with this board would likely be about $60 including $22 for the board, $30 for the display and breakout board and $4 for the RF radio
+The price of a display interface with this board would likely be about \$60 including \$22 for the board, \$30 for the display and breakout board and \$4 for the RF radio
 
 The CC3200 chip is a microcontroller with built-in Wi-Fi. The CC3200 Launchpad is a board designed to provide features for this chip such as GPIO pins, USB interface, and power.
 The primary selling point of this chip is the built-in WIFI which translates to good power efficiency, allowing the board to run very well on batteries. An E-Ink breakout board is available and has available design files. Along with the fact that the design files for the Launchpad are easily accessible, this board would be the easiest to transition from a prototype device to a commercial one. An additional advantage is that the WIFI built in is FCC approved, unlike many add-on Wi-Fi dongles, which removed a roadblock to commercialization. 
 However, no mesh network library could be found for the CC3200. The E-Ink breakout board for the CC3200 Launchpad is also quite expensive and large.
-The price of a display interface with this board would likely be about $80 including $30 for the board, $24 for the display breakout board and $21 for the display.
+The price of a display interface with this board would likely be about \$80 including \$30 for the board, \$24 for the display breakout board and \$21 for the display.
 
 The TI SensorTag is a small board made for prototyping Internet of Things devices. 
 This board has a built in communication device with mesh networking built-in, and is made for lasting a long time on a coin cell battery. It also has a dev pack for a “smart watch”, which acts as a breakout board for memory LCD displays. The board also had open hardware and software files which would facilitate making an actual product. The SensorTag also has sensors in it, making it possible to use only one type of board for both the sensor and the display interface, and possibly eliminating the need for a separate sensor which would reduce cost significantly.
 However, the devpack comes various accessories including with a 1.3” memory LCD, while all we really want is the connector for memory LCD. We would have to buy the memory LCD separately, which is more expensive than E-Ink.
 
-The price of a display interface with this board would likely be about $70: $29 for the board, $19 for the devpack and $20 for the display. This cost could be further reduced if the breakout board for the memory LCD display can be replicated so that the smartwatch devpack would not need to be bought for each display interface.
+The price of a display interface with this board would likely be about \$70: \$29 for the board, \$19 for the devpack and \$20 for the display. This cost could be further reduced if the breakout board for the memory LCD display can be replicated so that the smartwatch devpack would not need to be bought for each display interface.
 
 \subsubsection{Design Decisions}
 
-While overall the Raspberry Pi is a good board, the difficulty and price of running it by battery and its complexity mean it didn’t get chosen for our project. This solution could be good if the project allowed a power supply instead of batteries. The Arduino looks like a good option as it is the cheapest and fits all the requirements fairly well, and would probably be our second option. The CC3200 Launchpad would be the easiest to transition to an actual product, but would be the most difficult to get a prototype working. Along with the cost, this solution did not get chosen for the project. While the price of the SensorTag is not as good as the Arduino, the built in communications and mesh networking are huge advantages. The fact that this board can also be used for sensors and is open source makes this the top candidate for the project.
+While overall the Raspberry Pi is a good board, the difficulty and price of running it by battery and its complexity mean it didn'��t get chosen for our project. This solution could be good if the project allowed a power supply instead of batteries. The Arduino looks like a good option as it is the cheapest and fits all the requirements fairly well, and would probably be our second option. The CC3200 Launchpad would be the easiest to transition to an actual product, but would be the most difficult to get a prototype working. Along with the cost, this solution did not get chosen for the project. While the price of the SensorTag is not as good as the Arduino, the built in communications and mesh networking are huge advantages. The fact that this board can also be used for sensors and is open source makes this the top candidate for the project.
 
 % Ryan
 \subsection{Hub}
 
 \subsubsection{Design Criteria}
-The most important aspects of the Hub is it's ability to communicate, since there will likely be only a single one per installation, cost isn't a large factor. Also since it can be hidden and plugged in, form factor or battery power are not necessary considerations. This opens up the options to using full small computers, as long as they have the support to communicate with the sensors and displays, along with the computing power necessary to serve as the client to our server. Beyond these considerations, the other aspects of this component don't weigh as much.
+The most important aspects of the Hub is its ability to communicate, since there will likely be only a single one per installation, cost isn't a large factor. Also since it can be hidden and plugged in, form factor or battery power are not necessary considerations. This opens up the options to using full small computers, as long as they have the support to communicate with the sensors and displays, along with the computing power necessary to serve as the client to our server. Beyond these considerations, the other aspects of this component don't weigh as much.
 
 \subsubsection{Design Alternatives}
-The primary options for the hub where different models of the rasberry pi, the intel edison board, or possibly some other single board computer. There is an increasing number of single board computers available on the market, and they are getting cheaper and faster. in the consideration of these various boards, one large difference is the size of the community using the boards, and related to that, the number of devices avialable to easily interface with them. Most of the boards would've worked well for this application, as the necessary network communication can be connected via a usb port and the software needed to collect the zigbee data can run on linux. Due to the fact that this component can be plugged into permanent power, this opens up the possibility of any computer device that can run linux and has a usb port to being a viable option. The reasons for narrowing this field down to simply the pi's and the edison board is due to their large support, history of stability, and their low price point. 
+The primary options for the hub where different models of the raspberry pi, the intel edison board, or possibly some other single board computer. There is an increasing number of single board computers available on the market, and they are getting cheaper and faster. in the consideration of these various boards, one large difference is the size of the community using the boards, and related to that, the number of devices available to easily interface with them. Most of the boards would've worked well for this application, as the necessary network communication can be connected via a usb port and the software needed to collect the zigbee data can run on linux. Due to the fact that this component can be plugged into permanent power, this opens up the possibility of any computer device that can run linux and has a usb port to being a viable option. The reasons for narrowing this field down to simply the pi's and the edison board is due to their large support, history of stability, and their low price point. 
 
 \subsubsection{Design Decisions}
-The final board that was choosen was the Rasberry Pi 2 Model B. This was choosen becuase for it's price it had the most options, primarily that if necessary due to a design change later in this project, it would be possible to run Windows 10 on it. This board is available for $35, has more than the needed requirements and can use the zigbee module via the GPIO pins as opposed to the usb through a breakout board, saving some money. However the board we are currently using as we develop the prototype is a Rasberry Pi Model B+. This is because Calvin already had several older pi models available for use and the small advantage that the Pi 2 would offer isn't necessary unless for some future design change we need Windows 10, which is unlikely. This change of not going with the initial design decision saved some money in the budget and would enable us, if necessary, to purchase an additional sensor or display later in the project. There is also still enough money in the budget if for whatever reason, the purchase of a different single board computer becomes necessary. 
+The final board that was chosen was the Raspberry Pi 2 Model B. This was chosen because for it's price it had the most options, primarily that if necessary due to a design change later in this project, it would be possible to run Windows 10 on it. This board is available for \$35, has more than the needed requirements and can use the zigbee module via the GPIO pins as opposed to the usb through a breakout board, saving some money. However the board we are currently using as we develop the prototype is a Raspberry Pi Model B+. This is because Calvin already had several older pi models available for use and the small advantage that the Pi 2 would offer isn't necessary unless for some future design change we need Windows 10, which is unlikely. This change of not going with the initial design decision saved some money in the budget and would enable us, if necessary, to purchase an additional sensor or display later in the project. There is also still enough money in the budget if for whatever reason, the purchase of a different single board computer becomes necessary.
 
 % TJ
 \subsection{Server}
@@ -88,14 +92,3 @@ The final board that was choosen was the Rasberry Pi 2 Model B. This was choosen
 \subsubsection{Design Decisions}
 
 \end{document}
-
-% References
-% [1] http://robotics.eecs.berkeley.edu/~pister/SmartDust/
-% [2] http://webs.cs.berkeley.edu/nest-index.html
-% [3] http://cens.ucla.edu/
-% [4] http://tinyos.stanford.edu/tinyos-wiki/index.php/Main_Page
-% [5] http://www.memsic.com/wireless-sensor-networks/
-% [6] http://www.linear.com/products/Wireless_Sensor_Networks_-_Dust_Networks
-% [7] http://store-usa.arduino.cc/
-% [8] http://www.blueradios.com/hardware_sensors.htm
-% [9] http://www.digikey.com/product-detail/en/DB-CSR1010-10185-1A/DB-CSR1010-10185-1A-ND/4841745
