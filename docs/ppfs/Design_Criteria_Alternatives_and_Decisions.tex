@@ -77,10 +77,42 @@ While overall the Raspberry Pi is a good board, the difficulty and price of runn
 The most important aspects of the Hub is its ability to communicate, since there will likely be only a single one per installation, cost isn't a large factor. Also since it can be hidden and plugged in, form factor or battery power are not necessary considerations. This opens up the options to using full small computers, as long as they have the support to communicate with the sensors and displays, along with the computing power necessary to serve as the client to our server. Beyond these considerations, the other aspects of this component don't weigh as much.
 
 \subsubsection{Design Alternatives}
-The primary options for the hub where different models of the raspberry pi, the intel edison board, or possibly some other single board computer. There is an increasing number of single board computers available on the market, and they are getting cheaper and faster. in the consideration of these various boards, one large difference is the size of the community using the boards, and related to that, the number of devices available to easily interface with them. Most of the boards would've worked well for this application, as the necessary network communication can be connected via a usb port and the software needed to collect the zigbee data can run on linux. Due to the fact that this component can be plugged into permanent power, this opens up the possibility of any computer device that can run linux and has a usb port to being a viable option. The reasons for narrowing this field down to simply the pi's and the edison board is due to their large support, history of stability, and their low price point. 
+The primary options for the hub where different models of the Raspberry Pi, the Intel Edison board, or possibly some other single board computer. There is an increasing number of single board computers available on the market, and they are getting cheaper and faster. in the consideration of these various boards, one large difference is the size of the community using the boards, and related to that, the number of devices available to easily interface with them. Most of the boards would've worked well for this application, as the necessary network communication can be connected via a USB port and the software needed to collect the Zigbee data can run on Linux. Due to the fact that this component can be plugged into permanent power, this opens up the possibility of any computer device that can run Linux and has a USB port to being a viable option. The reasons for narrowing this field down to simply the pi's and the Edison board is due to their large support, history of stability, and their low price point. 
+
+The Edison board has the advantage of being more powerful than the Pi, and having the support of a large company. However it hasn't been developed on for as long as the Pi boards have and is approximately double the price, as can be seen in the table below. \cite{11}
+
+There are multiple models of the Raspberry Pi boards, each one with improved specs over the previous, generally in the form of more RAM, a faster CPU and GPU, and additional ports. The main difference with the most recent Pi, as compared to previous ones, is it has the ability to run Windows 10. This isn't currently a requirement of this project, however if the sensors software is made for only Windows, it could be a potentially useful aspect of choosing the newest Pi, the Raspberry Pi 2 Model B. The older versions of the Raspberry Pi should be adequate for this project though, as long as there is no need for Windows 10, then the computational power differences shouldn't make an impact on this project. \cite{12}
+
+The other aspect of the hub to be considered besides the single board computer, is how it will communicate with the sensor and display network, the only connectivity built into the Raspberry Pi's is an Ethernet port. This means that whatever wireless technology is used will need to be added through either the GPIO pins or a USB dongle. There were options for Bluetooth dongles \cite{13}, wifi dongles \cite{12}, and Zigbee modules \cite{14}. All of these options enabled the Pi's to connect to whichever network ends up being used. This is one area were the Edison board has an advantage, as it has wifi and Bluetooth connectivity built into the main chip, since it is primarily designed as an Internet of things (IOT) board.\cite{11}
 
 \subsubsection{Design Decisions}
-The final board that was chosen was the Raspberry Pi 2 Model B. This was chosen because for it's price it had the most options, primarily that if necessary due to a design change later in this project, it would be possible to run Windows 10 on it. This board is available for \$35, has more than the needed requirements and can use the zigbee module via the GPIO pins as opposed to the usb through a breakout board, saving some money. However the board we are currently using as we develop the prototype is a Raspberry Pi Model B+. This is because Calvin already had several older pi models available for use and the small advantage that the Pi 2 would offer isn't necessary unless for some future design change we need Windows 10, which is unlikely. This change of not going with the initial design decision saved some money in the budget and would enable us, if necessary, to purchase an additional sensor or display later in the project. There is also still enough money in the budget if for whatever reason, the purchase of a different single board computer becomes necessary.
+The final board that was chosen was the Raspberry Pi 2 Model B. This was chosen because for it's price it had the most options, primarily that if necessary due to a design change later in this project, it would be possible to run Windows 10 on it. This board is available for \$35, has more than the needed requirements and can use the Zigbee module via the GPIO pins as opposed to the USB through a breakout board, saving some money. However the board we are currently using as we develop the prototype is a Raspberry Pi Model B+. This is because Calvin already had several older pi models available for use and the small advantage that the Pi 2 would offer isn't necessary unless for some future design change Windows 10 becomes necessary, which is unlikely. This change of not going with the initial design decision saved some money in the budget and would enable the team, if necessary, to purchase an additional sensor or display later in the project. There is also still enough money in the budget if for whatever reason, the purchase of a different single board computer becomes necessary.
+
+       \begin{table}[h!]
+       	\begin{center}
+       		\caption{Decision Matrix for Hub Hardware}
+       		\label{tab:table1}
+       		\begin{tabular}{|c|c|c|c|c|}
+       			\hline
+       			Price && \$40 & \$95 & \$35 \\
+       			\hline
+       			Design Factors & Weight & Pi 2 Model B & Edison Board & Pi 1 Model B+ \\
+       			\hline
+       			Network Capabilities & 10 & 5 & 5 & 5\\
+       			\hline
+       			Ethernet & 8 & 10 & 1 & 10 \\
+       			\hline
+       			Range & 8 & 5 & 5 & 5 \\
+       			\hline
+       			Costs & 5 & 8 & 1 & 9 \\
+       			\hline
+       			Reliability & 10 & 10 & 10 & 9 \\
+       			\hline
+       			\textbf{Total} && 310 & 203 & 305 \\
+       			\hline
+       		\end{tabular}
+       	\end{center}
+       \end{table}
 
 % TJ
 \subsection{Server}
