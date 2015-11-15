@@ -1,6 +1,7 @@
 *\.pdf
 *\.log
 *\.aux
+*_aux
 *\.swp
 *\.toc
 *\.project.vim
