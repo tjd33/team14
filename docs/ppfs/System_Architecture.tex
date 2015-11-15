@@ -23,8 +23,8 @@
 
 \section{System Architecture}
 
-% Insert a general image perhaps?
-% Need to refer to the requirements section here I think.
+% TODO: Create a VERY simple block diagram detailing the entire system.
+The system architecture is split into four main categories: Sensors, Displays, Hub, and Server.
 
 \subsection{Sensors}
 
@@ -80,11 +80,11 @@ After doing all the machine encoding, the sensor makes a connection to the serve
 
 The server's main purpose is to track the information both from sensors and from remote users. It will take the information from the sensors, process the data, and then be able to display what machines are currently in use. It will pass that information to three primary locations: \textit{Current Reservation Database}, \textit{Historical Use Database}, and \textit{Current Use Database}.
 
-The \textit{Current Reservation Database} has the most recent reservations made both locally and remotely, along with knowing if a machine is currently in use to disallow someone from reserving it out from someone's current use. Because of this it is updated from HTTP requests (from the World Wide Web actor), local reservation requests (human actor in the gym), and from current status readings (made by sensors in the gym). It then also forwards any new reservations to the machines by sending the information to the hub.
+The \textit{Current Reservation Database} has the most recent reservations made both locally and remotely, along with knowing if a machine is currently in use to disallow someone from reserving it out from someone's current use. Because of this it is updated from HTTP requests (from the World Wide Web actor), local reservation requests (human actor in the gym), and from current status readings (made by sensors in the gym). It then also forwards any new reservations to the machines by sending the information to the hub. This database contains all the reservations that have not yet been completed for the machines. It was created as a separate database so that sending information to the machines would be simpler and quicker, as a very large (and ever-growing) database would not have to be queried to send up-to-date information about reservations.
 
-The \textit{Historical Use Database} simply tracks the information by machine that is received from the hub. It will act as the pool of information that administrators can draw upon to gain insight into the use of the machines and that clients will draw upon to gain health and habit insights on. It is essentially a log of all past use by machine.
+The \textit{Historical Use Database} simply tracks the information by machine that is received from the hub. It will act as the pool of information that administrators can draw upon to gain insight into the use of the machines and that clients will draw upon to gain health and habit insights on. It is essentially a log of all past use by machine. It will also contain information about reservations made, including if they were fulfilled, fulfilled on time, and proportion of time the machine was used with and without reservation.
 
-The \textit{Current Use Database} is a simpler version of the Historical Use Database in that it does not log use of the past machines, but simply keeps a record of whether a machine is current in use or not.
+The \textit{Current Use Database} is a simpler version of the Historical Use Database in that it does not log use of the past machines, but simply keeps a record of whether a machine is currently in use or not.
 
 This system is shown in the figure below.
 
