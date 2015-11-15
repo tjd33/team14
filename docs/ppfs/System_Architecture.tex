@@ -36,7 +36,7 @@ The basic UML diagram below details the connections of between the sensors and b
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/sensors.png}
-    \caption{A UML diagram of the sensor architecture}
+    \caption{UML Diagram of the Sensor Architecture}
 \end{figure}
 
 Each sensor will essentially funnel their information down to the hub through other sensors. To do this, each sensor will contain two main processes. The first process is \textbf{Hub Found}. This lets other sensors further away in the funnel that the hub is "down this way". This will allow sensors, if this attribute is detected, to not continue to search for other devices to make connections to, but to focus on only one (or perhaps two for redundancy's sake) and thus conserve power. The second process is \textbf{Sensor Encoder}. This process will encode the information of the sensor itself, along with the previous sensors, so that the information can be kept separate and particular to each machine. This is integral to determining which machines are in use and maintaining realistic reporting for both real-time and historic services. This process is activated by an outside actor using the equipment.
@@ -53,7 +53,7 @@ Because of the need to learn about remote reservations and push local reservatio
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/displays.png}
-    \caption{A UML diagram detailing the display architecture}
+    \caption{UML Diagram Detailing the Display Architecture}
 \end{figure}
 
 As with the sensors, the displays with funnel any information about local displays down to the hub through other displays. They will also pass a \textbf{Hub Found} signal up the chain of displays to communicate when searching is not required any longer. However, displays must also retrieve information about remote reservations and thus have another connection for that.
@@ -67,7 +67,7 @@ Now that all the information from the sensors and the displays has been "funnele
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/hub.png}
-    \caption{A UML diagram detailing the hub architecture}
+    \caption{UML Diagram Detailing the Hub Architecture}
 \end{figure}
 
 As mentioned previously, the hub has several key processes that affect both the sensors and the displays. It must encode all of the signals that it gets from the sensors into something that it is able to send to the server for the processing of the signals. Because it can connect to several different sensors, it must have its own \textbf{Sensor Encoder} that keeps track of which sensors sent which data. It is also sends a \textbf{Hub Found} signal to those sensors so that they know the hub is in the current connection list.
@@ -91,7 +91,7 @@ This system is shown in the figure below.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/server.png}
-    \caption{A UML diagram detailing the server architecture}
+    \caption{UML Diagram Detailing the Server Architecture}
 \end{figure}
 
 The main ideas to capture from the server is that it receives current use from the hub, while sending any remote reservations gained via HTTP requests. It also logs and displays current use of the machines for personal and administrative use.
