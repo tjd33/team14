@@ -33,9 +33,9 @@ To accomplish the goal of having a sensor network with a wide range, but long ba
 % This is a terrible intro to this
 The basic UML diagram below details the connections of between the sensors and between the sensor and the hub.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{uml/sensors.png}
+    \includegraphics[width=\textwidth]{uml/sensors.png}
     \caption{A UML diagram of the sensor architecture}
 \end{figure}
 
@@ -50,7 +50,7 @@ The displays are the answer to the problem of showing the user if a machine is r
 
 Because of the need to learn about remote reservations and push local reservations, the displays encountered a similar problem as the sensors: low power and long distance communication. With that similar problem came a similar solution: displays with mesh networking. In the figure below, one can see that the displays communicate with each other as well as the hub.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/displays.png}
     \caption{A UML diagram detailing the display architecture}
@@ -64,9 +64,9 @@ Due to the three different streams of information, the display contains three di
 
 Now that all the information from the sensors and the displays has been "funneled" into the hub, the hub's first purpose is to transfer this information up to the server for processing. The other purpose is to transfer any new information to the displays, along with transferring the \textbf{Hub Found} signal to the displays and sensors directly connected to the hub. This is illustrated in the figure below.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{uml/hub.png}
+    \includegraphics[width=\textwidth]{uml/hub.png}
     \caption{A UML diagram detailing the hub architecture}
 \end{figure}
 
@@ -88,9 +88,9 @@ The \textbf{Current Use Database} is a simpler version of the Historical Use Dat
 
 This system is shown in the figure below.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{uml/server.png}
+    \includegraphics[width=\textwidth]{uml/server.png}
     \caption{A UML diagram detailing the server architecture}
 \end{figure}
 
