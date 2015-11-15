@@ -28,8 +28,14 @@
 %	colorlinks,
 %	citecolor=black,
 %	linkcolor=black,
-%	urlcolor=black
+%	urlcolor=black,
 %}
+\usepackage{titlesec}	% Code to allow subsubsubsections - command is \paragraph{}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 % Margins
 \topmargin=-0.45in
