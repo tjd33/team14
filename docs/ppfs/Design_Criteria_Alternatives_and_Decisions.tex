@@ -116,12 +116,19 @@ The final board that was chosen was the Raspberry Pi 2 Model B. This was chosen 
 
 % TJ
 \subsection{Server}
-The server was chosen to be a Linux server using Python and basic networking libraries to connect to the Hub for two main reasons. The first reason is that the Hub will be running Linux, and so availability of Python Libraries and scripting tools is the same when the server will be using Linux, which will give a more streamlined experience. The other reason is that Linux is generally chosen to run on a server because the software is free and open source, and thus customizable for any purpose required.
+The server will handle all connections requesting information about the current status of the machines, along with making and viewing reservations for the equipment. It will also handle sending historical data for administrators and personal historical data for individual users. It takes all the data from the server and stores it, creating these services for the client.
 
 \subsubsection{Design Criteria}
+The server's primary requirement was that it must be reliable. Both the gym administrators and the gym's clients must be able to trust that when attempting to ascertain information about the machines, whether historical or current information, that the information can be sent to them. The server must be capable of modern networking protocols and functions, including HTTP/HTTPS requests and creating and maintaining TCP network connections. The HTTP requests requirement is to enable the server to send information about the state of the machines over the internet to clients of the system. The TCP network connections are to ensure a reliable connection between the hub and the server for consistent and reliable information sharing. The server must also be powerful enough to encrypt data and send data over encrypted connections to make sure that all client information is protected.
 
 \subsubsection{Design Alternatives}
+There are in essence two main players in the server world: Windows and Linux. Both of these options have the capabilities to meet the requirements stated above in the Design Criteria section, however Linux has several advantages. The first is that it is free, which will reduce the cost of our system. The second is that it is often more
+% Need a citation here
+reliable.
 
 \subsubsection{Design Decisions}
+It was chosen to use Ubuntu 14.04 as the server. It provides the reliability required to provide the users with a trustworthy experience. It also should be low maintenance once installed, as security and software updates can be handled automatically using built-in Linux functionality. Ubuntu 14.04 is the Long Term Supported (LTS) version of Linux currently and will be supported for
+% Need exact date
+several more years. It also has the modern capabilities to use Python and other libraries to create secure and consistent connection with the Hub. Also because the hub is running Linux, it makes sense to continue to use the same operating system for ease of upkeep. It also aligns with the teams goal of transparency because Linux is an Open Source solution to the problem the team is faced with.
 
 \end{document}
