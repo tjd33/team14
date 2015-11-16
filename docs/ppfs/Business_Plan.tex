@@ -27,11 +27,11 @@ The business plan for this gym reservation system is divided into two parts, whi
         
     \subsection{Cost estimate}
         \subsubsection{Development}
-        The vast majority of the budget for this project is used for purchasing sensors and equipment for the display interfaces. The items purchased or planned to be purchased are shown in Table 1.
-        \begin{table}[h!]
+        The vast majority of the budget for this project is used for purchasing sensors and equipment for the display interfaces. The items purchased or planned to be purchased are shown in Table \ref{tab:devPartCost}.
+        \begin{table}[H]
         	\begin{center}
         		\caption{Class Development Budget Usage}
-        		\label{tab:table1}
+        		\label{tab:devPartCost}
         		\begin{tabular}{|c|c|c|c|}
         			\hline
         			Quantity & Part & Price per Unit & Total\\
@@ -52,12 +52,12 @@ The business plan for this gym reservation system is divided into two parts, whi
         	\end{center}
         \end{table}
         
-        The Raspberry Pi used for the hub is a model B+ owned by the Calvin engineering dept that has been borrowed for the duration of the project. A ZigBee wire antenna for the Raspberry Pi was also borrowed from the Calvin engineering department. These items and their values are shown in Table 2.
+        The Raspberry Pi used for the hub is a model B+ owned by the Calvin engineering dept that has been borrowed for the duration of the project. A ZigBee wire antenna for the Raspberry Pi was also borrowed from the Calvin engineering department. These items and their values are shown in Table \ref{tab:devLoanedItems}.
         
-        \begin{table}[h!]
+        \begin{table}[H]
         	\begin{center}
         		\caption{Items Loaned by Calvin Engineering Department}
-        		\label{tab:table2}
+        		\label{tab:devLoanedItems}
         		\begin{tabular}{|c|c|}
         			\hline
         			Part & Value\\
@@ -73,20 +73,21 @@ The business plan for this gym reservation system is divided into two parts, whi
         \end{table}
         \subsubsection{Production}
         \paragraph{Fixed Costs}	% Dan, break your production subsubsection up into these 3 subsubsubsections
-        \paragraph{Variable Costs}
-        \paragraph{Summary Financials}
-        
         In order to transition from the prototype developed in this project to a final product, it is estimated that about 200 hours or additional design time would be required. At at \$100 per hour, this would cost about \$20000. The total development budget to get an initial commercial product would be about \$25000. This price should be recovered over the first five year of production, so \$5000 per year.
+        
+        To account for other fixed costs such as accounting, marketing, facilities, further R\&D, an additional overhead of 40\% is added to total cost of the system.
+        
+        \paragraph{Variable Costs}
         
         It is estimated that the system could be sold to about 100 gyms annually. A typical gym might have about 100 pieces of gym equipment that could be equipped with our sensors and displays, which would lead to a total sales of 10000 display interfaces (with sensors built in), 100 hubs, 100 servers. 
         For the prototype, a TI SensorTag is used for the sensor and display interface which has many more sensors than needed or desired and also comes with multiple wireless communication methods. It is estimated that a board without the extraneous features, and with a small case would cost about \$20.
         For the hub, the final product would likely still use a Raspberry PI as creating a custom board would be complex and likely not any cheaper. Equipment such as an Ethernet cable will still be needed.
-        These part costs are shown in Table 3.
+        These part costs are shown in Table \ref{tab:prodPartsCost}.
         
-        \begin{table}[h!]
+        \begin{table}[H]
         	\begin{center}
         		\caption{Parts cost for one system}
-        		%\label{tab:table1}
+        		\label{tab:prodPartsCost}
         		\begin{tabular}{|c|c|c|c|}
         			\hline
         			Quantity & Part & Price per Unit & Total\\
@@ -110,38 +111,54 @@ The business plan for this gym reservation system is divided into two parts, whi
         The cost of these parts does not include shipping and parts loss, so an extra 10\% is added to the parts price as overhead. 
         Over a total of 100 system, the annual initial R\&D cost recovery is \$500 per system.
         Cloud Server services such as amazon server will be used for hosting the server. This cost will be a monthly cost, and will scale with how much usage it gets. For typical usage which might be similar to a moderately WordPress installation, a 3-year instance on a small server could cost \$17.95, or \$646.2 for three years \cite{wordPressEstimate}
-        For other services such as accounting, marketing, facilities, further R\&D, an additional overhead of 40\% is added to the cost.
-        Theses costs along with an estimated sales price and profit are shown in table 4. The corporate income tax rate applied is \%35.
         
-        \begin{table}[h!]
+        Theses costs along with an estimated sales price and profit are shown in table \ref{tab:prodTotalCosts}. The corporate income tax rate applied is \%35.
+        
+        \begin{table}[H]
         	\begin{center}
-        		\caption{Cost of one System}
-        		%\label{tab:table1}
+        		\caption{Cost of a Single System}
+        		\label{tab:prodTotalCosts}
         		\begin{tabular}{|c|c|}
         			\hline
         			Parts & \$3922\\
         			\hline
         			Parts Overhead & \$392\\
         			\hline
-        			Initial R\&D recovery & 500\\
-        			\hline
         			3 Year of Server Usage & \$646.2\\
         			\hline
-        			Total & \$5460\\
+        			Total & \$4960\\
         			\hline
-        			Total with Overhead & 7645\$\\
-        			\hline
-        			Sales Price& \$10000\\
-        			\hline
-        			Profit before Tax& \$2355\\
-        			\hline
-        			Profit after Tax& \$1530\\
+        			Total with Overhead & \$6944\\
         			\hline
         		\end{tabular}
         	\end{center}
         \end{table}
         
-        The resulting profit of \$398 results in a profit margin of 15.3\%, which is satisfactory the this project.
+        \paragraph{Summary Financials}
+        
+		\begin{table}[H]
+			\begin{center}
+				\caption{Sales Price and Profit of a Single System}
+				\label{tab:SalesPrice}
+				\begin{tabular}{|c|c|}
+					\hline
+					Cost of one System with overhead & \$6944\\
+					\hline
+					Amortized Startup Costs & 500\\
+					\hline
+					Total Cost & 7444\\
+					\hline
+					Sales Price & \$10000\\
+					\hline
+					Profit before Tax& \$2556\\
+					\hline
+					Profit after Tax& \$1661\\
+					\hline
+				\end{tabular}
+			\end{center}
+		\end{table}
+        
+        Using a sales price of \$10000 per system, the resulting profit of \$1661 (shown in Table \ref{tab:SalesPrice}) results in a profit margin of 16.1\%, which is satisfactory the this project.
         
         
 
