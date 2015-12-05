@@ -47,15 +47,16 @@ One way the user interacts with the system via HTTP requests to the server, prim
 To accomplish the goal of having a sensor network with a wide range, but long battery life, it was decided that a mesh network system would be necessary. In general, to make a signal have a longer range, more power is given to a bigger antenna. This was not an option for sensors where the expected battery life must be greater than one year. However, a small range was not acceptable to fulfill the requirement of a generic system that would fit most any gym, so it was out of the question to settle for a small range. The new idea came to be use sensors that are capable of communicating to each other and then funneling that information through the other sensors to a centralized hub that would collect this data: a mesh network.
 
 % This is a terrible intro to this
-The basic UML diagram below details the connections between the sensors, between the sensor and the hub, and between the sensor and the user.
+The basic UML diagram in \refFig{fig:sensor_arch} details the connections between the sensors, between the sensor and the hub, and between the sensor and the user.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/sensors.png}
     \caption{UML Diagram of the Sensor Architecture}
+    \label{fig:sensor_arch}
 \end{figure}
 
-The sensor architecture can be though of as funnel. The further out from the hub a sensor is, the further away it is from the center of the funnel. To communicate with the hub, each sensor will filter their information down to the hub through other, closer, sensors. 
+The sensor architecture can be thought of as funnel. The further out from the hub a sensor is, the further away it is from the center of the funnel. To communicate with the hub, each sensor will filter their information down to the hub through other, closer, sensors.
 
 To be able to fulfill this design architecture, each sensor will contain two main processes. The first process is \sn{Hub Found}. The \sn{Hub Found} signal will alert other sensors further away from the hub that the destination is "down this way". This will allow sensors, if this attribute is detected, to not continue to search for other devices to make connections to, but to focus on only one (or perhaps two for redundancy's sake) and thus conserve power. The second process is \sn{Sensor Encoder}. This process will encode the information recorded by that sensor can be linked to that sensor. This allows the sensor to pass on useful information about itself,  along with the being able to send the data from previous sensors. This ensures that the information is kept separate and particular to each machine. This is integral to determining which machines are in use and maintaining realistic reporting for both real-time and historic services. This process is activated by an outside actor using the equipment.
 
@@ -65,34 +66,35 @@ The information contained in \sn{Current Sensor Status} signal is the encoded da
 
 The displays are the answer to the problem of showing the user if a machine is reserved or will be reserved shortly. They also will allow the user to create a reservation locally to ensure that they will not be asked to leave the machine before they are ready to leave.
 
-
-Because of the need to learn about remote reservations and push local reservations, the displays encountered a similar problem as the sensors: low power and long distance communication. With that similar problem came a similar solution: displays with mesh networking. In the figure below, one can see that the displays communicate with each other as well as the hub.
+With the need to learn about remote reservations and push local reservations, the displays encountered a similar problem as the sensors: low power and long distance communication. With that similar problem came a similar solution: displays with mesh networking capability. In the \refFig{fig:display_arch}, one can see that the displays are designed to communicate with each other as well as the hub.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/displays.png}
     \caption{UML Diagram Detailing the Display Architecture}
+    \label{fig:display_arch}
 \end{figure}
 
-As with the sensors, the displays with funnel any information about local displays down to the hub through other displays. They will also pass a \textit{Hub Found} signal up the chain of displays to communicate when searching is not required any longer. However, displays must also retrieve information about remote reservations and thus have another connection for that.
+Extending the analogy presented for sensors, the displays will funnel any information about local reservations down to the hub through other display units. They will also pass a \sn{Hub Found} signal up the chain of displays to communicate when searching is not required any longer. However, displays must also retrieve information about remote reservations and thus have an additional connection when compared to the sensors. Due to the three different streams of information, the display contains three distinct entities within itself.
 
-Due to the three different streams of information, the display contains three distinct entities within itself. The first is the \textit{Hub Found} entity, which completes the same function as the \textit{Hub Found} entity within the sensors. The second entity is the \textit{Current Schedule} entity. This is essentially a basic database that contains all the information that display needs to know about its schedule. It takes in a remote reservation and decides if it is pertinent to this display. If the reservation is pertinent, it updates the current schedule. It if the reservation is not pertinent, it continues sending the information to the next sensor, or "up the funnel". The third entity is the \textit{Machine Encoder} which will only send information if a local reservation has been initiated by an outside actor. It will also combine any other local reservations made by machines up the funnel and then send that down the funnel, encoded in such a fashion that the hub will be able to decode which machine has new local reservations.
+The first entity is the \sn{Hub Found} entity, which completes the same function as the \sn{Hub Found} entity within the sensors. The second entity is the \sn{Current Schedule} entity. This is a basic database that contains all the information regarding the reservation schedule for the current day for this machine. It takes in a remote reservation signal and decides if it is pertinent to this display. If the reservation is pertinent, it updates the \sn{Current Schedule}. It is the reservation is not pertinent, it continues sending the encoded information to the next sensor, or "up the funnel". The third entity is the \sn{Machine Encoder} which will only send information if a local reservation has been initiated by an outside actor. It will also encode any other local reservations made by machines up the funnel and then send that down the funnel. This is similar to the encoding of the signal in the sensors to ensure that the data received by the hub can be matched to a specific piece of equipment.
 
 \subsection{Hub}
 
-Now that all the information from the sensors and the displays has been "funneled" into the hub, the hub's first purpose is to transfer this information up to the server for processing. The other purpose is to transfer any new information to the displays, along with transferring the \textit{Hub Found} signal to the displays and sensors directly connected to the hub. This is illustrated in the figure below.
+Now that all the information from the sensors and the displays has been "funneled" into the hub, the hub's first purpose is to transfer this information up to the server for processing. The other purpose is to transfer any new information to the displays, along with transferring the \sn{Hub Found} signal to the displays and sensors directly connected to the hub. This is illustrated in the \refFig{fig:hub_arch}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{uml/hub.png}
     \caption{UML Diagram Detailing the Hub Architecture}
+    \label{fig:hub_arch}
 \end{figure}
 
-As mentioned previously, the hub has several key processes that affect both the sensors and the displays. It must encode all of the signals that it gets from the sensors into something that it is able to send to the server for the processing of the signals. Because it can connect to several different sensors, it must have its own \textit{Sensor Encoder} that keeps track of which sensors sent which data. It is also sends a \textit{Hub Found} signal to those sensors so that they know the hub is in the current connection list.
+The hub has several key processes that affect both the sensors and the displays. It must encode all of the signals that it gets from the sensors into something that it is able to send to the server for the processing of the signals. This will most likely include taking the information and forming a packet that is sent to the server. Because it can connect to several different sensors, it must have its own \sn{Sensor Encoder} that encodes which sensors sent which data into the packet that will be sent to the server. The hub will also send a \sn{Hub Found} signal to any connected sensors to ensure the sensors are funneling their readings to the correct location.
 
-It also handles all of the connections from the displays. Because the hub disseminates information to the different displays, it must have a \textit{Machine Decoder}, where it is able to take the information sent from the server and pass that along to the displays. It also receives information from the displays, so it must have a \textit{Machine Encoder} that takes the information received from the displays about local reservations and then passes that along to the server, so that it can maintain an up-to-date schedule. Once again, it sends a \textit{Hub Found} signal to the displays so that each display can confirm that the sensor is currently having information sent to it.
+The hub also handles all of the connections from the displays. A \sn{Machine Decoder} is necessary in the hub because it disseminates remote reservation information from the server to the displays. The \sn{Machine Decoder} is where the hub is will take the information from the server and decode that data into display-specific data. It also receives information from the displays, so it must have a \sn{Machine Encoder} that takes the information received from the displays about local reservations and then passes that along to the server. After the information is encoded and sent, the server can maintain an up-to-date schedule. Once again, the hub sends a \sn{Hub Found} signal to the displays so that each display can confirm it is sending the data to the correct location.
 
-After doing all the machine encoding, the sensor makes a connection to the server which carries information about local reservations made by actors in the gym. The hub also sends the current readings from the sensors, which are encoded as well. The hub receives information about remote reservations that are made and then passes that information, after decoding it, to the displays for up-to-date displays about current schedules by machine.
+The hub has three basic types of connections. The first type of connection is when the hub makes a connection to the server which carries information about local reservations made by actors in the gym. The second type of connection is when the sensors create a connection to the hub. On this connection the sensors send information on the current status by sensor. This signal is properly encoded. The third connection is when the hub receives information about remote reservations. This connection provides the information that will later be passed, after decoding, to the displays for up-to-date displays about current schedules by machine.
 
 \subsection{Server}
 
