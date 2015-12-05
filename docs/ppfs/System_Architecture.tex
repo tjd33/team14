@@ -1,4 +1,7 @@
 \documentclass[PPFS.tex]{template/subfiles}
+
+% \newcommand{\sn}[1]{\textsigfont{\textit{#1}}}
+\newcommand{\sn}[1]{\textit{#1}}
 \begin{document}
 %------------------------------------------
 %	SYSTEM ARCHITECTURE
@@ -24,14 +27,27 @@
 \section{System Architecture}
 
 % TODO: Create a VERY simple block diagram detailing the entire system.
-The system architecture is split into four main categories: Sensors, Displays, Hub, and Server.
+The system architecture is split into four main categories: Sensors, Displays, Hub, and Server. The overview of the architecture can be seen in \refFig{fig:general_overview}. The system was designed in order to be as low cost as possible, while still retaining generality for many different types of gyms. This architecture attempts to address problems of range, variable amounts of gym equipment and scalability.
+
+\begin{figure}[H]
+    \centering
+    % A task for another day
+    % \includesvg[clean,png,width=5cm]{general_overview}
+    \includegraphics[width=0.75\textwidth]{uml/general_overview.png}
+    \caption{UML Diagram of the Sensor Architecture}
+    \label{fig:general_overview}
+\end{figure}
+
+The displays and sensors would be placed on individual gym equipment, so that the user would have a by-machine understanding of the reservations upcoming for a given machine. The sensors main goal is to send information back to the hub, for collation by the server. The goal of the hub is to gather the data from the sensors and the display and send it to the server, as well as distribute remote reservation data to the displays. Finally, the server interacts with the user and sends information as requested to the user. It also handles any new reservation requests.
+
+One way the user interacts with the system via HTTP requests to the server, primarily for requesting information or setting reservations. Another way the user will interact with the system is using the gym equipment. By doing so, they will activate the sensors, who will update the hub. The final way the user interacts with the system is by reading from the displays and finding out the information about reservations for that machine.
 
 \subsection{Sensors}
 
 To accomplish the goal of having a sensor network with a wide range, but long battery life, it was decided that a mesh network system would be necessary. In general, to make a signal have a longer range, more power is given to a bigger antenna. This was not an option for sensors where the expected battery life must be greater than one year. However, a small range was not acceptable to fulfill the requirement of a generic system that would fit most any gym, so it was out of the question to settle for a small range. The new idea came to be use sensors that are capable of communicating to each other and then funneling that information through the other sensors to a centralized hub that would collect this data: a mesh network.
 
 % This is a terrible intro to this
-The basic UML diagram below details the connections between the sensors and also between the sensor and the hub.
+The basic UML diagram below details the connections between the sensors, between the sensor and the hub, and between the sensor and the user.
 
 \begin{figure}[H]
     \centering
@@ -39,9 +55,11 @@ The basic UML diagram below details the connections between the sensors and also
     \caption{UML Diagram of the Sensor Architecture}
 \end{figure}
 
-Each sensor will essentially funnel their information down to the hub through other sensors. To do this, each sensor will contain two main processes. The first process is \textit{Hub Found}. This lets other sensors further away in the funnel that the hub is "down this way". This will allow sensors, if this attribute is detected, to not continue to search for other devices to make connections to, but to focus on only one (or perhaps two for redundancy's sake) and thus conserve power. The second process is \textit{Sensor Encoder}. This process will encode the information of the sensor itself, along with the previous sensors, so that the information can be kept separate and particular to each machine. This is integral to determining which machines are in use and maintaining realistic reporting for both real-time and historic services. This process is activated by an outside actor using the equipment.
+The sensor architecture can be though of as funnel. The further out from the hub a sensor is, the further away it is from the center of the funnel. To communicate with the hub, each sensor will filter their information down to the hub through other, closer, sensors. 
 
-The information contained in \textit{Current Sensor Status} signal will be raw data that will be sent to the hub, and then sent on from there to the server for processing.
+To be able to fulfill this design architecture, each sensor will contain two main processes. The first process is \sn{Hub Found}. The \sn{Hub Found} signal will alert other sensors further away from the hub that the destination is "down this way". This will allow sensors, if this attribute is detected, to not continue to search for other devices to make connections to, but to focus on only one (or perhaps two for redundancy's sake) and thus conserve power. The second process is \sn{Sensor Encoder}. This process will encode the information recorded by that sensor can be linked to that sensor. This allows the sensor to pass on useful information about itself,  along with the being able to send the data from previous sensors. This ensures that the information is kept separate and particular to each machine. This is integral to determining which machines are in use and maintaining realistic reporting for both real-time and historic services. This process is activated by an outside actor using the equipment.
+
+The information contained in \sn{Current Sensor Status} signal is the encoded data that will -- eventually -- be sent to the hub. After arrive at the hub, that data will be sent to the server for processing.
 
 \subsection{Displays}
 
