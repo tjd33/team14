@@ -1,0 +1,92 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+\usepackage[parfill]{parskip} % Adds spacing between paragraphs
+\setlength{\parindent}{0pt} % Indent paragraphs
+
+%SetFonts
+
+%SetFonts
+
+
+\title{Eric DeGroot Engineering Fund Proposal}
+\author{Team 14: Daniel DeHoog, T.J. DeVries, Paul Griffioen, Ryan Siekman}
+\date{November 2, 2015}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\section{Project Description}
+%\subsection{}
+
+The goal of this project is to create a system that will allow people, both clients and administrators, to interact with gyms in a modern and smart way. This system will allow users to view what machines are currently open, and it will allow users to reserve systems for personal use. The system will also provide gym administrators with the ability to understand more clearly what machines get used, along with how often and when they are used.
+
+Included in the requirements defined for the project are sensors that can determine whether or not a machine is currently in use. These sensors must be movement sensors (accelerometer, gyroscope, or magnetometer) on a single board. Long battery life, on the order of years, is necessary in addition to the sensors being relatively small (less than 5 in$^2$). The sensors must also have network capabilities and be able to form a mesh network, where the sensors can communicate with and pass data to one another. Lastly, the sensors must be able to make strong yet removable physical connections to each machine.
+
+Also included in the project requirements are display interfaces that can display machine reservation information, such as a name and the reservation time. They must have long battery life, on the order of months. In addition, they must display information in a user-friendly manner and be able to handle sweat that may fall on the displays. They must also have network capabilities and be able to form a mesh network, where the displays can communicate with and pass data to one another. In addition, each display must be compatible with the mesh network, and it must be relatively small (approximately 2 in by 3 in) with at least two push buttons and one LED for making reservations.
+
+\section{Project Budget}
+
+After much research, TI SensorTags were determined to be the optimal choice as both sensors and display communication devices. They satisfy all of the design requirements, include a 9-axis motion sensor, and can interact with LCD display modules. However, TI SensorTags cost \$30 apiece, and this price accumulates quickly when implementing multiple TI SensorTags in a networked system.
+
+In addition to the TI SensorTags, a 2.7" Sharp LCD display was chosen as the display module since it has the ability to communicate with the TI SensorTags and operates using low power. However, 2.7" Sharp LCD displays cost \$20-\$30 apiece, and again, this price accumulates quickly when using multiple LCD displays in a networked system.
+
+The project budget given in Tables 1 and 2 describe how the standard class funds and the money from the Eric DeGroot Engineering Fund will be used, respectively, if awarded part of the fund. Prices for the Raspberry Pi and the ZigBee Mesh Wire Antenna are listed as being free because Calvin College owns and has access to these components.
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{Standard Class Funds}
+    \label{tab:table1}
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      Quantity & Part & Price per Unit & Total\\
+      \hline
+      1 & Raspberry Pi & \$35 & \$0\\
+      \hline
+      1 & ZigBee Mesh Wire Antenna & \$27 & \$0\\
+      \hline
+      4 & TI Debug DevPack & \$15 & \$60\\
+      \hline
+      1 & TI Watch DevPack & \$19 & \$19\\
+      \hline
+      10 & TI SensorTag & \$29 & \$290\\
+      \hline
+      5 & 2.7" Sharp LCD Display & \$30 & \$150\\
+      \hline
+      &&& \$519\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{Eric DeGroot Engineering Fund}
+    \label{tab:table2}
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      Quantity & Part & Price per Unit & Total\\
+      \hline
+      4 & TI SensorTag & \$29 & \$116\\
+      \hline
+      2 & 2.7" Sharp LCD Display & \$30 & \$60\\
+      \hline
+      &&& \$176\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+As can be seen in Table 1, the standard class funds provide enough money to almost allow the system to be implemented for a network of 5 machines. (For each machine, 1 SensorTag is needed as a sensor, 1 SensorTag is needed as a display communication device, and 1 LCD Display is needed.) In addition, this network may be even smaller if parts are faulty or do not last as long as expected. With the addition of funds from the Eric DeGroot Engineering Fund, that network may be increased to 7 machines (Table 2), which more closely emulates the network needed for a full application of the system.
+
+Since a large part of this project is mesh networking and communication between various pieces of hardware, the larger the network is, the closer it is to mirroring the way a full mesh network would function. As a result, having access to more sensors and more displays is necessary to better emulate the full application of the system.
+
+\section{Project Impact}
+
+Like all engineering, this project is intended to help make people's lives better and easier. In this case, however, the project intends to enhance the experience of gym users. We strive to make people's lives easier by passing knowledge on to them about what is currently happening in the gym without them having to physically go there. This project also allows gym users to save time by making reservations for their favorite equipment rather than waiting for others to finish using the machine they want to use. The system allows for better efficiency and a better use of people's time and gym resources. As a result, this project should have a positive impact on the community through ease of attaining information and more efficient use of time and resources in the context of gym applications.
+
+\end{document}

@@ -1,7 +1,9 @@
 \documentclass[letterpaper,11pt]{./templates/texMemo} % Set the paper size (letterpaper, a4paper, etc) and font size (10pt, 11pt or 12pt)
 
-\usepackage{parskip} % Adds spacing between paragraphs
-\setlength{\parindent}{15pt} % Indent paragraphs
+\usepackage{graphicx}
+\graphicspath{ {../img/} }
+\usepackage[parfill]{parskip} % Adds spacing between paragraphs
+\setlength{\parindent}{0pt} % Indent paragraphs
 
 %----------------------------------------------------------------------------------------
 %   MEMO INFORMATION
@@ -11,7 +13,7 @@
 
 % Setup of the document
 \memosubject{Project Brief}
-\memofrom{Daniel DeHoog, T.J. DeVries,
+\memofrom{Team 14 - Daniel DeHoog, T.J. DeVries,
     Paul Griffioen, Ryan Siekman}
 
 \memodate{October 19, 2015}
@@ -21,11 +23,19 @@
 
 \maketitle 
 
+\section{Team Members}
+
+% Include the team members
+\centerline{\includegraphics[width=0.25\textwidth]{dan.jpg} \includegraphics[width=0.25\textwidth]{tj.jpg} \includegraphics[width=0.25\textwidth]{paul.jpg} \includegraphics[width=0.25\textwidth]{ryan.jpg}}
+\centerline{Daniel DeHoog, TJ DeVries, Paul Griffioen, Ryan Siekman}
+
 \section{Project Description}
 
 Create a system that will allow people, both clients and administrators, to interact with gyms in a modern and smart way. This system will allow users to view what machines are currently open, and it will also allow users to reserve systems for personal use. The system will also provide gym administrators with the ability to understand more clearly what machines get used, along with how often and when they are used.
 
 \section{Project Requirements}
+
+The following subsections list the project requirements, which are divided into system requirements and hardware requirements. Necessary requirements are listed as is, whereas optional requirements are presented in brackets.
 
 \subsection{System Requirements}
 
@@ -135,8 +145,10 @@ Create a system that will allow people, both clients and administrators, to inte
 
 \section{Current Project Status}		
 
-Since we have determined what our requirements are, the main tasks our team is currently working on are determining alternatives that satisfy the requirments and starting to work on the PPFS, as well as working out what  tools we want to use to facilitate project management and collaboration during the projects. 
-The alternatives we are attempting to determine include what hardware we want to use for our sensors and for the display interfaces, both the display itself and the board used for wireless comminication. The difficulty  in this task is finding hardware that is both low power, can comminicate in a mesh network and is compatible with the other hardware. For the Hub, it has been decided that a Rasberry Pi will be used, coupled with wireless modules to communicate with the display interfaces and the sensors.
-For project management, we are using Microsoft project coupled with a google spreadsheet to allow us to collaborate on managing the project. We are also using distributed version control system "Git" to facilitate collaboration on design files and reports while giving us more control to manage the files over time.
+Since we have determined the project requirements, the main tasks our team is currently working on are determining alternative designs that satisfy the requirements and working on the PPFS. In addition, we are determining what tools we want to use to facilitate project management and collaboration during the project.
+
+The alternatives we are attempting to determine include what hardware we want to use for our sensors and for the display interfaces, which includes both the display itself and the board used for wireless communication. The difficulty in this task is finding hardware that possesses both low power, is capable of communicating in a mesh network, and is compatible with the other hardware. For the hub, we have decided to use a Raspberry Pi coupled with wireless modules to communicate with the display interfaces and the sensors.
+
+For project management, we are using Microsoft Project coupled with a Google spreadsheet to allow us to collaborate when managing the project. We are also using a distributed version control system "Git" to facilitate collaboration on design files and reports while giving us more control to manage the files over time.
 
 \end{document}

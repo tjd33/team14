@@ -1,8 +1,11 @@
 *\.pdf
 *\.log
 *\.aux
+*_aux
 *\.swp
 *\.toc
 *\.project.vim
 *\.DS_Store
 *\.synctex.gz
+*\.lot
+*\.lof

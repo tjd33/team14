@@ -1,0 +1,170 @@
+\documentclass[PPFS.tex]{template/subfiles}
+\begin{document}
+%-----------------------------------
+%	BUSINESS PLAN
+%-----------------------------------
+\section{Business Plan}
+
+The business plan for this gym reservation system is divided into two parts, which include a marketing study and a cost estimate. The marketing study describes the need for a gym reservation system, and the cost estimate gives a detailed breakdown of the costs involved in implementing such a system.
+
+    \subsection{Marketing Study}
+    
+    The marketing study for the gym reservation system includes a description of similar existing systems that might be in direct competition with this product. It also includes a survey of prospective customers and managers to gain a sense of what characteristics they desire to see implemented in such a product.
+    
+        \subsubsection{Competition}
+        
+        While there are many reservation systems in the world that exist for gyms, most systems are only capable of reserving gym facilities or sports equipment. Few gyms have the ability to reserve specific machines at specific times. A few gyms do, though, including some gyms on the campuses of Syracuse University \cite{Syracuse} and Harvard University \cite{Harvard}. Gyms at both of these locations use machines built by Precor, a company that manufactures fitness equipment \cite{Precor}. Precor in turn uses the fitness software provided by Preva \cite{Preva} to have a reservation system capability that is built into each one of their machines.
+        
+        Each of these systems has the reservation system capability built in to the machine itself. There are no known companies that sell gym reservation systems that are not built in to the the machine itself. The system proposed in this project is unique in that it can be applied to any existing gym without having to replace all of the machines in the gym.
+        
+        In addition, the cost necessary to implement this system in an existing gym is less than the difference in price between machines that do not have a reservation system and machines that have a built in reservation system. As a result, it is smarter economically to implement a reservation system that is separate from each machine. In addition, a reservation system that is separate from each machine is able to be generalized for any gym and is modular in nature.% insert comparison table and list prices for Precor and Preva
+        
+        \subsubsection{Market Survey}
+        
+        A survey of prospective customers asking about the need for a gym reservation system was conducted. Both gym users and gym managers were questioned as to what features they would like to see in a reservation system and what price they would view as reasonable for the system. 60.4\% of respondents indicated that it would be very useful to view the availability of gym machines on a mobile application or the web. In addition, 47.6\% of respondents indicated that it would be very useful to remotely reserve cardio machines in the gym. Cardio machines seem to be used more frequently than weight machines, as 55.5\% of respondents indicated that they use cardio machines most of the time, whereas only 41.3\% of respondents said that they used weight machines most of the time. The majority of responses pertaining to a gym reservation system were either positive or neutral, with very few respondents indicating that some sort of gym reservation system would not be useful. The results of this survey demonstrate the market need for such a system.
+        
+        % Not sure how to survey prospective customers
+        
+    \subsection{Cost estimate}
+    The cost estimate includes both the summary of the development costs during this project and an estimate of the production cost of a system.
+    
+        \subsubsection{Development}
+        The vast majority of the budget for this project is used for purchasing sensors and equipment for the display interfaces. The items purchased or planned to be purchased are shown in \textbf{Table \ref{tab:devPartCost}}.
+        \begin{table}[H]
+        	\begin{center}
+        		\caption{Class Development Budget Usage}
+        		\label{tab:devPartCost}
+        		\begin{tabular}{|c|c|c|c|}
+        			\hline
+        			Quantity & Part & Price per Unit & Total\\
+        			\hline
+        			2 & TI Debug DevPack & \$15 & \$30\\
+        			\hline
+        			1 & TI Watch DevPack & \$19 & \$19\\
+        			\hline
+        			4 & Memory LCD Connector Board & \$2.5 & \$10\\
+        			\hline
+        			10 & TI SensorTag & \$29 & \$290\\
+        			\hline
+        			5 & 2.7" Sharp LCD Display & \$30 & \$150\\
+        			\hline
+        			&&& \$499\\
+        			\hline
+        		\end{tabular}
+        	\end{center}
+        \end{table}
+        
+        The Raspberry Pi used for the hub is a model B+ owned by the Calvin engineering department that has been borrowed for the duration of the project. A ZigBee wire antenna for the Raspberry Pi was also borrowed from the Calvin engineering department. These items and their values are shown in \textbf{Table \ref{tab:devLoanedItems}}.
+        
+        \begin{table}[H]
+        	\begin{center}
+        		\caption{Items Loaned by Calvin Engineering Department}
+        		\label{tab:devLoanedItems}
+        		\begin{tabular}{|c|c|}
+        			\hline
+        			Part & Value\\
+        			\hline
+        			Raspberry Pi Model B+ & \$30 \\
+        			\hline
+        			ZigBee Mesh Wire Antenna & \$27 \\
+        			\hline
+        			& \$57\\
+        			\hline
+        		\end{tabular}
+        	\end{center}
+        \end{table}
+        \subsubsection{Production}
+        The cost of producing a single system includes both fixed and variable costs. Both of these affect the price at which the system will be sold for commercially.
+        
+        \paragraph{Fixed Costs}	
+        In order to transition from the prototype developed in this project to a final product, it is estimated that about 200 hours of additional design time would be required. At \$100 per hour, this would cost \$20000. The total development budget to get an initial commercial product would be about \$25000. This price should be recovered over the first five year of production, and the annual development recovery cost is \$5000.
+        
+        To account for other fixed costs such as accounting, marketing, facilities, and further R\&D, an additional overhead of 40\% is added to total cost of the system.
+        
+        \paragraph{Variable Costs}
+        
+        It is estimated that the system could be sold to about 100 gyms annually. A typical gym might have about 100 pieces of gym equipment that could be equipped with sensors and displays, which would lead to a total sale of 10000 display interfaces (with sensors built in), 100 hubs, and 100 servers. 
+        For the prototype, a TI SensorTag is used for the sensor and display interface. It has many more sensors than needed or desired and also comes with multiple wireless communication methods. It is estimated that a board without the extraneous features and with a small case would cost about \$20.
+        
+        For the hub, the final product would likely still use a Raspberry Pi, as creating a custom board would be complex, and this would likely result in a more expensive yet inferior product. Equipment such as an ethernet cable will be needed.
+        These part costs are shown in \textbf{Table \ref{tab:prodPartsCost}}.
+        
+        \begin{table}[H]
+        	\begin{center}
+        		\caption{Parts Cost for One System}
+        		\label{tab:prodPartsCost}
+        		\begin{tabular}{|c|c|c|c|}
+        			\hline
+        			Quantity & Part & Price per Unit & Total\\
+        			\hline
+        			100 & Display Interface & \$20 & \$2000\\
+        			\hline
+        			100 & 2.7" Memory LCD & \$18.63 \cite{mouserMemoryLCD} & \$1863\\
+        			\hline
+        			1 & Raspberry Pi Model B & \$35 \cite{alliedRaspberryPi} & \$35\\
+        			\hline
+        			1 & XBee & \$19 \cite{mouserXBEE} & \$19\\
+        			\hline
+        			1 & 50' Ethernet cable & \$5.25 \cite{amazonEthernetCable} & \$5.25\\
+        			\hline
+        			&Total&& \$3922\\
+        			\hline
+        		\end{tabular}
+        	\end{center}
+        \end{table}
+        
+        The cost of these parts does not include shipping and parts loss, so an extra 10\% is added to the parts price as overhead. 
+        Over a total of 100 systems, the annual initial R\&D cost recovery is \$50 per system.
+        Cloud Server services such as Amazon server will be used for hosting the server. This cost will be a monthly cost, and will scale with how much usage it gets. For typical usage which might be similar to a moderate WordPress installation, a 3-year instance on a small server could cost \$17.95 per month, or \$646.2 for three years \cite{wordPressEstimate}
+        
+        These costs along with an estimated sales price and profit are shown in \textbf{Table \ref{tab:prodTotalCosts}}. The corporate income tax rate applied is 35\%.
+        
+        \begin{table}[H]
+        	\begin{center}
+        		\caption{Cost of a Single System}
+        		\label{tab:prodTotalCosts}
+        		\begin{tabular}{|c|c|}
+        			\hline
+        			Parts & \$3922\\
+        			\hline
+        			Parts Overhead & \$392\\
+        			\hline
+        			3 Year of Server Usage & \$646.2\\
+        			\hline
+        			Total & \$4960\\
+        			\hline
+        			Total with Overhead & \$6944\\
+        			\hline
+        		\end{tabular}
+        	\end{center}
+        \end{table}
+        
+        \paragraph{Summary Financials}
+        
+		\begin{table}[H]
+			\begin{center}
+				\caption{Sales Price and Profit of a Single System}
+				\label{tab:SalesPrice}
+				\begin{tabular}{|c|c|}
+					\hline
+					Cost of one System with overhead & \$6944\\
+					\hline
+					Amortized Startup Costs & 50\\
+					\hline
+					Total Cost & 6994\\
+					\hline
+					Sales Price & \$10000\\
+					\hline
+					Profit before Tax& \$3006\\
+					\hline
+					Profit after Tax& \$1953\\
+					\hline
+				\end{tabular}
+			\end{center}
+		\end{table}
+        
+        Using a sales price of \$10000 per system, the resulting profit of \$1953 (shown in \textbf{Table \ref{tab:SalesPrice}}) results in a profit margin of 19.5\%, which is satisfactory for this project.
+        
+        
+
+\end{document}
