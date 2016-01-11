@@ -105,7 +105,10 @@ This lets you modify the commits you made for the last three commits. In other w
 Important Quote:
 
 ```
-So, before you run git rebase, always ask yourself, "Is anyone else looking at this branch?" If the answer is yes, take your hands off the keyboard and start thinking about a non-destructive way to make your changes (e.g., the git revert command). Otherwise, you’re safe to re-write history as much as you like.
+So, before you run git rebase, always ask yourself, "Is anyone else looking at this
+    branch?" If the answer is yes, take your hands off the keyboard and start
+    thinking about a non-destructive way to make your changes (e.g., the git revert
+    command). Otherwise, you’re safe to re-write history as much as you like.
 ```
 
 This is to remind you to make sure you are rebasing the correct way.
