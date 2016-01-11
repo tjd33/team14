@@ -16,23 +16,27 @@ import logging
 import psycopg2
 
 # Local Imports
+from senseable_gym import logger_name
 
 
 class Database():
-    def __init__(self, dbname, user, password=None, filename=None):
+    def __init__(self, dbname, user, password=None):
         """TODO: Docstring for __init__.
 
         :dbname: TODO
         :user: TODO
         :password: TODO
-        :filename: TODO
         :returns: TODO
 
         """
-
         # Get the logger
         self.logger = logging.getLogger(logger_name)
-        pass
+
+        # Set up the connection to the database
+        if password:
+            self.connection = psycopg2.connect(dbname=dbname, user=user, password=password)
+        else:
+            self.connection = psycopg2.connect(dbname=dbname, user=user)
 
     def execute_sql_script(self, filename):
         """
