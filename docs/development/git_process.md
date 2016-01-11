@@ -45,6 +45,10 @@ To create and then checkout a branch:
 ### Flow
 
 ```bash
+# Make sure your development branchis up-to-date
+git checkout development
+git pull
+
 # Create a new branch new_branch
 git checkout -b new_branch
 
@@ -57,7 +61,7 @@ git commit
 # Push changes to Github so everyone can see them
 #   These changes do not have to be a completed branch
 #   Or even have everything working. This is still on YOUR
-#   person branch.
+#   personal branch.
 git push -u origin new_branch
 
 # After the '-u origin new_branch' stuff, you can now just do
@@ -79,10 +83,10 @@ git fetch origin development
 git checkout new_branch
 
 # Now perform a rebase
-git rebase development
+git rebase development new_branch
 ```
 
-This will rebase the development commits BEFORE the commits on your current branch. Make sure that you do it this way. It is very important.
+You can think of this as rebase development onto new_branch. This will rebase the development commits BEFORE the commits on your current branch. Make sure that you do it this way. It is very important.
 
 After doing this, make sure to run any tests that you've made, so that as you continue your work, you don't break anything unexpected because of a new change.
 
@@ -112,11 +116,17 @@ Once you are sure that your feature branch is up-to-date with development, you c
 # IT IS VERY IMPORANT THAT YOUR FEATURE BRANCH IS UP TO DATE
 #   PLEASE DO NOT PROCESS UNLESS THAT IS TRUE
 
-# Next switch back to your feature branch
-git checkout new_branch
+# Switch to development, the branch we are going to update
+git checkout development
 
-# Now rebase your commits onto development
-git rebase development
+# Now merge your commits onto development
+#   Note that there should be no merge conflicts here
+#   Because we already have made sure our branches are in agreement.
+#   That's why it's nice to use merge right now.
+git merge new_branch
+
+# Now push that up
+git push origin development
 ```
 
 And that's all. 
