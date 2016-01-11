@@ -2,6 +2,22 @@
 
 This document will provide a quick overview of how, what, and when you should use some of the general git commands for development. It also serves as a way for me to make sure that I'm saying the same thing every time I tell us to do something different.
 
+## Commits Reference
+
+Below is just a summary of [this article](http://chris.beams.io/posts/git-commit/).
+
+* The first line of the commit is the **subject**.
+    * This should be limited to 50 characters or less.
+    * If you feel like you can't fit it in 50 characters or less, try committing less in the commit you are currently writing!
+    * It should be stated in the imperative mood. In other words, read the commit as "This commit will... <insert subject>"
+    * The subject is always followed by a blank line.
+    * Should be capitalized and not followed by punctuation.
+* Following the subject and a blank line, you have the **body**.
+    * Wrap the body at 72 characters.
+    * Use the body to explain why and how, when necessary
+
+With these ideas in place, we can do some really nice things for checking and comparing history. There are some really pretty commands such as `git log --oneline` and `git shortlog` that will look much better when keeping things the correct size. Github also expects these to be true of commits and formats the history accordingly.
+
 ## Branches Reference
 
 To see what branches you have in your repository:
@@ -45,7 +61,7 @@ To create and then checkout a branch:
 ### Flow
 
 ```bash
-# Make sure your development branchis up-to-date
+# Make sure your development branch is up-to-date
 git checkout development
 git pull
 
