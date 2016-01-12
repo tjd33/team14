@@ -9,3 +9,5 @@
 *\.synctex.gz
 *\.lot
 *\.lof
+*\.pyc
+*pycache*
