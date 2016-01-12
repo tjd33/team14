@@ -9,6 +9,10 @@
 *\.synctex.gz
 *\.lot
 *\.lof
+
+# Python Files
 *\.pyc
 *pycache*
+
+# Tags files
 *tags
