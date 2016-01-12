@@ -17,3 +17,6 @@ class TestDatabaseModel(unittest.TestCase):
         db = DatabaseModel('testdb', 'team14')
 
         db.add_machine('machine1')
+
+if __name__ == "__main__":
+    print('Testing...')
