@@ -16,7 +16,8 @@ import logging
 import psycopg2
 
 # Local Imports
-from senseable_gym import logger_name
+# from senseable_gym import logger_name
+logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
 
 class DatabaseModel():
