@@ -24,19 +24,17 @@ $GIT_DIRECTORY/
 |-- www
 |-- etc.
 |-- senseable_gym
-    # Anything relating to our python code goes here
+    # All the python code goes in here
+    #   And anything related to the python code.
 
-    |-- senseable_gym
-        # All the python code goes in here
+    |-- sg_database
+        # Anything with the database model goes here
 
-        |-- sg_database
-            # Anything with the database model goes here
+    |-- sg_<object_name>
+        # New additions (gui, view, etc.) get titled the same
 
-        |-- sg_<object_name>
-            # New additions (gui, view, etc.) get titled the same
-
-        |-- test
-            # Tests should be placed in this folder with descriptive names
+    |-- test
+        # Tests should be placed in this folder with descriptive names
 ```
 
 Make sure to put your code in this format. This allows for a lot of really nice imports and testing features. These include:
@@ -57,9 +55,13 @@ To run tests, soon you should be able to just say:
 
 `$ make test`
 
-When invoking this command, you will be able to automatically run the entire test suite that we've made.
+or
 
-However, if you're looking to only run a test script that you've been working on, this structure allows you to do it very easily. To invoke the test script, navigate to the `$GIT_DIRECTORY/senseable_gym` directory and invoke the command:
+`$ python3 -m unittest discover`
+
+When invoking either of these commands, you will be able to automatically run the entire test suite that we've made.
+
+However, if you're looking to only run a test script that you've been working on, this structure allows you to do it very easily. To invoke the test script, navigate to the `$GIT_DIRECTORY` directory and invoke the command:
 
 `$ python3 -m senseable_gym.test.<test_script_name>`
 
