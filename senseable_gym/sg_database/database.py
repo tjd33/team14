@@ -19,7 +19,7 @@ import psycopg2
 from senseable_gym import logger_name
 
 
-class Database():
+class DatabaseModel():
     def __init__(self, dbname, user, password=None):
         """TODO: Docstring for __init__.
 
@@ -50,4 +50,32 @@ class Database():
         :returns: None
 
         """
+        pass
+
+    def add_machine(self, machine):
+        pass
+
+    def remove_machine(self, id):
+        pass
+
+    # Getters
+
+    def get_machines(self):
+        pass
+
+    def get_machine_status(self, id):
+        pass
+
+    def get_machine_location(self, id):
+        pass
+
+    def get_machine_type(self, id):
+        pass
+
+    # Setters
+
+    def set_machine_status(self, id, status):
+        pass
+
+    def set_machine_location(self, id, location):
         pass
