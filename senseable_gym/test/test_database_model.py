@@ -23,11 +23,17 @@ class TestDatabaseModel(unittest.TestCase):
     def test_execute_sql_script(self):
         self.db.execute_sql_script('./senseable_gym/test/sql_scripts/test1.sql')
 
+        # Get everything from test
         self.db.cursor.execute('SELECT * FROM test')
 
+        # Actually read the information
         rows = self.db.cursor.fetchall()
 
+        # Assert that it equals what we inserted in test1
         self.assertEqual(rows, [(1, 'helloworld')])
+
+        # Drop the test table
+        self.db.cursor.execute('DROP TABLE test')
 
     def test_empty_db(self):
         pass
