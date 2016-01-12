@@ -11,6 +11,7 @@ TJ DeVries
 
 # Built-in Imports
 import logging
+import re
 
 # Third Party Imports
 import psycopg2
@@ -39,6 +40,16 @@ class DatabaseModel():
         else:
             self.connection = psycopg2.connect(dbname=dbname, user=user)
 
+        self.cursor = self.connection.cursor()
+
+    def _empty_db(self):
+        """TODO: Docstring for _empty_db.
+        :returns: TODO
+
+        """
+        # self.cursor.execute('truncate table if exists equipment;')
+        pass
+
     def execute_sql_script(self, filename):
         """
         This will execute a generic sql script.
@@ -51,7 +62,28 @@ class DatabaseModel():
         :returns: None
 
         """
-        pass
+        self.logger.info('Executing SQL script file: {}'.format(filename))
+
+        # Initialize an empty statement
+        statement = ''
+
+        for line in open(filename):
+            if re.match(r'--', line):
+                # Ignore sql comment lines
+                continue
+            if not re.search(r'[^-;]+;', line):
+                # Keep appending lines that don't end
+                statement = statement + line
+            else:
+                # Append the last line that we need
+                statement = statement + line
+
+                self.logger.debug('Executing SQL Statment: {}'.format(statement))
+
+                self.cursor.execute(statement)
+
+                # Now reset our statement
+                statement = ''
 
     def add_machine(self, machine):
         pass
