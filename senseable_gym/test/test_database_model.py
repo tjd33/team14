@@ -7,6 +7,10 @@ import unittest
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel
 
+from senseable_gym.sg_util.machine import Machine
+from senseable_gym.sg_util.machine import MachineType
+from senseable_gym.sg_util.machine import MachineStatus
+
 
 class TestDatabaseModel(unittest.TestCase):
     def setUp(self):
@@ -18,6 +22,7 @@ class TestDatabaseModel(unittest.TestCase):
         """
         self.db = DatabaseModel('testdb', 'team14')
 
+        self.db.execute_sql_script('./senseable_gym/sg_database/sg_schema.sql')
         self.db._empty_db()
 
     def test_execute_sql_script(self):
@@ -45,7 +50,18 @@ class TestDatabaseModel(unittest.TestCase):
         pass
 
     def test_add_machine(self):
-        pass
+        machine = Machine(1, MachineType.TREADMILL, [1, 1, 1])
+        self.assertEqual(machine.get_status(), MachineStatus.UNKNOWN)
+
+        self.db.add_machine(machine)
+
+        test_machine_type = self.db.get_machine_type(1)
+
+        self.assertEqual(test_machine_type, MachineType.TREADMILL)
+
+    def test_add_machine_check_type(self):
+        self.assertRaises(ValueError, self.db.add_machine, 'not machine type')
+        self.assertRaises(ValueError, self.db.add_machine, 1)
 
     def test_add_duplicate_machine(self):
         pass
