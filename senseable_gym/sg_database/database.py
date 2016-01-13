@@ -15,13 +15,14 @@ import re
 
 # Third Party Imports
 import psycopg2
+import psycopg2.extras
 
 # Local Imports
 # from senseable_gym import logger_name
 
 from senseable_gym.sg_util.machine import Machine
 # from senseable_gym.sg_util.machine import MachineStatus
-# from senseable_gym.sg_util.machine import MachineType
+from senseable_gym.sg_util.machine import MachineType
 
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
@@ -46,6 +47,7 @@ class DatabaseModel():
             self.connection = psycopg2.connect(dbname=dbname, user=user)
 
         self.cursor = self.connection.cursor()
+        self.dict_cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     def _empty_db(self):
         """TODO: Docstring for _empty_db.
@@ -53,7 +55,24 @@ class DatabaseModel():
 
         """
         # self.cursor.execute('truncate table if exists equipment;')
+        self.cursor.execute('truncate table equipment')
         pass
+
+    def _print_table(self, table_name):
+        """
+        A function to quickly print the contents of a table.
+        Currently to just be used for debugging purposes.
+        """
+        # Perform the query
+        self.cursor.execute('SELECT * FROM {}'.format(table_name))
+
+        # Fetch the results
+        rows = self.cursor.fetchall()
+
+        # Print the results
+        self.logger.info('Printing from table `{}`'.format(table_name))
+        for row in rows:
+            print(row)
 
     def execute_sql_script(self, filename):
         """
@@ -92,8 +111,18 @@ class DatabaseModel():
                     statement = ''
 
     def add_machine(self, machine):
+        # Make sure that we're actually getting a machine object passed in
         if not isinstance(machine, Machine):
             raise ValueError('Machine Objects Only')
+
+        # Now that we know we have a machine object, we can insert its information into our database
+        self.cursor.execute('INSERT INTO equipment VALUES({}, {}, \'{{ {},{},{} }}\' )'.format(
+            machine.get_id(),
+            machine.get_type().value,
+            machine.get_location()[0],
+            machine.get_location()[1],
+            machine.get_location()[2])
+        )
 
     def remove_machine(self, id):
         pass
@@ -103,6 +132,15 @@ class DatabaseModel():
     def get_machines(self):
         pass
 
+    def get_machine(self, id):
+        self.dict_cursor.execute('SELECT * FROM equipment WHERE equipment_id = {id}'.format(id=id))
+
+        machine_query = self.dict_cursor.fetchall()[0]
+
+        return Machine(machine_query['equipment_id'],
+                       MachineType(machine_query['equipment_type']),
+                       machine_query['location'])
+
     def get_machine_status(self, id):
         pass
 
@@ -110,7 +148,9 @@ class DatabaseModel():
         pass
 
     def get_machine_type(self, id):
-        pass
+        current_machine = self.get_machine(id)
+
+        return current_machine.get_type()
 
     # Setters
 
