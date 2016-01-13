@@ -18,6 +18,11 @@ import psycopg2
 
 # Local Imports
 # from senseable_gym import logger_name
+
+from senseable_gym.sg_util.machine import Machine
+# from senseable_gym.sg_util.machine import MachineStatus
+# from senseable_gym.sg_util.machine import MachineType
+
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
 
@@ -67,26 +72,28 @@ class DatabaseModel():
         # Initialize an empty statement
         statement = ''
 
-        for line in open(filename):
-            if re.match(r'--', line):
-                # Ignore sql comment lines
-                continue
-            if not re.search(r'[^-;]+;', line):
-                # Keep appending lines that don't end
-                statement = statement + line
-            else:
-                # Append the last line that we need
-                statement = statement + line
+        with open(filename, 'r') as f:
+            for line in f:
+                if re.match(r'--', line):
+                    # Ignore sql comment lines
+                    continue
+                if not re.search(r'[^-;]+;', line):
+                    # Keep appending lines that don't end
+                    statement = statement + line
+                else:
+                    # Append the last line that we need
+                    statement = statement + line
 
-                self.logger.debug('Executing SQL Statment: {}'.format(statement))
+                    self.logger.debug('Executing SQL Statment: {}'.format(statement))
 
-                self.cursor.execute(statement)
+                    self.cursor.execute(statement)
 
-                # Now reset our statement
-                statement = ''
+                    # Now reset our statement
+                    statement = ''
 
     def add_machine(self, machine):
-        pass
+        if not isinstance(machine, Machine):
+            raise ValueError('Machine Objects Only')
 
     def remove_machine(self, id):
         pass
