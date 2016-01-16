@@ -14,8 +14,11 @@ import logging
 import re
 
 # Third Party Imports
-import psycopg2
-import psycopg2.extras
+from sqlalchemy import create_engine
+from sqlalchemy import MetaData
+from sqlalchemy import inspect, select
+from sqlalchemy import Table
+from sqlalchemy import Column, Integer, String
 
 # Local Imports
 # from senseable_gym import logger_name
@@ -41,21 +44,23 @@ class DatabaseModel():
         self.logger = logging.getLogger(logger_name)
 
         # Set up the connection to the database
-        if password:
-            self.connection = psycopg2.connect(dbname=dbname, user=user, password=password)
-        else:
-            self.connection = psycopg2.connect(dbname=dbname, user=user)
+        self.engine = create_engine('sqlite://')
 
-        self.cursor = self.connection.cursor()
-        self.dict_cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        self.meta = MetaData(self.engine)
+
+        self.equipment = Table('equipment', self.meta,
+                               Column('equipment_id', Integer, primary_key=True),
+                               Column('equipment_type', Integer),
+                               Column('location', Integer)
+                               )
+
+        self.equipment.create()
 
     def _empty_db(self):
         """TODO: Docstring for _empty_db.
         :returns: TODO
 
         """
-        # self.cursor.execute('truncate table if exists equipment;')
-        self.cursor.execute('truncate table equipment')
         pass
 
     def _print_table(self, table_name):
@@ -63,11 +68,12 @@ class DatabaseModel():
         A function to quickly print the contents of a table.
         Currently to just be used for debugging purposes.
         """
-        # Perform the query
-        self.cursor.execute('SELECT * FROM {}'.format(table_name))
-
         # Fetch the results
-        rows = self.cursor.fetchall()
+        if table_name not in self.meta.tables:
+            raise ValueError('Table `{}` not found in database'.format(table_name))
+
+        insp = inspect(self.engine)
+        rows = insp.get_columns(table_name)
 
         # Print the results
         self.logger.info('Printing from table `{}`'.format(table_name))
@@ -116,13 +122,15 @@ class DatabaseModel():
             raise ValueError('Machine Objects Only')
 
         # Now that we know we have a machine object, we can insert its information into our database
-        self.cursor.execute('INSERT INTO equipment VALUES({}, {}, \'{{ {},{},{} }}\' )'.format(
-            machine.get_id(),
-            machine.get_type().value,
-            machine.get_location()[0],
-            machine.get_location()[1],
-            machine.get_location()[2])
-        )
+
+        ins1 = self.equipment.insert().values(
+                    equipment_id=machine.get_id(),
+                    equipment_type=machine.get_type().value,
+                    location=1
+                )
+
+        with self.engine.connect() as con:
+            con.execute(ins1)
 
     def remove_machine(self, id):
         pass
@@ -133,9 +141,13 @@ class DatabaseModel():
         pass
 
     def get_machine(self, id):
-        self.dict_cursor.execute('SELECT * FROM equipment WHERE equipment_id = {id}'.format(id=id))
+        with self.engine.connect() as con:
+            query = select([self.equipment]).where(
+                    self.equipment.c.equipment_id == id)
 
-        machine_query = self.dict_cursor.fetchall()[0]
+            rs = con.execute(query)
+
+            machine_query = rs.fetchall()[0]
 
         return Machine(machine_query['equipment_id'],
                        MachineType(machine_query['equipment_type']),
