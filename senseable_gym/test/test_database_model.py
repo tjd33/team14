@@ -22,9 +22,7 @@ class TestDatabaseModel(unittest.TestCase):
         """
         self.db = DatabaseModel('testdb', 'team14')
 
-        self.db.execute_sql_script('./senseable_gym/sg_database/sg_schema.sql')
-        self.db._empty_db()
-
+    @unittest.skip('Not implemented currently')
     def test_execute_sql_script(self):
         self.db.execute_sql_script('./senseable_gym/test/sql_scripts/test1.sql')
 
