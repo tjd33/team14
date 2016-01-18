@@ -19,6 +19,7 @@ from sqlalchemy import MetaData
 from sqlalchemy import inspect, select
 from sqlalchemy import Table
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import sessionmaker
 
 # Local Imports
 # from senseable_gym import logger_name
@@ -26,6 +27,9 @@ from sqlalchemy import Column, Integer, String
 from senseable_gym.sg_util.machine import Machine
 # from senseable_gym.sg_util.machine import MachineStatus
 from senseable_gym.sg_util.machine import MachineType
+
+from senseable_gym.sg_database.sg_tables import Base
+from senseable_gym.sg_database.sg_tables import Equipment
 
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
@@ -48,13 +52,11 @@ class DatabaseModel():
 
         self.meta = MetaData(self.engine)
 
-        self.equipment = Table('equipment', self.meta,
-                               Column('equipment_id', Integer, primary_key=True),
-                               Column('equipment_type', Integer),
-                               Column('location', Integer)
-                               )
+        self.base = Base
+        self.base.metadata.bind = self.engine
+        self.base.metadata.create_all()
 
-        self.equipment.create()
+        self.session = sessionmaker(bind=self.engine)()
 
     def _empty_db(self):
         """TODO: Docstring for _empty_db.
@@ -121,16 +123,14 @@ class DatabaseModel():
         if not isinstance(machine, Machine):
             raise ValueError('Machine Objects Only')
 
-        # Now that we know we have a machine object, we can insert its information into our database
+        self.session.add(Equipment(
+            equipment_id=machine.get_id(),
+            equipment_type=machine.get_type().value,
+            location=1
+            )
+        )
 
-        ins1 = self.equipment.insert().values(
-                    equipment_id=machine.get_id(),
-                    equipment_type=machine.get_type().value,
-                    location=1
-                )
-
-        with self.engine.connect() as con:
-            con.execute(ins1)
+        self.session.commit()
 
     def remove_machine(self, id):
         pass
@@ -141,23 +141,21 @@ class DatabaseModel():
         pass
 
     def get_machine(self, id):
-        with self.engine.connect() as con:
-            query = select([self.equipment]).where(
-                    self.equipment.c.equipment_id == id)
+        # Query the equipment table to find the machine by its ID
+        #   Then, since the ID is a primary key, there can only be one of them
+        #   So, return the first one in that list.
+        machine_query = self.session.query(Equipment).filter_by(equipment_id=id).first()
 
-            rs = con.execute(query)
-
-            machine_query = rs.fetchall()[0]
-
-        return Machine(machine_query['equipment_id'],
-                       MachineType(machine_query['equipment_type']),
-                       machine_query['location'])
+        # Return a machine object, based on that query.
+        return Machine(machine_query.equipment_id,
+                       MachineType(machine_query.equipment_type),
+                       machine_query.location)
 
     def get_machine_status(self, id):
-        pass
+        return self.get_machine(id).get_status()
 
     def get_machine_location(self, id):
-        pass
+        return self.get_machine(id).get_location()
 
     def get_machine_type(self, id):
         current_machine = self.get_machine(id)
