@@ -66,3 +66,35 @@ However, if you're looking to only run a test script that you've been working on
 `$ python3 -m senseable_gym.test.<test_script_name>`
 
 and it will run your tests.
+
+The structure is similar to what is shown below:
+
+```python
+# Built-in Imports
+import unittest     # This is the package that lets us run automated unit tessts
+
+# Local Imports
+from senseable_gym.sg_module_to_test import class_to_test
+from senseable_gym.sg_module_to_test import function_to_test
+
+
+class Test_module_to_test(unittest.TestCase):
+    def setUp(self):
+        """
+        This will run before every test begins.
+
+        It should put the conditions in such a way that each test is independent of 
+            each other.
+            It is not always required.
+        """
+        # Code here
+
+    def test_testname_here(self):
+        """
+        This is a place to run the automated unit tests.
+        """
+        # Code here
+        
+if __name__ == '__main__':
+    unittest.main()
+```
