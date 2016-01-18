@@ -4,6 +4,9 @@
 # Built-in Imports
 import unittest
 
+# Third Party Imports
+from sqlalchemy.exc import IntegrityError as DuplicateError
+
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel
 
@@ -57,12 +60,32 @@ class TestDatabaseModel(unittest.TestCase):
 
         self.assertEqual(test_machine_type, MachineType.TREADMILL)
 
+    def test_add_machine_two(self):
+        machine1 = Machine(1, MachineType.TREADMILL, [1, 1, 1])
+        machine2 = Machine(2, MachineType.BICYCLE, [2, 2, 2])
+
+        self.db.add_machine(machine1)
+        self.db.add_machine(machine2)
+
+        test_machine1 = self.db.get_machine_type(1)
+        test_machine2 = self.db.get_machine_type(2)
+
+        self.assertNotEqual(test_machine1, test_machine2)
+
+        self.assertEqual(test_machine1, MachineType.TREADMILL)
+        self.assertEqual(test_machine2, MachineType.BICYCLE)
+
     def test_add_machine_check_type(self):
         self.assertRaises(ValueError, self.db.add_machine, 'not machine type')
         self.assertRaises(ValueError, self.db.add_machine, 1)
 
     def test_add_duplicate_machine(self):
-        pass
+        machine1 = Machine(1, MachineType.TREADMILL, [1, 1, 1])
+        machine2 = Machine(1, MachineType.TREADMILL, [1, 1, 1])
+
+        self.db.add_machine(machine1)
+
+        self.assertRaises(DuplicateError, self.db.add_machine, machine2)
 
 if __name__ == "__main__":
     unittest.main()
