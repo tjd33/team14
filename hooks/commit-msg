@@ -26,7 +26,7 @@ with open(commit_msg_filepath, 'r') as f:
         print_msg('Commit subject must start with a capital letter', 'Error')
         error_count += 1
 
-    if line[-1] == '.':
+    if '.\n' in line or '.' == line[-1]:
         print_msg('Commit subject should not end with a period', 'Error')
         error_count += 1
 
