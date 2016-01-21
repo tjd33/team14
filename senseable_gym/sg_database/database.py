@@ -18,16 +18,14 @@ from sqlalchemy import create_engine
 from sqlalchemy import MetaData
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy.exc import IntegrityError
 # Local Imports
 # from senseable_gym import logger_name
 
-from senseable_gym.sg_util.machine import Machine
+from senseable_gym.sg_util.machine import Machine, Base
 # from senseable_gym.sg_util.machine import MachineStatus
-from senseable_gym.sg_util.machine import MachineType
+# from senseable_gym.sg_util.machine import MachineType
 
-from senseable_gym.sg_database.sg_tables import Base
-from senseable_gym.sg_database.sg_tables import Equipment
 
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
@@ -121,12 +119,13 @@ class DatabaseModel():
         if not isinstance(machine, Machine):
             raise ValueError('Machine Objects Only')
 
-        self.session.add(Equipment(
-            equipment_id=machine.get_id(),
-            equipment_type=machine.get_type().value,
-            location=1
-            )
-        )
+        result = self.session.query(Machine).filter(Machine.id == machine.id).all()
+
+        # TODO: This is not currently working as expected.
+        if result == list():
+            self.session.add(machine)
+        else:
+            raise IntegrityError('A machine object can only be added once')
 
         self.session.commit()
 
@@ -142,12 +141,7 @@ class DatabaseModel():
         # Query the equipment table to find the machine by its ID
         #   Then, since the ID is a primary key, there can only be one of them
         #   So, return the first one in that list.
-        machine_query = self.session.query(Equipment).filter_by(equipment_id=id).first()
-
-        # Return a machine object, based on that query.
-        return Machine(machine_query.equipment_id,
-                       MachineType(machine_query.equipment_type),
-                       machine_query.location)
+        return self.session.query(Machine).filter(Machine.id == id).one()
 
     def get_machine_status(self, id):
         return self.get_machine(id).get_status()
@@ -161,8 +155,7 @@ class DatabaseModel():
     # Setters
 
     def set_machine_status(self, id, status):
-        # self.get_machine(id).set_status(status)
-        self.session.query(Equipment).filter_by(equipment_id=id).first().status k
+        self.get_machine(id).set_status(status.value)
         self.session.commit()
 
     def set_machine_location(self, id, location):
