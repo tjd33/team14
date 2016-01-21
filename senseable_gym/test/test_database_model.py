@@ -87,5 +87,16 @@ class TestDatabaseModel(unittest.TestCase):
 
         self.assertRaises(DuplicateError, self.db.add_machine, machine2)
 
+    def test_get_machine_status(self):
+        machine = Machine(1, MachineType.TREADMILL, [1, 1, 1])
+
+        self.db.add_machine(machine)
+
+        self.assertEqual(self.db.get_machine_status(1), MachineStatus.UNKNOWN)
+
+        self.db.set_machine_status(1, MachineStatus.BUSY)
+
+        self.assertEqual(self.db.get_machine_status(1), MachineStatus.BUSY)
+
 if __name__ == "__main__":
     unittest.main()
