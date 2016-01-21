@@ -4,29 +4,67 @@
 # Standard Imports
 from enum import Enum
 
+from sqlalchemy import Column, Integer, Sequence
+from sqlalchemy import orm
+from sqlalchemy.ext.declarative import declarative_base
 
-class Machine():
-    def __init__(self, id, type, location, color=False):
-        self.id = id
-        self.type = type
-        self.location = location
-        self.status = MachineStatus.UNKNOWN
+# Create our base class
+Base = declarative_base()
+
+
+class Machine(Base):
+    __tablename__ = 'machine'
+
+    id = Column(Integer, Sequence('machine_id_seq'), primary_key=True)
+    type = Column(Integer)
+    location = Column(Integer)
+    status = Column(Integer)
+
+    def __init__(self, type, location, status=None, color=False):
+        if isinstance(type, MachineType):
+            self.type = type.value
+        else:
+            self.type = type
+
+        self.location = 1
+
+        if status is None:
+            status = MachineStatus.UNKNOWN
+
+        if isinstance(status, MachineStatus):
+            self.status = status.value
+        else:
+            self.status = status
 
         # Our variable that holds whether we will print in color or not
         self.color = color
+
+        # Base.__init__(self)
+
+    @orm.reconstructor
+    def init_on_load(self):
+        if isinstance(self.type, MachineType):
+            self.type = self.type.value
+        else:
+            self.type = self.type
+
+        if isinstance(self.status, MachineStatus):
+            self.status = self.status.value
+        else:
+            self.status = self.status
 
     # Getters
     def get_id(self):
         return self.id
 
     def get_status(self):
-        return self.status
+        return MachineStatus(self.status)
 
     def get_location(self):
         return self.location
 
     def get_type(self):
-        return self.type
+        return MachineType(self.type)
 
     # Setters
     def set_status(self, status):
@@ -37,7 +75,11 @@ class Machine():
 
     # String representation
     def __str__(self):
-        s = str(self.id)
+        s = '<id: {}, type: {}, status: {}>'.format(
+                str(self.id),
+                self.type,
+                self.status
+                )
 
         if self.color:
             status_color = self.get_status().color_string()
