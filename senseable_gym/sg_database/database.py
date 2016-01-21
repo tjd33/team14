@@ -16,9 +16,7 @@ import re
 # Third Party Imports
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData
-from sqlalchemy import inspect, select
-from sqlalchemy import Table
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
 
 # Local Imports
@@ -158,14 +156,14 @@ class DatabaseModel():
         return self.get_machine(id).get_location()
 
     def get_machine_type(self, id):
-        current_machine = self.get_machine(id)
-
-        return current_machine.get_type()
+        return self.get_machine(id).get_type()
 
     # Setters
 
     def set_machine_status(self, id, status):
-        pass
+        # self.get_machine(id).set_status(status)
+        self.session.query(Equipment).filter_by(equipment_id=id).first().status k
+        self.session.commit()
 
     def set_machine_location(self, id, location):
         pass
