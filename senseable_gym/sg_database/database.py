@@ -119,10 +119,10 @@ class DatabaseModel():
         return self.get_machine(id).type
 
     # Setters
-
     def set_machine_status(self, id, status):
         self.get_machine(id).status = status
         self.session.commit()
 
     def set_machine_location(self, id, location):
-        pass
+        self.get_machine(id).location = location
+        self.session.commit()
