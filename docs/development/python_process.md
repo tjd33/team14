@@ -139,6 +139,9 @@ example.squared = 10
 
 # This would print 100
 print(example.squared)
+
+# This would give you an error
+example.squared = 'THIS WILL BE AN ERROR'
 ```
 
-This is a horrible example, but you see the point. You just interact with it like it is an attribute. You don't have to worry about getters and setters.
+This is a horrible example, but you see the point. You just interact with it like it is an attribute. You don't have to worry about getters and setters. But, when you do it, you still have the safety of the getters and setters that you would have had before.
