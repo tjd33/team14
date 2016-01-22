@@ -16,3 +16,6 @@
 
 # Tags files
 *tags
+
+# Pycharm Things
+.idea/*
