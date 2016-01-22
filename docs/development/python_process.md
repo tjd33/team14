@@ -98,3 +98,47 @@ class Test_module_to_test(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 ```
+
+### Writing Getters and Setters
+
+So Python implements this **SUPER** awesome thing called a `property`. This may require some reading, but a basic idea is as follows:
+
+```python
+class ExampleModule():
+    def __init__(self, parameter):
+        # Going to set this parameter as a property of our module.
+        #   This means the logic of getting and setting can be passed off
+        #   Into different functions and always utilized
+        self._squared = parameter
+    
+    # Here's where we tell python that our `p` value is a property
+    @property
+    def squared(self):
+        return self._squared ** 2
+    
+    @squared.setter
+    def squared(self, value):
+        if not isinstance(value, int):
+            raise ValueError('Value must be an int')
+            
+        self._squared = value
+```
+
+What this does is completely erase the need to write getters and setters. You can do everything with those now simply by accessing the property of the class.
+
+For example, if you wanted to see what the `p` value was of an `ExampleModule` it would look like this:
+
+```python
+example = ExampleModule(5)
+
+# This would print 25
+print(example.squared)
+
+# This would set the internal value to 10
+example.squared = 10
+
+# This would print 100
+print(example.squared)
+```
+
+This is a horrible example, but you see the point. You just interact with it like it is an attribute. You don't have to worry about getters and setters.
