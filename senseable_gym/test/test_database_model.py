@@ -25,22 +25,6 @@ class TestDatabaseModel(unittest.TestCase):
         """
         self.db = DatabaseModel('testdb', 'team14')
 
-    @unittest.skip('Not implemented currently')
-    def test_execute_sql_script(self):
-        self.db.execute_sql_script('./senseable_gym/test/sql_scripts/test1.sql')
-
-        # Get everything from test
-        self.db.cursor.execute('SELECT * FROM test')
-
-        # Actually read the information
-        rows = self.db.cursor.fetchall()
-
-        # Assert that it equals what we inserted in test1
-        self.assertEqual(rows, [(1, 'helloworld')])
-
-        # Drop the test table
-        self.db.cursor.execute('DROP TABLE test')
-
     def test_empty_db(self):
         pass
 
@@ -51,8 +35,8 @@ class TestDatabaseModel(unittest.TestCase):
         pass
 
     def test_add_machine(self):
-        machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1], status=0)
-        self.assertEqual(machine.get_status(), MachineStatus.UNKNOWN)
+        machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
+        self.assertEqual(machine.status, MachineStatus.UNKNOWN)
 
         self.db.add_machine(machine)
 
@@ -97,6 +81,36 @@ class TestDatabaseModel(unittest.TestCase):
         self.db.set_machine_status(1, MachineStatus.BUSY)
 
         self.assertEqual(self.db.get_machine_status(1), MachineStatus.BUSY)
+
+    def test_get_machines(self):
+        machine1 = Machine(MachineType.BICYCLE, [1, 2, 2])
+        machine2 = Machine(MachineType.TREADMILL, [1, 3, 3])
+
+        self.db.add_machine(machine1)
+        self.db.add_machine(machine2)
+
+        machines = self.db.get_machines()
+
+        self.assertEqual(machines, [machine1, machine2])
+        self.assertNotEqual(machines, [machine1, machine1])
+
+    def test_remove_machine(self):
+        machine1 = Machine(MachineType.BICYCLE, [1, 2, 2])
+        machine2 = Machine(MachineType.TREADMILL, [1, 3, 3])
+
+        self.db.add_machine(machine1)
+        self.db.add_machine(machine2)
+
+        machines = self.db.get_machines()
+
+        self.assertEqual(machines, [machine1, machine2])
+        self.assertNotEqual(machines, [machine1, machine1])
+
+        self.db.remove_machine(machine1.id)
+
+        machines = self.db.get_machines()
+
+        self.assertEqual(machines, [machine2])
 
 if __name__ == "__main__":
     unittest.main()

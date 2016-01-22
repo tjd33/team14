@@ -78,42 +78,6 @@ class DatabaseModel():
         for row in rows:
             print(row)
 
-    def execute_sql_script(self, filename):
-        """
-        This will execute a generic sql script.
-            This will primarily be used to create the database from a
-            script that was generated in some other way and saved
-            as an SQL script.
-
-        :filename: string containing the path to the filename
-            of the sql script
-        :returns: None
-
-        """
-        self.logger.info('Executing SQL script file: {}'.format(filename))
-
-        # Initialize an empty statement
-        statement = ''
-
-        with open(filename, 'r') as f:
-            for line in f:
-                if re.match(r'--', line):
-                    # Ignore sql comment lines
-                    continue
-                if not re.search(r'[^-;]+;', line):
-                    # Keep appending lines that don't end
-                    statement = statement + line
-                else:
-                    # Append the last line that we need
-                    statement = statement + line
-
-                    self.logger.debug('Executing SQL Statment: {}'.format(statement))
-
-                    self.cursor.execute(statement)
-
-                    # Now reset our statement
-                    statement = ''
-
     def add_machine(self, machine):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(machine, Machine):
@@ -130,12 +94,14 @@ class DatabaseModel():
         self.session.commit()
 
     def remove_machine(self, id):
-        pass
+        machine = self.get_machine(id)
+
+        self.session.delete(machine)
 
     # Getters
 
     def get_machines(self):
-        pass
+        return self.session.query(Machine).all()
 
     def get_machine(self, id):
         # Query the equipment table to find the machine by its ID
@@ -144,18 +110,18 @@ class DatabaseModel():
         return self.session.query(Machine).filter(Machine.id == id).one()
 
     def get_machine_status(self, id):
-        return self.get_machine(id).get_status()
+        return self.get_machine(id).status
 
     def get_machine_location(self, id):
-        return self.get_machine(id).get_location()
+        return self.get_machine(id).location
 
     def get_machine_type(self, id):
-        return self.get_machine(id).get_type()
+        return self.get_machine(id).type
 
     # Setters
 
     def set_machine_status(self, id, status):
-        self.get_machine(id).set_status(status.value)
+        self.get_machine(id).status = status
         self.session.commit()
 
     def set_machine_location(self, id, location):

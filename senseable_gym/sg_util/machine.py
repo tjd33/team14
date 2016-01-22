@@ -17,61 +17,60 @@ class Machine(Base):
 
     id = Column(Integer, Sequence('machine_id_seq'), primary_key=True)
     type = Column(Integer)
-    location = Column(Integer)
+
+    # TODO: See if this is the easiest way to store these in ANY database
+    location_x = Column(Integer)
+    location_y = Column(Integer)
+    location_z = Column(Integer)
+
     status = Column(Integer)
 
-    def __init__(self, type, location, status=None, color=False):
-        if isinstance(type, MachineType):
-            self.type = type.value
-        else:
-            self.type = type
-
-        self.location = 1
-
-        if status is None:
-            status = MachineStatus.UNKNOWN
-
-        if isinstance(status, MachineStatus):
-            self.status = status.value
-        else:
-            self.status = status
+    def __init__(self, type, location, color=False):
+        self._type = type
+        self._location = location
+        self._status = MachineStatus.UNKNOWN
 
         # Our variable that holds whether we will print in color or not
         self.color = color
 
         # Base.__init__(self)
 
-    @orm.reconstructor
-    def init_on_load(self):
-        if isinstance(self.type, MachineType):
-            self.type = self.type.value
+    @property
+    def type(self):
+        return MachineType(self._type)
+
+    @type.setter
+    def type(self):
+        if isinstance(type, MachineType):
+            self._type = type.value
         else:
-            self.type = self.type
+            self._type = type
 
-        if isinstance(self.status, MachineStatus):
-            self.status = self.status.value
+    @property
+    def location(self):
+        return self._location
+
+    @location.setter
+    def location(self, value):
+        if len(value) != 3:
+            raise ValueError('This is not a proper location')
+
+        self.location_x = value[0]
+        self.location_y = value[1]
+        self.location_z = value[2]
+
+        self._location = value
+
+    @property
+    def status(self):
+        return MachineStatus(self._status)
+
+    @status.setter
+    def status(self, value):
+        if isinstance(value, MachineStatus):
+            self._status = value.value
         else:
-            self.status = self.status
-
-    # Getters
-    def get_id(self):
-        return self.id
-
-    def get_status(self):
-        return MachineStatus(self.status)
-
-    def get_location(self):
-        return self.location
-
-    def get_type(self):
-        return MachineType(self.type)
-
-    # Setters
-    def set_status(self, status):
-        self.status = status
-
-    def set_location(self, location):
-        self.location = location
+            self._status = value
 
     # String representation
     def __str__(self):
