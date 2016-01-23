@@ -5,11 +5,8 @@
 from enum import Enum
 
 from sqlalchemy import Column, Integer, Sequence
-from sqlalchemy import orm
-from sqlalchemy.ext.declarative import declarative_base
 
-# Create our base class
-Base = declarative_base()
+from senseable_gym.sg_util.base import Base
 
 
 class Machine(Base):
