@@ -16,4 +16,19 @@ class User(Base):
     first_name = Column(String(32))
     last_name = Column(String(32))
 
+    def __init__(self, user_name, first_name, last_name):
+        self._user_name = user_name
+        self._first_name = first_name
+        self._last_name = last_name
 
+    @property
+    def full_name(self):
+        return self.first_name + self.last_name
+
+    @property
+    def user_name(self):
+        return self._user_name
+
+    @user_name.setter
+    def user_name(self, value):
+        self._user_name = value
