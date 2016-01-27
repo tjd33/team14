@@ -23,7 +23,7 @@ class User(Base):
 
     @property
     def full_name(self):
-        return self.first_name + self.last_name
+        return self.first_name + ' ' + self.last_name
 
     @property
     def user_name(self):
@@ -32,3 +32,19 @@ class User(Base):
     @user_name.setter
     def user_name(self, value):
         self._user_name = value
+
+    @property
+    def first_name(self):
+        return self._first_name
+
+    @first_name.setter
+    def first_name(self, value):
+        self._first_name = value
+
+    @property
+    def last_name(self):
+        return self._last_name
+
+    @last_name.setter
+    def last_name(self, value):
+        self._last_name = value
