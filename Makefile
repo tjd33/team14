@@ -5,3 +5,5 @@ all: ./docs/design_documents/*
 other:
 	pdflatex files
 
+test:
+	python3 -m unittest discover -v
