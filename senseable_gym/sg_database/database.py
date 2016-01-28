@@ -11,7 +11,6 @@ TJ DeVries
 
 # Built-in Imports
 import logging
-import re
 
 # Third Party Imports
 from sqlalchemy import create_engine
@@ -25,7 +24,7 @@ from sqlalchemy.exc import IntegrityError
 from senseable_gym.sg_util.machine import Machine, Base
 # from senseable_gym.sg_util.machine import MachineStatus
 # from senseable_gym.sg_util.machine import MachineType
-
+# from senseable_gym.sg_util.user import User
 
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
