@@ -19,3 +19,7 @@
 
 # Pycharm Things
 .idea/*
+
+.vs/*
+*.pyproj
+*.sln
