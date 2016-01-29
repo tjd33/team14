@@ -10,23 +10,17 @@ print ('connecting to %s port %s' %server_address)
 sock.connect(server_address)
 
 try:
-    
-    # Send data
-    message = 'stop'
-    print ('sending "%s"' % message)
-    sock.sendall(message)
+	
+	# Send data
+	message = 'stop'
+	print ('sending "%s"' % message)
+	sock.sendall(message)
 
-    # Look for the response
-    amount_received = 0
-    amount_expected = len(message)
-    
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print ('received "%s"' % data)
+	# Look for the response
+	print (sock.recv(16))
 
  
 
 finally:
-    print ('closing socket')
-    sock.close()
+	print ('closing socket')
+	sock.close()
