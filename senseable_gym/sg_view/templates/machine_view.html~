@@ -1,0 +1,9 @@
+<!doctype html>
+<title>Current Machine Status</title>
+{% if !machines %}
+  <h1>No Machines Entered into System!</h1>
+{% else %}
+	{% for machine in machines %}
+  <li>{{ machine.id }}:{{ machine.status }}</li>
+	{% endfor %}
+{% endif %}
