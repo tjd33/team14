@@ -1,6 +1,10 @@
 import socket
 import sys
+from Reservation import Reservation
+import pickle
 
+res = Reservation("pgrif", 1200, 150)
+data_string = pickle.dumps(res, -1)
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -10,21 +14,23 @@ print ('connecting to %s port %s' % server_address)
 sock.connect(server_address)
 
 try:
-    
-    # Send data
-    message = 'This is the message.  It will be repeated.'
-    print ('sending "%s"' % message)
-    sock.sendall(message)
+	
+	# Send data
+	# message = b'This is the message.  It will be repeated.'
+	
+	#print ('sending "%s"' % message)
+	size = len(data_string)
+	print(size)
+	sock.sendall(data_string)
 
-    # Look for the response
-    amount_received = 0
-    amount_expected = len(message)
-    
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print ('received "%s"' % data)
+	# Look for the response
+	# amount_received = 0
+	# amount_expected = len(message)
+	while size > 0:
+		data = sock.recv(16)
+		print ('sent 16')
+		size -= 16
 
 finally:
-    print ('closing socket')
-    sock.close()
+	print ('closing socket')
+	sock.close()
