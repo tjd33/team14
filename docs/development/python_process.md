@@ -4,6 +4,8 @@
 
 I'd like to use pep8 as our style guide, except with line lengths increased to at least 120 (maybe 140). To do this, you can just install pep8 or flake8 on your machine and then run it on your files. Later if we want I can just have a hook to check it for you if we want.
 
+All indentation shall be made into spaces with a four space width.
+
 ## Tests
 
 Write them.
