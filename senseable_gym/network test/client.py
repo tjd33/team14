@@ -14,20 +14,12 @@ print ('connecting to %s port %s' % server_address)
 sock.connect(server_address)
 
 try:
-	
-	# Send data
-	# message = b'This is the message.  It will be repeated.'
-	
-	#print ('sending "%s"' % message)
 	size = len(data_string)
 	print(size)
 	sock.sendall(data_string)
 
-	# Look for the response
-	# amount_received = 0
-	# amount_expected = len(message)
 	while size > 0:
-		data = sock.recv(16)
+		data = sock.recv(8)
 		print ('sent 16')
 		size -= 16
 
