@@ -11,6 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from senseable_gym.sg_database.database import DatabaseModel
 
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
+from senseable_gym.sg_util.user import User
 
 
 class TestDatabaseModel(unittest.TestCase):
@@ -101,11 +102,43 @@ class TestDatabaseModel(unittest.TestCase):
         self.assertEqual(machines, [machine1, machine2])
         self.assertNotEqual(machines, [machine1, machine1])
 
-        self.db.remove_machine(machine1.id)
+        self.db.remove_machine(machine1.machine_id)
 
         machines = self.db.get_machines()
 
         self.assertEqual(machines, [machine2])
 
+    def test_add_user(self):
+        user = User('user', 'first', 'last')
+
+        self.db.add_user(user)
+
+        self.assertEqual(user.user_id, 1)
+
+        self.assertEqual(self.db.get_user(1), user)
+
+    @unittest.skip('Not yet implemented')
+    def test_add_duplicate_user(self):
+        user = User('user', 'first', 'last')
+
+        self.db.add_user(user)
+        self.db.add_user(user)
+
+    def test_current_machine_user_relationship(self):
+        user = User('user', 'first', 'last')
+        machine = Machine(MachineType.BICYCLE, [1, 2, 2])
+
+        self.db.add_user(user)
+        self.db.add_machine(machine)
+
+        self.assertEqual(machine.machine_id, 1)
+        self.assertEqual(user.user_id, 1)
+
+        self.db.set_user_machine_status(machine=machine, user=user)
+
+        rels_query = self.db.get_machine_user_relationships()
+
+        # print(rels)
+        print(rels_query)
 if __name__ == "__main__":
     unittest.main()
