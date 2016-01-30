@@ -21,10 +21,13 @@ from sqlalchemy.exc import IntegrityError
 # Local Imports
 # from senseable_gym import logger_name
 
-from senseable_gym.sg_util.machine import Machine, Base
-# from senseable_gym.sg_util.machine import MachineStatus
-# from senseable_gym.sg_util.machine import MachineType
-# from senseable_gym.sg_util.user import User
+from senseable_gym.sg_util.base import Base
+from senseable_gym.sg_util.machine import Machine, MachineStatus
+from senseable_gym.sg_util.user import User
+
+# Relationships
+from senseable_gym.sg_util.relationships import MachineCurrentUser
+
 
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
 
@@ -32,12 +35,6 @@ logger_name = 'senseable_logger'    # This is temporary until I can get the logg
 class DatabaseModel():
     def __init__(self, dbname, user, password=None):
         """TODO: Docstring for __init__.
-
-        :dbname: TODO
-        :user: TODO
-        :password: TODO
-        :returns: TODO
-
         """
         # Get the logger
         self.logger = logging.getLogger(logger_name)
@@ -82,7 +79,7 @@ class DatabaseModel():
         if not isinstance(machine, Machine):
             raise ValueError('Machine Objects Only')
 
-        result = self.session.query(Machine).filter(Machine.id == machine.id).all()
+        result = self.session.query(Machine).filter(Machine.machine_id == machine.machine_id).all()
 
         # TODO: This is not currently working as expected.
         if result == list():
@@ -106,7 +103,7 @@ class DatabaseModel():
         # Query the equipment table to find the machine by its ID
         #   Then, since the ID is a primary key, there can only be one of them
         #   So, return the first one in that list.
-        return self.session.query(Machine).filter(Machine.id == id).one()
+        return self.session.query(Machine).filter(Machine.machine_id == id).one()
 
     def get_machine_status(self, id):
         return self.get_machine(id).status
@@ -125,3 +122,46 @@ class DatabaseModel():
     def set_machine_location(self, id, location):
         self.get_machine(id).location = location
         self.session.commit()
+
+    def add_user(self, user):
+        # Make sure that we're actually getting a machine object passed in
+        if not isinstance(user, User):
+            raise ValueError('Machine Objects Only')
+
+        result = self.session.query(User).filter(User.user_id == user.user_id).all()
+
+        # TODO: This is not currently working as expected.
+        if result == list():
+            self.session.add(user)
+        else:
+            raise IntegrityError('A user object can only be added once')
+
+        self.session.commit()
+
+    def get_user(self, user_id):
+        return self.session.query(User).filter(User.user_id == user_id).one()
+
+    def set_user_machine_status(self,
+                                machine: Machine,
+                                user: User,
+                                status: MachineStatus = MachineStatus.BUSY) -> MachineCurrentUser:
+        """
+        This function should update the relationship between users and machines,
+
+        :param machine: Machine Object
+        :param user: User Object
+        :param status: Optional Status parameter
+        """
+        machine.status = status
+        relationship = MachineCurrentUser(machine, user)
+
+        self.session.add(relationship)
+
+        return relationship
+
+    def get_machine_user_relationships(self):
+        """
+        Get the current machine and user relationships
+        :return: A list of MachineCurrentUser objects
+        """
+        return self.session.query(MachineCurrentUser).one()
