@@ -136,10 +136,26 @@ class TestDatabaseModel(unittest.TestCase):
 
         self.db.set_user_machine_status(machine=machine, user=user)
 
-        rel = self.db.get_machine_user_relationships()
+        rel = self.db.get_machine_user_relationships(machine)
 
         self.assertEqual(rel._machine, machine)
         self.assertEqual(rel._user, user)
+
+    def test_wrong_machine_user_relationship(self):
+        user = User('user', 'first', 'last')
+        bad_user = User('this', 'is', 'bad')
+
+        machine = Machine(MachineType.BICYCLE, [1, 2, 2])
+
+        # Make a relationship without anything in the database
+        self.db.set_user_machine_status(machine, bad_user)
+        # self.db.get_machine_user_relationships(machine)
+
+        self.db.add_user(user)
+        self.db.add_machine(machine)
+
+        # Make a relationship with a user that is not in the database
+        self.db.set_user_machine_status(machine, bad_user)
 
 
 if __name__ == "__main__":
