@@ -5,7 +5,7 @@
 from enum import Enum
 
 from sqlalchemy import Column, Integer, Sequence
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 
 from senseable_gym.sg_util.base import Base
 
@@ -23,7 +23,7 @@ class Machine(Base):
 
     status = Column(Integer)
 
-    current_user = relationship('MachineCurrentUser', cascade="all, delete-orphan", backref='machine')
+    # current_user = relationship('MachineCurrentUser', cascade="all, delete-orphan", backref='machine')
 
     def __init__(self, type, location, color=False):
         self._type = type

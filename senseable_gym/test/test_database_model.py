@@ -136,9 +136,11 @@ class TestDatabaseModel(unittest.TestCase):
 
         self.db.set_user_machine_status(machine=machine, user=user)
 
-        rels_query = self.db.get_machine_user_relationships()
+        rel = self.db.get_machine_user_relationships()
 
-        # print(rels)
-        print(rels_query)
+        self.assertEqual(rel._machine, machine)
+        self.assertEqual(rel._user, user)
+
+
 if __name__ == "__main__":
     unittest.main()
