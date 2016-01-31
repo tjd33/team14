@@ -159,12 +159,12 @@ class DatabaseModel():
 
         return relationship
 
-    def get_machine_user_relationships(self):
+    def get_machine_user_relationships(self, machine):
         """
         Get the current machine and user relationships
         :return: A list of MachineCurrentUser objects
         """
-        rel = self.session.query(MachineCurrentUser).one()
+        rel = self.session.query(MachineCurrentUser).filter(MachineCurrentUser.machine_id == machine.machine_id).one()
 
         # TODO: I believe this is not the correct way to repopulate the relationship
         #       However, I don't really see a different way to do it now. Maybe

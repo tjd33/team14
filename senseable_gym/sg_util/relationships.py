@@ -5,7 +5,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, DateTime
-# from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship
 
 # Senseable Gym Imports
 from senseable_gym.sg_util.base import Base
@@ -20,7 +20,7 @@ class MachineCurrentUser(Base):
     machine_id = Column(Integer, ForeignKey('machine.machine_id'))
     user_id = Column(Integer, ForeignKey('user.user_id'))
     relationship_start = Column(DateTime, nullable=False, default=datetime.now())
-    # machine = relationship(Machine, lazy='joined')
+    machine = relationship(Machine, lazy='joined')
     # user = relationship('user')
 
     def __init__(self, machine: Machine, user: User, time=None):
