@@ -9,10 +9,12 @@
 *\.synctex.gz
 *\.lot
 *\.lof
+*\.html~
 
 # Python Files
 *\.pyc
 *pycache*
+*\.py~
 
 # Tags files
 *tags

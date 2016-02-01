@@ -10,11 +10,6 @@ from sqlalchemy.exc import IntegrityError
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel
 
-from senseable_gym.sg_util.machine import Machine
-from senseable_gym.sg_util.machine import MachineType
-from senseable_gym.sg_util.machine import MachineStatus
-
-
 class TestDatabaseModel(unittest.TestCase):
     def setUp(self):
         """
