@@ -100,6 +100,12 @@ git checkout new_branch
 
 # Now perform a rebase
 git rebase development new_branch
+
+# Now make sure that the remote branch has the same story as you
+git pull --rebase
+
+# Now you can push your changes up to the repository
+git push
 ```
 
 You can think of this as rebase development onto new_branch. This will rebase the development commits BEFORE the commits on your current branch. Make sure that you do it this way. It is very important.
