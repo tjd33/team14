@@ -148,6 +148,10 @@ git checkout development
 #   Note that there should be no merge conflicts here
 #   Because we already have made sure our branches are in agreement.
 #   That's why it's nice to use merge right now.
+# Once you are writing the commit for this merge, maybe just throw in
+#   A little update about why you are merging now. This could include
+#   a new feature that you have added, or maybe even that the whole 
+#   branch is finished. Just try and be descriptive
 git merge new_branch
 
 # Now push that up
