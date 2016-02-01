@@ -5,17 +5,15 @@
 from enum import Enum
 
 from sqlalchemy import Column, Integer, Sequence
-from sqlalchemy import orm
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import relationship
 
-# Create our base class
-Base = declarative_base()
+from senseable_gym.sg_util.base import Base
 
 
 class Machine(Base):
     __tablename__ = 'machine'
 
-    id = Column(Integer, Sequence('machine_id_seq'), primary_key=True)
+    machine_id = Column(Integer, Sequence('machine_id_seq'), primary_key=True)
     type = Column(Integer)
 
     # TODO: See if this is the easiest way to store these in ANY database
@@ -24,6 +22,8 @@ class Machine(Base):
     location_z = Column(Integer)
 
     status = Column(Integer)
+
+    # current_user = relationship('MachineCurrentUser', cascade="all, delete-orphan", backref='machine')
 
     def __init__(self, type, location, color=False):
         self._type = type
@@ -75,7 +75,7 @@ class Machine(Base):
     # String representation
     def __str__(self):
         s = '<id: {}, type: {}, status: {}>'.format(
-                str(self.id),
+                str(self.machine_id),
                 self.type,
                 self.status
                 )

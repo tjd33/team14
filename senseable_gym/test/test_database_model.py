@@ -10,9 +10,8 @@ from sqlalchemy.exc import IntegrityError
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel
 
-from senseable_gym.sg_util.machine import Machine
-from senseable_gym.sg_util.machine import MachineType
-from senseable_gym.sg_util.machine import MachineStatus
+from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
+from senseable_gym.sg_util.user import User
 
 
 class TestDatabaseModel(unittest.TestCase):
@@ -29,9 +28,6 @@ class TestDatabaseModel(unittest.TestCase):
         pass
 
     def test_get_machine(self):
-        pass
-
-    def test_get_machines(self):
         pass
 
     def test_add_machine(self):
@@ -106,11 +102,61 @@ class TestDatabaseModel(unittest.TestCase):
         self.assertEqual(machines, [machine1, machine2])
         self.assertNotEqual(machines, [machine1, machine1])
 
-        self.db.remove_machine(machine1.id)
+        self.db.remove_machine(machine1.machine_id)
 
         machines = self.db.get_machines()
 
         self.assertEqual(machines, [machine2])
+
+    def test_add_user(self):
+        user = User('user', 'first', 'last')
+
+        self.db.add_user(user)
+
+        self.assertEqual(user.user_id, 1)
+
+        self.assertEqual(self.db.get_user(1), user)
+
+    @unittest.skip('Not yet implemented')
+    def test_add_duplicate_user(self):
+        user = User('user', 'first', 'last')
+
+        self.db.add_user(user)
+        self.db.add_user(user)
+
+    def test_current_machine_user_relationship(self):
+        user = User('user', 'first', 'last')
+        machine = Machine(MachineType.BICYCLE, [1, 2, 2])
+
+        self.db.add_user(user)
+        self.db.add_machine(machine)
+
+        self.assertEqual(machine.machine_id, 1)
+        self.assertEqual(user.user_id, 1)
+
+        self.db.set_user_machine_status(machine=machine, user=user)
+
+        rel = self.db.get_machine_user_relationships(machine)
+
+        self.assertEqual(rel._machine, machine)
+        self.assertEqual(rel._user, user)
+
+    def test_wrong_machine_user_relationship(self):
+        user = User('user', 'first', 'last')
+        bad_user = User('this', 'is', 'bad')
+
+        machine = Machine(MachineType.BICYCLE, [1, 2, 2])
+
+        # Make a relationship without anything in the database
+        self.db.set_user_machine_status(machine, bad_user)
+        # self.db.get_machine_user_relationships(machine)
+
+        self.db.add_user(user)
+        self.db.add_machine(machine)
+
+        # Make a relationship with a user that is not in the database
+        self.db.set_user_machine_status(machine, bad_user)
+
 
 if __name__ == "__main__":
     unittest.main()
