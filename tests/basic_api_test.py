@@ -26,6 +26,7 @@ from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
 db = DatabaseModel('dbname', 'example')
 
 for machine_id in range(10):
+    # Just set a few differences in the objects so every one is not identical
     if machine_id % 2 == 0:
         m_type = MachineType.BICYCLE
         m_status = MachineStatus.BUSY
@@ -33,12 +34,18 @@ for machine_id in range(10):
         m_type = MachineType.TREADMILL
         m_status = MachineStatus.UNKNOWN
 
+    # Create a Machine Object
     temp_machine = Machine(type=m_type, location=[machine_id, machine_id, 1])
+
+    # Set it to have a particular status
     temp_machine.status = m_status
 
+    # Add the machine to the database
     db.add_machine(temp_machine)
 
+# Use the database to retrieve all of the machines
 machine_list = db.get_machines()
 
+# Print the machines that we have
 for machine in machine_list:
     print(machine)
