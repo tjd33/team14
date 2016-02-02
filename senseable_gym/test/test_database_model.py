@@ -24,9 +24,11 @@ class TestDatabaseModel(unittest.TestCase):
         """
         self.db = DatabaseModel('testdb', 'team14')
 
+    @unittest.skip('Not yet implemented')
     def test_empty_db(self):
         pass
 
+    @unittest.skip('Not yet implemented')
     def test_get_machine(self):
         pass
 
