@@ -3,7 +3,7 @@ import sys
 from Reservation import Reservation
 import pickle
 
-res = Reservation("pgrif", 1200, 150)
+res = Reservation("pgriff", 1200, 150)
 data_string = pickle.dumps(res, -1)
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,7 +20,6 @@ try:
 
 	while size > 0:
 		data = sock.recv(8)
-		print ('sent 16')
 		size -= 16
 
 finally:
