@@ -138,6 +138,9 @@ class DatabaseModel():
 
         self.session.commit()
 
+    def get_users(self):
+        return self.session.query(User).all()
+
     def get_user(self, user_id):
         return self.session.query(User).filter(User.user_id == user_id).one()
 
