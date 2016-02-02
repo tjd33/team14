@@ -4,7 +4,7 @@
 # Standard Imports
 from enum import Enum
 
-from sqlalchemy import Column, Integer, Sequence
+from sqlalchemy import Column, Integer, Sequence, Boolean
 # from sqlalchemy.orm import relationship
 
 from senseable_gym.sg_util.base import Base
@@ -14,21 +14,23 @@ class Machine(Base):
     __tablename__ = 'machine'
 
     machine_id = Column(Integer, Sequence('machine_id_seq'), primary_key=True)
-    type = Column(Integer)
+    _type = Column(Integer)
+    _status = Column(Integer)
+    color = Column(Boolean)
 
     # TODO: See if this is the easiest way to store these in ANY database
-    location_x = Column(Integer)
-    location_y = Column(Integer)
-    location_z = Column(Integer)
-
-    status = Column(Integer)
+    _location_x = Column(Integer)
+    _location_y = Column(Integer)
+    _location_z = Column(Integer)
 
     # current_user = relationship('MachineCurrentUser', cascade="all, delete-orphan", backref='machine')
 
     def __init__(self, type, location, color=False):
-        self._type = type
-        self._location = location
-        self._status = MachineStatus.UNKNOWN
+        self._type = type.value
+        self._location_x = location[0]
+        self._location_y = location[1]
+        self._location_z = location[2]
+        self._status = MachineStatus.UNKNOWN.value
 
         # Our variable that holds whether we will print in color or not
         self.color = color
@@ -48,16 +50,16 @@ class Machine(Base):
 
     @property
     def location(self):
-        return self._location
+        return [self._location_x, self._location_y, self._location_z]
 
     @location.setter
     def location(self, value):
         if len(value) != 3:
             raise ValueError('This is not a proper location')
 
-        self.location_x = value[0]
-        self.location_y = value[1]
-        self.location_z = value[2]
+        self._location_x = value[0]
+        self._location_y = value[1]
+        self._location_z = value[2]
 
         self._location = value
 
@@ -74,10 +76,11 @@ class Machine(Base):
 
     # String representation
     def __str__(self):
-        s = '<id: {}, type: {}, status: {}>'.format(
+        s = '<id: {0:2}, type: {1:10}, status: {2:7}, location: {3}>'.format(
                 str(self.machine_id),
                 self.type,
-                self.status
+                self.status,
+                self.location
                 )
 
         if self.color:
