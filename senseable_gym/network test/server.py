@@ -2,6 +2,7 @@ import socket
 import sys
 from Reservation import Reservation
 import pickle
+import time
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,6 +26,7 @@ while True:
 
 		# Receive the data in small chunks and retransmit it
 		data_string = b''
+		total = 0
 		while True:
 			data = connection.recv(16)
 			if data:
@@ -32,7 +34,9 @@ while True:
 				if data == b'stop':
 					nonstop = False
 				data_string += data
+				total += len(data)
 				connection.sendall(b'received')
+				# time.sleep(1)
 			else:
 				print ('no more data from', client_address)
 				break
