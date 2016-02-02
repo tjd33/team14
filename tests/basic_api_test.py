@@ -17,7 +17,7 @@ It will also provide a reference for how to use the API that the senseable
 # Senseable Gym Imports
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
-
+from senseable_gym.sg_util.user import User
 # Code begins here
 
 # Create your own database model
@@ -47,5 +47,20 @@ for machine_id in range(10):
 machine_list = db.get_machines()
 
 # Print the machines that we have
+print('---------- Machines ----------')
 for machine in machine_list:
     print(machine)
+
+# Now we add some users to our database model
+for user_id in range(4):
+    temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id))
+
+    # Add the users to the database
+    db.add_user(temp_user)
+
+user_list = db.get_users()
+
+# Print the users that we have
+print('---------- Users ----------')
+for user in user_list:
+    print(user)
