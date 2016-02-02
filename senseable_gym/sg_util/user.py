@@ -3,7 +3,7 @@
 
 # Standard Imports
 from sqlalchemy import Column, Integer, Sequence, String
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 
 # Senseable Gym Imports
 from senseable_gym.sg_util.base import Base
@@ -18,9 +18,9 @@ class User(Base):
         self._last_name = last_name
 
     user_id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
-    user_name = Column(String(32))
-    first_name = Column(String(32))
-    last_name = Column(String(32))
+    _user_name = Column(String(32))
+    _first_name = Column(String(32))
+    _last_name = Column(String(32))
 
     @property
     def full_name(self) -> str:
@@ -49,3 +49,9 @@ class User(Base):
     @last_name.setter
     def last_name(self, value):
         self._last_name = value
+
+    def __str__(self):
+        return 'User: {}, Name: {}'.format(
+                self.user_name,
+                self.full_name
+                )
