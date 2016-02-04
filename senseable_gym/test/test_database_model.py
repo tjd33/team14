@@ -32,6 +32,15 @@ class TestDatabaseModel(unittest.TestCase):
     def test_get_machine(self):
         pass
 
+    def test_get_machine_by_location(self):
+        machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
+
+        self.db.add_machine(machine)
+
+        test_machine = self.db.get_machine_by_location([1, 1, 1])
+
+        self.assertEqual(test_machine.type, MachineType.TREADMILL)
+
     def test_add_machine(self):
         machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
         self.assertEqual(machine.status, MachineStatus.UNKNOWN)
