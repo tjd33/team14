@@ -4,6 +4,11 @@ from threading import Thread
 from Reservation import Reservation
 import pickle
 
+# Local Imports
+from senseable_gym.sg_database.database import DatabaseModel
+from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
+from senseable_gym.sg_util.user import User
+
 class service(socketserver.BaseRequestHandler):
 	def handle(self):
 		data = 'dummy'
@@ -16,15 +21,26 @@ class service(socketserver.BaseRequestHandler):
 
 		print ("Client exited")
 		self.request.close()
-		res = pickle.loads(data_string)
-		print('name: ', res.name)
-
+		obj = pickle.loads(data_string)
+		if type(obj) is Reservation:
+			print('name: ', obj.name)
+			# add locally made reservation to db
+		elif type(obj) is Machine:
+			database.set_machine_status(obj.machine_id,obj.status)
+		else:
+			print ('unknown object type')
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	pass
 
-t = ThreadedTCPServer((sys.argv[1],10000), service)
+if len(sys.argv) < 2:
+	host = 'localhost'
+else:
+	host = sys.argv[1]
+t = ThreadedTCPServer((host,10000), service)
 print('created server')
+database = DatabaseModel('testdb', 'team14')
+database.add_machine(Machine(type=MachineType.TREADMILL, location=[1, 1, 1]))
 try:
 	t.serve_forever()
 except KeyboardInterrupt:
