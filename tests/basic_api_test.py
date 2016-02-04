@@ -18,6 +18,7 @@ It will also provide a reference for how to use the API that the senseable
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
 from senseable_gym.sg_util.user import User
+
 # Code begins here
 
 # Create your own database model
@@ -64,3 +65,22 @@ user_list = db.get_users()
 print('---------- Users ----------')
 for user in user_list:
     print(user)
+
+# Create some relationships between users and machines
+#   These relationships are all for the current status of machines
+
+# Lets create a relationship between a user with id = 1 and
+#   a machine with location [1, 1, 1]
+user_1 = db.get_user(1)
+machine_1 = db.get_machine_by_location([1, 1, 1])
+
+# Indicate the a relationship has been made between these two objects
+db.set_user_machine_status(machine_1, user_1)
+
+# Find out what the status of the machine is (we already know it)
+rel_1 = db.get_machine_user_relationships(machine_1)
+
+print('---------- Relationships -----')
+print(rel_1)
+print(rel_1._machine)
+print(rel_1._user)
