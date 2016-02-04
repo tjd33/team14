@@ -13,7 +13,7 @@ TJ DeVries
 import logging
 
 # Third Party Imports
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy import MetaData
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
@@ -105,6 +105,15 @@ class DatabaseModel():
         #   So, return the first one in that list.
         return self.session.query(Machine).filter(Machine.machine_id == id).one()
 
+    def get_machine_by_location(self, location):
+        # This is used to get a machine by a specific location.
+        #   This is useful because locations need to be unique
+        return self.session.query(Machine).filter(and_(
+            Machine._location_x == location[0],
+            Machine._location_y == location[1],
+            Machine._location_z == location[2])
+            ).one()
+
     def get_machine_status(self, id):
         return self.get_machine(id).status
 
@@ -126,7 +135,7 @@ class DatabaseModel():
     def add_user(self, user):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(user, User):
-            raise ValueError('Machine Objects Only')
+            raise ValueError('User Objects Only')
 
         result = self.session.query(User).filter(User.user_id == user.user_id).all()
 

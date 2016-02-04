@@ -51,7 +51,7 @@ class User(Base):
         self._last_name = value
 
     def __str__(self):
-        return 'User: {}, Name: {}'.format(
+        return '<User: {}, Name: {}>'.format(
                 self.user_name,
                 self.full_name
                 )
