@@ -9,12 +9,9 @@ import pickle
 	
 class PIClient:
 	def __init__(self, host, hostPort):
-		
-		
 		self.server_address = (host, hostPort)
 		print ('connecting to %s port %s' % self.server_address)
 		
-	
 	def pickleAndSend(self, object):
 		# Create a TCP/IP socket to the server
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -35,8 +32,6 @@ class PIClient:
 
 		finally:
 			sock.close()
-	
-
 			
 if len(sys.argv)<2:
 	client = PIClient('localhost', 10000)
@@ -44,7 +39,6 @@ else:
 	client = PIClient (sys.argv[1], 10000)
 	
 res = Reservation("pgriff", 1200, 150)
-
 
 client.pickleAndSend(res)
 machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
