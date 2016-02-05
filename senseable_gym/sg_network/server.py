@@ -1,5 +1,7 @@
 import sys
 import socketserver
+import socket
+import struct
 from threading import Thread
 from Reservation import Reservation
 import pickle
@@ -13,22 +15,29 @@ class service(socketserver.BaseRequestHandler):
 	def handle(self):
 		data = 'dummy'
 		print ("Client connected with ", self.client_address)
-		data_string = b''
-		while len(data):
-			data = self.request.recv(16)
-			data_string += data
-			self.request.send(b'received')
-
+		data = self.request.recv(4)
+		length = socket.ntohl(struct.unpack("I",data)[0])
+		print(length)
+		self.request.send(b'received')
+		data = self.request.recv(length+2)
+		self.request.send(b'received')
+		test = self.request.recv(10)
 		print ("Client exited")
 		self.request.close()
-		obj = pickle.loads(data_string)
-		if type(obj) is Reservation:
-			print('name: ', obj.name)
+		loadedObject = pickle.loads(data)
+		if type(loadedObject) is Reservation:
+			pass
 			# add locally made reservation to db
-		elif type(obj) is Machine:
+		elif type(loadedObject) is Machine:
 			print ("add machine to database")
-			# database.set_machine_status(obj.machine_id,obj.status)
+			print(type(database))
+			print(machine.location)
+			# database = DatabaseModel('testdb', 'team14')
+			# machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
+			# database.add_machine(machine)
+			# database.set_machine_status(machine.machine_id, machine.status)
 		else:
+			print(loadedObject.location)
 			print ('unknown object type')
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -41,7 +50,9 @@ else:
 t = ThreadedTCPServer((host,10000), service)
 print('created server')
 database = DatabaseModel('testdb', 'team14')
-database.add_machine(Machine(type=MachineType.TREADMILL, location=[1, 1, 1]))
+machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
+# database.add_machine(machine)
+# database.set_machine_status(machine.machine_id, machine.status)
 try:
 	t.serve_forever()
 except KeyboardInterrupt:
