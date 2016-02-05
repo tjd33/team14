@@ -22,7 +22,7 @@ class TestDatabaseModel(unittest.TestCase):
         It should put the database in a blank state so that we can
             isolate each test by themselves.
         """
-        self.db = DatabaseModel('testdb', 'team14')
+        self.db = DatabaseModel(None, 'team14')
 
     @unittest.skip('Not yet implemented')
     def test_empty_db(self):

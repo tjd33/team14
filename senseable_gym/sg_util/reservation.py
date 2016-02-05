@@ -9,8 +9,8 @@ from sqlalchemy import Column, Integer, Sequence, ForeignKey, DateTime
 
 # Local Imports
 from senseable_gym.sg_util.base import Base
-from senseable_gym.sg_util.Machine import Machine
-from senseable_gym.sg_util.User import User
+from senseable_gym.sg_util.machine import Machine
+from senseable_gym.sg_util.user import User
 
 
 class Reservation(Base):
