@@ -21,7 +21,6 @@ class service(socketserver.BaseRequestHandler):
 		self.request.send(b'received')
 		data = self.request.recv(length+2)
 		self.request.send(b'received')
-		test = self.request.recv(10)
 		print ("Client exited")
 		self.request.close()
 		loadedObject = pickle.loads(data)
@@ -30,12 +29,8 @@ class service(socketserver.BaseRequestHandler):
 			# add locally made reservation to db
 		elif type(loadedObject) is Machine:
 			print ("add machine to database")
-			print(type(database))
-			print(machine.location)
-			# database = DatabaseModel('testdb', 'team14')
-			# machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
-			# database.add_machine(machine)
-			# database.set_machine_status(machine.machine_id, machine.status)
+			# cannot access database from thread right now 
+			#database.set_machine_status(machine.machine_id, machine.status)
 		else:
 			print(loadedObject.location)
 			print ('unknown object type')
@@ -51,8 +46,7 @@ t = ThreadedTCPServer((host,10000), service)
 print('created server')
 database = DatabaseModel('testdb', 'team14')
 machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
-# database.add_machine(machine)
-# database.set_machine_status(machine.machine_id, machine.status)
+database.add_machine(machine)
 try:
 	t.serve_forever()
 except KeyboardInterrupt:
