@@ -16,7 +16,7 @@ import logging
 from sqlalchemy import create_engine, and_
 from sqlalchemy import MetaData
 from sqlalchemy import inspect
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.exc import IntegrityError
 # Local Imports
 # from senseable_gym import logger_name
@@ -40,7 +40,10 @@ class DatabaseModel():
         self.logger = logging.getLogger(logger_name)
 
         # Set up the connection to the database
-        self.engine = create_engine('sqlite://')
+        if dbname:
+            self.engine = create_engine('sqlite:///{}.db'.format(dbname))
+        else:
+            self.engine = create_engine('sqlite://')
 
         self.meta = MetaData(self.engine)
 
@@ -48,7 +51,8 @@ class DatabaseModel():
         self.base.metadata.bind = self.engine
         self.base.metadata.create_all()
 
-        self.session = sessionmaker(bind=self.engine)()
+        self.session_factory = sessionmaker(bind=self.engine)
+        self.session = scoped_session(self.session_factory)()
 
     def _empty_db(self):
         """TODO: Docstring for _empty_db.
