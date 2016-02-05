@@ -42,4 +42,5 @@ res = Reservation("pgriff", 1200, 150)
 
 client.pickleAndSend(res)
 machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
+machine.status = MachineStatus.BUSY
 client.pickleAndSend(machine)

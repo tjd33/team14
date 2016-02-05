@@ -17,7 +17,6 @@ class service(socketserver.BaseRequestHandler):
 		print ("Client connected with ", self.client_address)
 		data = self.request.recv(4)
 		length = socket.ntohl(struct.unpack("I",data)[0])
-		print(length)
 		self.request.send(b'received')
 		data = self.request.recv(length+2)
 		self.request.send(b'received')
@@ -28,9 +27,12 @@ class service(socketserver.BaseRequestHandler):
 			pass
 			# add locally made reservation to db
 		elif type(loadedObject) is Machine:
-			print ("add machine to database")
+			print ("update machine in database")
 			# cannot access database from thread right now 
-			#database.set_machine_status(machine.machine_id, machine.status)
+			print(loadedObject.machine_id)
+			database = DatabaseModel('testdb', 'team14')
+			database.add_machine(loadedObject) # add for testing purposes
+			#database.set_machine_status(loadedObject, loadedObject.status)
 		else:
 			print(loadedObject.location)
 			print ('unknown object type')
@@ -43,12 +45,10 @@ if len(sys.argv) < 2:
 else:
 	host = sys.argv[1]
 t = ThreadedTCPServer((host,10000), service)
+t.allow_reuse_address = True
 print('created server')
-database = DatabaseModel('testdb', 'team14')
-machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
-database.add_machine(machine)
+
 try:
 	t.serve_forever()
 except KeyboardInterrupt:
-	pass
-t.server_close()
+	t.server_close()
