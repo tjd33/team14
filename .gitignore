@@ -23,3 +23,5 @@
 .vs/*
 *.pyproj
 *.sln
+
+*testdb.db*
