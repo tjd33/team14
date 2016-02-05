@@ -4,29 +4,41 @@ from Reservation import Reservation
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 import pickle
 
+
+	
+class PIClient:
+	def __init__(self, host, hostPort):
+		# Create a TCP/IP socket to the server
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.server_address = (host, hostPort)
+		print ('connecting to %s port %s' % self.server_address)
+		self.sock.connect(self.server_address)
+	
+	def pickleAndSend(self, object):
+		data_string = pickle.dumps(object, -1)
+		try:
+			size = len(data_string)
+			print(size)
+			self.sock.sendall(data_string)
+
+			while size > 0:
+				data = self.sock.recv(8)
+				size -= 16
+		finally:
+			pass
+	
+	def close(self):
+		print ('closing socket')
+		self.sock.close()
+			
+if len(sys.argv)<2:
+	client = PIClient('localhost', 10000)
+else:
+	client = PIClient (sys.argv[1], 10000)
+	
 res = Reservation("pgriff", 1200, 150)
 machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
-data_string = pickle.dumps(machine, -1)
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Connect the socket to the port where the server is listening
-if len(sys.argv)<2:
-	server_address = ('localhost', 10000)
-else:
-	server_address = (sys.argv[1], 10000)
-print ('connecting to %s port %s' % server_address)
-sock.connect(server_address)
-
-try:
-	size = len(data_string)
-	print(size)
-	sock.sendall(data_string)
-
-	while size > 0:
-		data = sock.recv(8)
-		size -= 16
-
-finally:
-	print ('closing socket')
-	sock.close()
+client.pickleAndSend(res)
+client.pickleAndSend(Machine)
+client.close()

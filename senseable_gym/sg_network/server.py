@@ -26,7 +26,8 @@ class service(socketserver.BaseRequestHandler):
 			print('name: ', obj.name)
 			# add locally made reservation to db
 		elif type(obj) is Machine:
-			database.set_machine_status(obj.machine_id,obj.status)
+			print ("add machine to database")
+			# database.set_machine_status(obj.machine_id,obj.status)
 		else:
 			print ('unknown object type')
 
