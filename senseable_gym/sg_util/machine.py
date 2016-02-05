@@ -25,6 +25,8 @@ class Machine(Base):
 
     # current_user = relationship('MachineCurrentUser', cascade="all, delete-orphan", backref='machine')
 
+    # current_user = relationship('MachineCurrentUser', cascade="all, delete-orphan", backref='machine')
+
     def __init__(self, type, location, color=False):
         self._type = type.value
         self._location_x = location[0]
