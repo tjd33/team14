@@ -5,6 +5,7 @@ import struct
 import os
 from threading import Thread
 from Reservation import Reservation
+from Command import Command
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 import pickle
 
@@ -21,7 +22,7 @@ class service(socketserver.BaseRequestHandler):
 		self.request.close()
 		loadedObject = pickle.loads(data)
 		if type(loadedObject) is Reservation:
-			print('reservation received')
+			print('reservation received: ' + loadedObject.name)
 			# add locally made reservation to local list of reservations
 
 		else:
@@ -56,6 +57,7 @@ class PIClient:
 
 		finally:
 			sock.close()
+			
 
 			
 if len(sys.argv)<2:
@@ -75,6 +77,11 @@ def runTCPServer():
 thread = Thread(target = runTCPServer).start()
 print("server running")
 res = Reservation("pgriff", 1200, 150)
+
+try:
+	client.pickleAndSend(Command("request reservations"))
+except ConnectionRefusedError:
+	print ('connection refused')
 
 try:
 	client.pickleAndSend(res)
