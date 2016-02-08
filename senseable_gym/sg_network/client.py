@@ -1,11 +1,35 @@
 import socket
+import socketserver
 import sys
 import struct
+import os
+from threading import Thread
 from Reservation import Reservation
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 import pickle
 
+class service(socketserver.BaseRequestHandler):
+	def handle(self):
+		data = 'dummy'
+		print ("Client connected with ", self.client_address)
+		data = self.request.recv(4)
+		length = socket.ntohl(struct.unpack("I",data)[0])
+		self.request.send(b'received')
+		data = self.request.recv(length+2)
+		self.request.send(b'received')
+		print ("Client exited")
+		self.request.close()
+		loadedObject = pickle.loads(data)
+		if type(loadedObject) is Reservation:
+			print('reservation received')
+			# add locally made reservation to local list of reservations
 
+		else:
+			print(loadedObject.location)
+			print ('unknown object type')
+
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+	pass
 	
 class PIClient:
 	def __init__(self, host, hostPort):
@@ -32,15 +56,37 @@ class PIClient:
 
 		finally:
 			sock.close()
+
 			
 if len(sys.argv)<2:
-	client = PIClient('localhost', 10000)
+	host = 'localhost'
 else:
-	client = PIClient (sys.argv[1], 10000)
-	
+	host = sys.argv[1]
+client = PIClient(host,10000)
+t = ThreadedTCPServer((host, 20000), service)
+t.allow_reuse_address = True
+print('created server')
+
+def runTCPServer():
+	try:
+		t.serve_forever()
+	finally:
+		pass
+thread = Thread(target = runTCPServer).start()
+print("server running")
 res = Reservation("pgriff", 1200, 150)
 
-client.pickleAndSend(res)
+try:
+	client.pickleAndSend(res)
+	print('sent reservation')
+except ConnectionRefusedError:
+	print ('connection refused')
 machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
 machine.status = MachineStatus.BUSY
-client.pickleAndSend(machine)
+try:
+	client.pickleAndSend(machine)
+except ConnectionRefusedError:
+	print ('connection refused')
+os.system('pause')
+t.shutdown()
+t.server_close()
