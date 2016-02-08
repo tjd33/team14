@@ -5,6 +5,7 @@ import struct
 import os
 from threading import Thread
 from Reservation import Reservation
+from Command import Command
 import pickle
 
 # Local Imports
@@ -51,8 +52,18 @@ class service(socketserver.BaseRequestHandler):
 		print ("Client exited")
 		self.request.close()
 		loadedObject = pickle.loads(data)
-		if type(loadedObject) is Reservation:
-			pass
+		if type(loadedObject) is Command:
+			if loadedObject.commandStr == "request reservations":
+				print('initial PI client contact')
+				database = DatabaseModel('testdb', 'team14')
+				res = Reservation("existing res", 1200, 150)
+				try:
+					client.pickleAndSend(res)
+				except ConnectionRefusedError:
+					print ('connection refused')
+				# get reservations and send them
+		elif type(loadedObject) is Reservation:
+			print('reservation received: ' + loadedObject.name)
 			# add locally made reservation to db
 		elif type(loadedObject) is Machine:
 			print ("update machine in database")
