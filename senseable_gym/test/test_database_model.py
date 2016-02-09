@@ -5,7 +5,6 @@
 import unittest
 
 # Third Party Imports
-from sqlalchemy.exc import IntegrityError
 
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel
@@ -70,13 +69,12 @@ class TestDatabaseModel(unittest.TestCase):
         self.assertRaises(ValueError, self.db.add_machine, 'not machine type')
         self.assertRaises(ValueError, self.db.add_machine, 1)
 
-    @unittest.skip('Not implemented')
     def test_add_duplicate_machine(self):
         machine1 = Machine(MachineType.TREADMILL, [1, 1, 1])
 
         self.db.add_machine(machine1)
 
-        self.assertRaises(IntegrityError, self.db.add_machine, machine1)
+        self.assertRaises(ValueError, self.db.add_machine, machine1)
 
     def test_get_machine_status(self):
         machine = Machine(MachineType.TREADMILL, [1, 1, 1])

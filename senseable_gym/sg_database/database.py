@@ -17,7 +17,7 @@ from sqlalchemy import create_engine, and_
 from sqlalchemy import MetaData
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.exc import IntegrityError
+
 # Local Imports
 # from senseable_gym import logger_name
 
@@ -83,13 +83,25 @@ class DatabaseModel():
         if not isinstance(machine, Machine):
             raise ValueError('Machine Objects Only')
 
-        result = self.session.query(Machine).filter(Machine.machine_id == machine.machine_id).all()
+        # Check to make sure machine is valid
+        result_loc = self.session.query(Machine).filter(and_(
+            Machine._location_x == machine._location_x,
+            Machine._location_y == machine._location_y,
+            Machine._location_z == machine._location_z)
+            ).all()
 
         # TODO: This is not currently working as expected.
-        if result == list():
+        if not result_loc:
+            # This means the machine has not been added with the same location
             self.session.add(machine)
         else:
-            raise IntegrityError('A machine object can only be added once')
+            # We have entered a duplicate machine, and that needs to be handled
+            if result_loc[0].type == machine.type:
+                raise ValueError('This machine object has already been added before.\n\tOriginal Machine ID: {}'.format(
+                    result_loc[0].machine_id))
+            else:
+                raise ValueError('A machine object has already been added in this location.\n\tOriginal Machine ID: {}'.format(
+                    result_loc[0].machine_id))
 
         self.session.commit()
 
@@ -147,7 +159,7 @@ class DatabaseModel():
         if result == list():
             self.session.add(user)
         else:
-            raise IntegrityError('A user object can only be added once')
+            raise ValueError('A user object can only be added once')
 
         self.session.commit()
 
