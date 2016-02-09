@@ -4,3 +4,7 @@ class MachineError(Exception):
 
 class UserError(Exception):
     pass
+
+
+class ReservationError(Exception):
+    pass
