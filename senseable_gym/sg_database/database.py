@@ -30,6 +30,7 @@ from senseable_gym.sg_util.user import User
 
 # Relationships
 from senseable_gym.sg_util.relationships import MachineCurrentUser
+from senseable_gym.sg_util.reservation import Reservation
 
 # }}}
 # {{{ Global Definitions
@@ -125,6 +126,14 @@ class DatabaseModel():
             self.session.add(user)
         else:
             raise ValueError('A user object can only be added once')
+
+        self.session.commit()
+
+    def add_reservation(self, res: Reservation) -> None:
+        """
+        Adds a reservation to the database
+        """
+        self.session.add(res)
 
         self.session.commit()
 
