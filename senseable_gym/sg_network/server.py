@@ -25,7 +25,6 @@ class ServerClient:
 		data_string = pickle.dumps(object, -1)
 		try:
 			size = len(data_string)
-			print(size)
 			size = struct.pack("I", socket.htonl(size))
 			sock.sendall(size)
 			data = sock.recv(8)
@@ -38,7 +37,22 @@ class ServerClient:
 
 		finally:
 			sock.close()
-
+	
+	def sendReservation(self, res):
+		try:
+			self.pickleAndSend(res)
+		except ConnectionRefusedError:
+			print ('connection refused')
+	
+	def sendAllReservations(self):
+		database = DatabaseModel('testdb', 'team14')
+		#database.getAllReservations()
+		res1 = Reservation("res1", 1200, 150)
+		res2 = Reservation("res2", 1200, 150)
+		reservationList = []
+		reservationList.append(res1)
+		reservationList.append(res2)
+		self.pickleAndSend(reservationList)
 
 class service(socketserver.BaseRequestHandler):
 	def handle(self):
@@ -49,7 +63,6 @@ class service(socketserver.BaseRequestHandler):
 		self.request.send(b'received')
 		data = self.request.recv(length+2)
 		self.request.send(b'received')
-		print ("Client exited")
 		self.request.close()
 		loadedObject = pickle.loads(data)
 		if type(loadedObject) is Command:
@@ -107,11 +120,8 @@ server = Server(host, 10000)
 
 
 res = Reservation("pgriff", 1200, 150)
-try:
-	client.pickleAndSend(res)
-except ConnectionRefusedError:
-	print ('connection refused')
-	# should this remember and retry, or discard and do complete refresh when connection is achieved
+client.sendReservation(res)
+client.sendAllReservations()
 
 os.system('pause')
 server.stop()
