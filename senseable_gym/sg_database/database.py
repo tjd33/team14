@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# {{{ Docstring
 """
 This file contains the database functions necessary to be used by any aspect
     of the senseable gym. It will try and abstract all the sql away from what
@@ -8,7 +9,8 @@ This file contains the database functions necessary to be used by any aspect
 
 TJ DeVries
 """
-
+# }}}
+# {{{ Imports
 # Built-in Imports
 import logging
 from typing import List
@@ -29,11 +31,14 @@ from senseable_gym.sg_util.user import User
 # Relationships
 from senseable_gym.sg_util.relationships import MachineCurrentUser
 
-
+# }}}
+# {{{ Global Definitions
 logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
+# }}}
 
 
 class DatabaseModel():
+    # {{{ Initialization
     def __init__(self, dbname, user, password=None):
         """TODO: Docstring for __init__.
         """
@@ -79,6 +84,8 @@ class DatabaseModel():
         for row in rows:
             print(row)
 
+    # }}}
+    # {{{ Adders
     def add_machine(self, machine):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(machine, Machine):
@@ -106,13 +113,30 @@ class DatabaseModel():
 
         self.session.commit()
 
+    def add_user(self, user):
+        # Make sure that we're actually getting a machine object passed in
+        if not isinstance(user, User):
+            raise ValueError('User Objects Only')
+
+        result = self.session.query(User).filter(User.user_id == user.user_id).all()
+
+        # TODO: This is not currently working as expected.
+        if not result:
+            self.session.add(user)
+        else:
+            raise ValueError('A user object can only be added once')
+
+        self.session.commit()
+
+    # }}}
+    # {{{ Removers
     def remove_machine(self, id):
         machine = self.get_machine(id)
 
         self.session.delete(machine)
 
-    # Getters
-
+    # }}}
+    # {{{ Getters
     def get_machines(self) -> List[Machine]:
         return self.session.query(Machine).all()
 
@@ -140,7 +164,29 @@ class DatabaseModel():
     def get_machine_type(self, id):
         return self.get_machine(id).type
 
-    # Setters
+    def get_users(self):
+        return self.session.query(User).all()
+
+    def get_user(self, user_id):
+        return self.session.query(User).filter(User.user_id == user_id).one()
+
+    def get_machine_user_relationships(self, machine):
+        """
+        Get the current machine and user relationships
+        :return: A list of MachineCurrentUser objects
+        """
+        rel = self.session.query(MachineCurrentUser).filter(MachineCurrentUser.machine_id == machine.machine_id).one()
+
+        # TODO: I believe this is not the correct way to repopulate the relationship
+        #       However, I don't really see a different way to do it now. Maybe
+        #       I will see it later though.
+        rel._machine = self.session.query(Machine).filter(Machine.machine_id == rel.machine_id).one()
+        rel._user = self.session.query(User).filter(User.user_id == rel.user_id).one()
+
+        return rel
+
+    # }}}
+    # {{{ Setters
     def set_machine_status(self, id, status):
         self.get_machine(id).status = status
         self.session.commit()
@@ -148,27 +194,6 @@ class DatabaseModel():
     def set_machine_location(self, id, location):
         self.get_machine(id).location = location
         self.session.commit()
-
-    def add_user(self, user):
-        # Make sure that we're actually getting a machine object passed in
-        if not isinstance(user, User):
-            raise ValueError('User Objects Only')
-
-        result = self.session.query(User).filter(User.user_id == user.user_id).all()
-
-        # TODO: This is not currently working as expected.
-        if result == list():
-            self.session.add(user)
-        else:
-            raise ValueError('A user object can only be added once')
-
-        self.session.commit()
-
-    def get_users(self):
-        return self.session.query(User).all()
-
-    def get_user(self, user_id):
-        return self.session.query(User).filter(User.user_id == user_id).one()
 
     def set_user_machine_status(self,
                                 machine: Machine,
@@ -188,17 +213,4 @@ class DatabaseModel():
 
         return relationship
 
-    def get_machine_user_relationships(self, machine):
-        """
-        Get the current machine and user relationships
-        :return: A list of MachineCurrentUser objects
-        """
-        rel = self.session.query(MachineCurrentUser).filter(MachineCurrentUser.machine_id == machine.machine_id).one()
-
-        # TODO: I believe this is not the correct way to repopulate the relationship
-        #       However, I don't really see a different way to do it now. Maybe
-        #       I will see it later though.
-        rel._machine = self.session.query(Machine).filter(Machine.machine_id == rel.machine_id).one()
-        rel._user = self.session.query(User).filter(User.user_id == rel.user_id).one()
-
-        return rel
+    # }}}
