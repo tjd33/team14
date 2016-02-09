@@ -79,23 +79,32 @@ class service(socketserver.BaseRequestHandler):
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	pass
 
+class Server:
+	t = None
+	def __init__(self, host, port):
+		Server.t = ThreadedTCPServer((host,port),service)
+		Server.t.allow_reuse_address
+		thread = Thread(target = Server.runTCPServer)
+		thread.start()
+		
+	def runTCPServer():
+		try:
+			print ('starting server')
+			Server.t.serve_forever()
+		finally:
+			print('TCP server was stopped')	
+			
+	def stop(self):
+		Server.t.shutdown()
+		Server.t.server_close()
+	
 if len(sys.argv) < 2:
 	host = 'localhost'
 else:
 	host = sys.argv[1]
 client = ServerClient(host, 20000)
-t = ThreadedTCPServer((host,10000), service)
-t.allow_reuse_address = True
-print('created server')
+server = Server(host, 10000)
 
-def runTCPServer():
-	try:
-		t.serve_forever()
-	finally:
-		pass
-
-thread = Thread(target = runTCPServer).start()
-print("server running")
 
 res = Reservation("pgriff", 1200, 150)
 try:
@@ -103,6 +112,6 @@ try:
 except ConnectionRefusedError:
 	print ('connection refused')
 	# should this remember and retry, or discard and do complete refresh when connection is achieved
+
 os.system('pause')
-t.shutdown()
-t.server_close()
+server.stop()
