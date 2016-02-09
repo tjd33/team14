@@ -11,6 +11,7 @@ TJ DeVries
 
 # Built-in Imports
 import logging
+from typing import List
 
 # Third Party Imports
 from sqlalchemy import create_engine, and_
@@ -112,16 +113,16 @@ class DatabaseModel():
 
     # Getters
 
-    def get_machines(self):
+    def get_machines(self) -> List[Machine]:
         return self.session.query(Machine).all()
 
-    def get_machine(self, id):
+    def get_machine(self, id) -> Machine:
         # Query the equipment table to find the machine by its ID
         #   Then, since the ID is a primary key, there can only be one of them
         #   So, return the first one in that list.
         return self.session.query(Machine).filter(Machine.machine_id == id).one()
 
-    def get_machine_by_location(self, location):
+    def get_machine_by_location(self, location) -> Machine:
         # This is used to get a machine by a specific location.
         #   This is useful because locations need to be unique
         return self.session.query(Machine).filter(and_(
