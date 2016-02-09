@@ -4,20 +4,26 @@ import sys
 import struct
 import os
 from threading import Thread
-from Reservation import Reservation
 from Command import Command
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
+from senseable_gym.sg_util.reservation import Reservation
 import pickle
 
 class PIClient:
 	def __init__(self, host, hostPort):
+		self.machines = dict()
+		self.reservations = dict()
 		self.server_address = (host, hostPort)
-		print ('connecting to %s port %s' % self.server_address)
+		print ('client connected to %s port %s' % self.server_address)
 		
 	def pickleAndSend(self, object):
 		# Create a TCP/IP socket to the server
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		sock.connect(self.server_address)
+		try:
+			sock.connect(self.server_address)
+		except ConnectionRefusedError:
+			print ('connection refused')
+			return
 		data_string = pickle.dumps(object, -1)
 		try:
 			size = len(data_string)
@@ -35,22 +41,17 @@ class PIClient:
 			sock.close()
 			
 	def sendReservation(self, res):
-		try:
-			self.pickleAndSend(res)
-		except ConnectionRefusedError:
-			print ('connection refused')	
+		self.pickleAndSend(res)	
 
 	def sendMachineUpdate(self, machine):
-		try:
-			self.pickleAndSend(machine)
-		except ConnectionRefusedError:
-			print ('connection refused')	
+		self.pickleAndSend(machine)	
 			
 	def requestAllReservations(self):
-		try:
-			client.pickleAndSend(Command("request reservations"))
-		except ConnectionRefusedError:
-			print ('connection refused')
+		client.pickleAndSend(Command("request reservations"))
+			
+	def requestAllMachines(self):
+		client.pickleAndSend(Command("request machines"))
+		
 
 class service(socketserver.BaseRequestHandler):
 	def handle(self):
@@ -66,15 +67,15 @@ class service(socketserver.BaseRequestHandler):
 		if type(loadedObject) is Reservation:
 			print('reservation received: ' + loadedObject.name)
 			# add locally made reservation to local list of reservations
-		elif type(loadedObject) is list:
-			print('received reservation list')
-			for reservation in loadedObject:
-				if type(reservation) is Reservation:
-					print (reservation.name)
-					# add to local list
-				else:
-					print('non reservation received in list')
-					
+		elif type(loadedObject) is dict:
+			if type(next (iter (loadedObject.values()))) is Machine:
+				client.machines = loadedObject
+				print('replaced machine database')
+			elif type(next (iter (loadedObject.values()))) is Reservation:
+				client.reservations = loadedObject
+				print('replaced reservation database')
+			else:
+				print('unknown dictionary type')
 		else:
 			print ('unknown object type')
 			print (type(loadedObject))
@@ -111,8 +112,9 @@ server = PIServer(host,20000)
 
 
 client.requestAllReservations()
-res = Reservation("pgriff", 1200, 150)
-client.sendReservation(res)
+client.requestAllMachines()
+
+
 machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
 machine.status = MachineStatus.BUSY
 client.sendMachineUpdate(machine)

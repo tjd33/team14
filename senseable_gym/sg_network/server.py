@@ -11,6 +11,7 @@ import pickle
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
+from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.user import User
 
 class ServerClient:
@@ -21,7 +22,11 @@ class ServerClient:
 	def pickleAndSend(self, object):
 		# Create a TCP/IP socket to the server
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		sock.connect(self.server_address)
+		try:
+			sock.connect(self.server_address)
+		except ConnectionRefusedError:
+			print ('connection refused')
+			return
 		data_string = pickle.dumps(object, -1)
 		try:
 			size = len(data_string)
@@ -39,21 +44,27 @@ class ServerClient:
 			sock.close()
 	
 	def sendReservation(self, res):
-		try:
-			self.pickleAndSend(res)
-		except ConnectionRefusedError:
-			print ('connection refused')
-	
+		self.pickleAndSend(res)
+			
 	def sendAllReservations(self):
+		print('sending all reservations')
 		database = DatabaseModel('testdb', 'team14')
 		#database.getAllReservations()
-		res1 = Reservation("res1", 1200, 150)
-		res2 = Reservation("res2", 1200, 150)
+		res1 = Reservation(Machine(type=MachineType.TREADMILL, location = [1,1,1]), 1, 1)
+		res2 = Reservation(Machine(type=MachineType.TREADMILL, location = [1,1,1]), 1, 1)
 		reservationList = []
 		reservationList.append(res1)
 		reservationList.append(res2)
-		self.pickleAndSend(reservationList)
-
+		reservationDict = {reservation.reservation_id:reservation for reservation in reservationList}
+		self.pickleAndSend(reservationDict)
+		
+	def sendAllMachines(self):
+		print('sending all machines')
+		database = DatabaseModel('testdb', 'team14')
+		machineList = database.get_machines()
+		machineDict = {machine.machine_id:machine for machine in machineList}
+		self.pickleAndSend(machineDict)
+		
 class service(socketserver.BaseRequestHandler):
 	def handle(self):
 		data = 'dummy'
@@ -67,14 +78,9 @@ class service(socketserver.BaseRequestHandler):
 		loadedObject = pickle.loads(data)
 		if type(loadedObject) is Command:
 			if loadedObject.commandStr == "request reservations":
-				print('initial PI client contact')
-				database = DatabaseModel('testdb', 'team14')
-				res = Reservation("existing res", 1200, 150)
-				try:
-					client.pickleAndSend(res)
-				except ConnectionRefusedError:
-					print ('connection refused')
-				# get reservations and send them
+				client.sendAllReservations()
+			elif loadedObject.commandStr == "request machines":
+				client.sendAllMachines()
 		elif type(loadedObject) is Reservation:
 			print('reservation received: ' + loadedObject.name)
 			# add locally made reservation to db
@@ -86,7 +92,7 @@ class service(socketserver.BaseRequestHandler):
 			database.add_machine(loadedObject) # add for testing purposes
 			#database.set_machine_status(loadedObject, loadedObject.status)
 		else:
-			print(loadedObject.location)
+			print(type(loadedObject))
 			print ('unknown object type')
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -119,9 +125,9 @@ client = ServerClient(host, 20000)
 server = Server(host, 10000)
 
 
-res = Reservation("pgriff", 1200, 150)
-client.sendReservation(res)
 client.sendAllReservations()
+database = DatabaseModel('testdb', 'team14')
+database.add_machine(Machine(type=MachineType.TREADMILL, location = [1,1,1]))
 
 os.system('pause')
 server.stop()
