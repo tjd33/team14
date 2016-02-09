@@ -21,7 +21,6 @@ class PIClient:
 		data_string = pickle.dumps(object, -1)
 		try:
 			size = len(data_string)
-			print(size)
 			size = struct.pack("I", socket.htonl(size))
 			sock.sendall(size)
 			data = sock.recv(8)
@@ -34,6 +33,24 @@ class PIClient:
 
 		finally:
 			sock.close()
+			
+	def sendReservation(self, res):
+		try:
+			self.pickleAndSend(res)
+		except ConnectionRefusedError:
+			print ('connection refused')	
+
+	def sendMachineUpdate(self, machine):
+		try:
+			self.pickleAndSend(machine)
+		except ConnectionRefusedError:
+			print ('connection refused')	
+			
+	def requestAllReservations(self):
+		try:
+			client.pickleAndSend(Command("request reservations"))
+		except ConnectionRefusedError:
+			print ('connection refused')
 
 class service(socketserver.BaseRequestHandler):
 	def handle(self):
@@ -44,16 +61,23 @@ class service(socketserver.BaseRequestHandler):
 		self.request.send(b'received')
 		data = self.request.recv(length+2)
 		self.request.send(b'received')
-		print ("Client exited")
 		self.request.close()
 		loadedObject = pickle.loads(data)
 		if type(loadedObject) is Reservation:
 			print('reservation received: ' + loadedObject.name)
 			# add locally made reservation to local list of reservations
-
+		elif type(loadedObject) is list:
+			print('received reservation list')
+			for reservation in loadedObject:
+				if type(reservation) is Reservation:
+					print (reservation.name)
+					# add to local list
+				else:
+					print('non reservation received in list')
+					
 		else:
-			print(loadedObject.location)
 			print ('unknown object type')
+			print (type(loadedObject))
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	pass
@@ -85,26 +109,13 @@ else:
 client = PIClient(host,10000)
 server = PIServer(host,20000)
 
-try:
-	client.pickleAndSend(Command("request reservations"))
-except ConnectionRefusedError:
-	print ('connection refused')
 
-	
-res = Reservation("pgriff", 1200, 150)	
-try:
-	client.pickleAndSend(res)
-	print('sent reservation')
-except ConnectionRefusedError:
-	print ('connection refused')
-
-
+client.requestAllReservations()
+res = Reservation("pgriff", 1200, 150)
+client.sendReservation(res)
 machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
 machine.status = MachineStatus.BUSY
-try:
-	client.pickleAndSend(machine)
-except ConnectionRefusedError:
-	print ('connection refused')
+client.sendMachineUpdate(machine)
 
 	
 os.system('pause')
