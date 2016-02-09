@@ -27,4 +27,13 @@ class Reservation(Base):
         self._user = user
         self.reservation_time = time
 
-        self.machine_id = self._machine.machind_id
+        self.machine_id = self._machine.machine_id
+        self.user_id = self._user.user_id
+
+    @property
+    def machine(self):
+        return self._machine
+
+    @property
+    def user(self):
+        return self._user
