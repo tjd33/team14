@@ -48,10 +48,12 @@ class ServerClient:
 			
 	def sendAllReservations(self):
 		print('sending all reservations')
-		database = DatabaseModel('testdb', 'team14')
+		database = DatabaseModel(None, 'team14')
 		#database.getAllReservations()
-		res1 = Reservation(Machine(type=MachineType.TREADMILL, location = [1,1,1]), 1, 1)
-		res2 = Reservation(Machine(type=MachineType.TREADMILL, location = [1,1,1]), 1, 1)
+		machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
+		database.add_machine(machine)
+		res1 = Reservation(machine, 1, 1, 2)
+		res2 = Reservation(machine, 1, 1, 2)
 		reservationList = []
 		reservationList.append(res1)
 		reservationList.append(res2)
@@ -60,7 +62,7 @@ class ServerClient:
 		
 	def sendAllMachines(self):
 		print('sending all machines')
-		database = DatabaseModel('testdb', 'team14')
+		database = DatabaseModel(None, 'team14')
 		machineList = database.get_machines()
 		machineDict = {machine.machine_id:machine for machine in machineList}
 		self.pickleAndSend(machineDict)
@@ -88,7 +90,7 @@ class service(socketserver.BaseRequestHandler):
 			print ("update machine in database")
 			# cannot access database from thread right now 
 			print(loadedObject.machine_id)
-			database = DatabaseModel('testdb', 'team14')
+			database = DatabaseModel(None, 'team14')
 			database.add_machine(loadedObject) # add for testing purposes
 			#database.set_machine_status(loadedObject, loadedObject.status)
 		else:
@@ -126,7 +128,7 @@ server = Server(host, 10000)
 
 
 client.sendAllReservations()
-database = DatabaseModel('testdb', 'team14')
+database = DatabaseModel(None, 'team14')
 database.add_machine(Machine(type=MachineType.TREADMILL, location = [1,1,1]))
 
 os.system('pause')
