@@ -85,7 +85,7 @@ class Test_module_to_test(unittest.TestCase):
         """
         This will run before every test begins.
 
-        It should put the conditions in such a way that each test is independent of 
+        It should put the conditions in such a way that each test is independent of
             each other.
             It is not always required.
         """
@@ -96,7 +96,7 @@ class Test_module_to_test(unittest.TestCase):
         This is a place to run the automated unit tests.
         """
         # Code here
-        
+
 if __name__ == '__main__':
     unittest.main()
 ```
@@ -112,17 +112,17 @@ class ExampleModule():
         #   This means the logic of getting and setting can be passed off
         #   Into different functions and always utilized
         self._squared = parameter
-    
+
     # Here's where we tell python that our `p` value is a property
     @property
     def squared(self):
         return self._squared ** 2
-    
+
     @squared.setter
     def squared(self, value):
         if not isinstance(value, int):
             raise ValueError('Value must be an int')
-            
+
         self._squared = value
 ```
 
@@ -150,4 +150,41 @@ This is a horrible example, but you see the point. You just interact with it lik
 
 ### Logging
 
+To view the currently logging setup, you can view the file in `team14/senseable_gym/__init__.py`. What this setup does is create the ability for all parts of the `senseable_gym` module to share a unified logger. This means we can send them to specific files, write them out in a similar way to the command line, etc.
 
+At this point, you might say, "Wow, that sounds really nice, but how much setup do I have to do in each of my files to get it to work?" The answer is (of course, since this is Python) very nice, and even requires very little boilerplate code.
+
+For your file, you should do something similar to this:
+
+```python
+# docstring and information
+
+import logging
+
+# other imports
+
+# This name will get you the write logger
+#   You can create sub loggers of this logger, by putting a period on the name
+#   However, it is required that the first part of the name start with the global name
+global_logger_name = 'senseable_logger'
+file_logger_name = global_logger_name + '.my_file'
+
+# Get the logger
+my_logger = logging.getLogger(file_logger_name)
+
+# Now you have the logger, so you can write statements to it.
+#   This is pretty simple, and most of it you should be able to find online
+#   But to write info or debug messages, you can use the following commands
+my_logger.info('this is an informative statement')
+my_logger.debug('this is a debug statement')
+```
+
+So there you go, it's a pretty simple idea about how you can set up the logger. The `__init__.py` file will be upgraded a few more times with configuration modifications, but your code should not have to change and you won't really have to worry about it. Ultimately, we'll have a logs folder that will print out pretty information to you about how your part of the project is working, and will help you debug any problems that are occuring. No more print statements for debugging, that have to disappear later! Yay!
+
+#### Logging Levels
+
+Currently, the only way to set the logger level is to modify the line in the `__init__.py` where it says `logger.setLevel(logging.LEVELNAME)`. At some point, this will be able to be specified at the command line level, but it's just not quite ready yet. Just try and change it back to whatever level name it was before you made the change (when you're going to commit) and everything should be just fine.
+
+#### Logging Notes
+
+IT IS IMPORTANT TO LOG. :)
