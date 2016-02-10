@@ -216,6 +216,16 @@ class DatabaseModel():
 
         return rel
 
+    def get_reservations(self):
+        return self.session.query(Reservation).all()
+
+    def get_reservations_by_machine(self, machine):
+        return self.session.query(Reservation).filter(
+                Reservation.machine_id == machine.machine_id).all()
+
+    def get_reservations_by_machine_id(self, machine_id):
+        return self.session.query(Reservation).filter(
+                Reservation.machine_id == machine_id).all()
     # }}}
     # {{{ Setters
     def set_machine_status(self, id, status):
