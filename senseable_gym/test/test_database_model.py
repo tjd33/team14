@@ -3,6 +3,7 @@
 
 # Built-in Imports
 import unittest
+from datetime import datetime
 
 # Third Party Imports
 
@@ -11,6 +12,8 @@ from senseable_gym.sg_database.database import DatabaseModel
 
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
+from senseable_gym.sg_util.reservation import Reservation
+from senseable_gym.sg_util.exception import MachineError, UserError, ReservationError
 
 
 class TestDatabaseModel(unittest.TestCase):
@@ -22,6 +25,11 @@ class TestDatabaseModel(unittest.TestCase):
             isolate each test by themselves.
         """
         self.db = DatabaseModel(None, 'team14')
+
+        self.time_1 = datetime(2050, 1, 1, 1, 0, 0)
+        self.time_2 = datetime(2050, 1, 2, 1, 0, 0)
+        self.time_3 = datetime(2050, 1, 3, 1, 0, 0)
+        self.time_4 = datetime(2050, 1, 4, 1, 0, 0)
 
     @unittest.skip('Not yet implemented')
     def test_empty_db(self):
@@ -74,7 +82,8 @@ class TestDatabaseModel(unittest.TestCase):
 
         self.db.add_machine(machine1)
 
-        self.assertRaises(ValueError, self.db.add_machine, machine1)
+        with self.assertRaises(MachineError):
+            self.db.add_machine(machine1)
 
     def test_get_machine_status(self):
         machine = Machine(MachineType.TREADMILL, [1, 1, 1])
@@ -126,12 +135,74 @@ class TestDatabaseModel(unittest.TestCase):
 
         self.assertEqual(self.db.get_user(1), user)
 
-    @unittest.skip('Not yet implemented')
     def test_add_duplicate_user(self):
         user = User('user', 'first', 'last')
 
         self.db.add_user(user)
+
+        with self.assertRaises(UserError):
+            self.db.add_user(user)
+
+    def test_add_reservation(self):
+        machine = Machine(MachineType.BICYCLE, [1, 1, 1])
+        user = User('u1', 'f1', 'l1')
+
+        self.db.add_machine(machine)
         self.db.add_user(user)
+
+        res = Reservation(machine, user, self.time_1, self.time_2)
+        self.db.add_reservation(res)
+
+    def test_add_overlapping_reservation_different_machine(self):
+        machine_1 = Machine(MachineType.BICYCLE, [1, 1, 1])
+        user_1 = User('u1', 'f1', 'l1')
+
+        self.db.add_machine(machine_1)
+        self.db.add_user(user_1)
+
+        machine_2 = Machine(MachineType.BICYCLE, [2, 2, 2])
+        user_2 = User('u2', 'f2', 'l2')
+
+        self.db.add_machine(machine_2)
+        self.db.add_user(user_2)
+
+        res_1 = Reservation(machine_1, user_1, self.time_1, self.time_3)
+        self.db.add_reservation(res_1)
+
+        res_2 = Reservation(machine_2, user_2, self.time_2, self.time_4)
+        self.db.add_reservation(res_2)
+
+    def test_add_overlapping_reservation_same_machine(self):
+        machine = Machine(MachineType.BICYCLE, [1, 1, 1])
+        user_1 = User('u1', 'f1', 'l1')
+        user_2 = User('u2', 'f2', 'l2')
+
+        self.db.add_machine(machine)
+        self.db.add_user(user_1)
+        self.db.add_user(user_2)
+
+        res_1 = Reservation(machine, user_1, self.time_1, self.time_3)
+        self.db.add_reservation(res_1)
+
+        with self.assertRaises(ReservationError):
+            res_2 = Reservation(machine, user_2, self.time_2, self.time_4)
+            self.db.add_reservation(res_2)
+
+    def test_add_overlapping_reservation_same_user(self):
+        machine_1 = Machine(MachineType.BICYCLE, [1, 1, 1])
+        machine_2 = Machine(MachineType.BICYCLE, [2, 2, 2])
+        user = User('u1', 'f1', 'l1')
+
+        self.db.add_machine(machine_1)
+        self.db.add_machine(machine_2)
+        self.db.add_user(user)
+
+        res_1 = Reservation(machine_1, user, self.time_1, self.time_3)
+        self.db.add_reservation(res_1)
+
+        with self.assertRaises(ReservationError):
+            res_2 = Reservation(machine_2, user, self.time_2, self.time_4)
+            self.db.add_reservation(res_2)
 
     def test_current_machine_user_relationship(self):
         user = User('user', 'first', 'last')
