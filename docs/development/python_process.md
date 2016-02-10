@@ -53,7 +53,7 @@ This works for any of the folders or files we put in the project. This means no 
 
 ### Testing
 
-To run tests, soon you should be able to just say:
+To run tests, on Linux you can say:
 
 `$ make test`
 
@@ -147,3 +147,7 @@ example.squared = 'THIS WILL BE AN ERROR'
 ```
 
 This is a horrible example, but you see the point. You just interact with it like it is an attribute. You don't have to worry about getters and setters. But, when you do it, you still have the safety of the getters and setters that you would have had before.
+
+### Logging
+
+
