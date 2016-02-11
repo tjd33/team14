@@ -7,7 +7,7 @@
 -->
 <html>
 	<head>
-		<title>Current Machine Status</title>
+		<title>Machine Overview</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -19,7 +19,7 @@
 	<h1>Machine Status</h1>
 	{% if machines %}
 		{% for machine in machines %}
-  			<li>{{ machine.id }}:{{ machine.status }}</li>
+  			<li>{{ machine.machine_id }} : {{ machine.status }}</li>
 		{% endfor %}
 	{% else %}
   		<h2>No Machines Entered into System!</h2>
