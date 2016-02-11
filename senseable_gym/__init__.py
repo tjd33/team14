@@ -26,4 +26,6 @@ logger.addHandler(handler)
 # }}}
 # {{{ Level Management
 logger.setLevel(logging.ERROR)
+
+EXTRA_DEBUG = 5
 # }}}
