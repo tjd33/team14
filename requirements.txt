@@ -1,3 +1,4 @@
 # This is the requirements document for the senseable_gym python module
 sqlalchemy
 typing
+click
