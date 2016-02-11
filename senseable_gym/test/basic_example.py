@@ -30,6 +30,10 @@ from senseable_gym.sg_util.reservation import Reservation
 @click.command()
 @click.option('--level', default='INFO', help='Logging level for the logger')
 @click.option('--dbname', default='none', help='Database name')
+def main_settings(level='info', dbname='none'):
+    main(level, dbname)
+
+
 def main(level, dbname):
     # Create your own database model
     #   You specify the name of the database and then the user accessing the database
@@ -121,5 +125,7 @@ def main(level, dbname):
     res_list = db.get_reservations()
     [print(res) for res in res_list]
 
+    return db
+
 if __name__ == "__main__":
-    main()
+    main_settings()
