@@ -23,7 +23,16 @@ def home(database=None):
         db.add_machine(machine_2)
 
     machine_list = db.get_machines()
-    return render_template('machine_view.html', machines=machine_list)
+    user_list = db.get_users()
+
+    reservation_dict = {}
+    for machine in machine_list:
+        reservation_dict[machine.machine_id] = db.get_reservations_by_machine(machine)
+    return render_template('machine_view.html',
+                           machines=machine_list,
+                           users=user_list,
+                           reservations=reservation_dict
+                           )
 
 
 @app.route('/index/')
