@@ -15,7 +15,6 @@ from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import MachineError, UserError, ReservationError
 
-
 class TestDatabaseModel(unittest.TestCase):
     def setUp(self):
         """
