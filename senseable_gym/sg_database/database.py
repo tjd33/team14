@@ -22,8 +22,7 @@ from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 # Local Imports
-# from senseable_gym import logger_name
-
+from senseable_gym import EXTRA_DEBUG, global_logger_name
 from senseable_gym.sg_util.base import Base
 from senseable_gym.sg_util.machine import Machine, MachineStatus
 from senseable_gym.sg_util.user import User
@@ -34,9 +33,6 @@ from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import MachineError, UserError, ReservationError
 
 # }}}
-# {{{ Global Definitions
-logger_name = 'senseable_logger'    # This is temporary until I can get the logger setup
-# }}}
 
 
 class DatabaseModel():
@@ -45,7 +41,7 @@ class DatabaseModel():
         """TODO: Docstring for __init__.
         """
         # Get the logger
-        self.logger = logging.getLogger(logger_name)
+        self.logger = logging.getLogger(global_logger_name + '.database')
 
         # Set up the connection to the database
         if dbname:
@@ -103,6 +99,8 @@ class DatabaseModel():
         # TODO: This is not currently working as expected.
         if not result_loc:
             # This means the machine has not been added with the same location
+            self.logger.debug('Adding machine at location {}'.format(
+                machine.location))
             self.session.add(machine)
         else:
             # We have entered a duplicate machine, and that needs to be handled
@@ -137,8 +135,9 @@ class DatabaseModel():
         """
         machine_reservations = self.session.query(Reservation).filter(
                 Reservation.machine_id == res.machine_id).all()
-        self.logger.debug('Machine {} Reservations: {}'.format(
-            res.machine_id, machine_reservations))
+        self.logger.log(EXTRA_DEBUG, 'Machine {} Reservations: {}'.format(
+                            res.machine_id, machine_reservations)
+                        )
 
         for m_r in machine_reservations:
             if res.is_overlapping_reservation(m_r):
@@ -226,6 +225,7 @@ class DatabaseModel():
     def get_reservations_by_machine_id(self, machine_id):
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine_id).all()
+
     # }}}
     # {{{ Setters
     def set_machine_status(self, id, status):
