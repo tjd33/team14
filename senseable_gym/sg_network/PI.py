@@ -3,26 +3,39 @@ import socketserver
 import sys
 import struct
 import os
+import time
 from threading import Thread
 from Command import Command
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.reservation import Reservation
 import pickle
+import logging
+
+global_logger_name = 'senseable_logger'
+file_logger_name = global_logger_name + '.server'
+my_logger = logging.getLogger(file_logger_name)
+my_logger.setLevel(logging.DEBUG)
 
 class PIClient:
 	def __init__(self, host, hostPort):
 		self.machines = dict()
 		self.reservations = dict()
 		self.server_address = (host, hostPort)
-		print ('client connected to %s port %s' % self.server_address)
+		my_logger.info('client connected to %s port %s' % self.server_address)
+
 		
+	def requestUpdate(self):
+		self.requestAllMachines()
+		time.sleep(0.1) #for debug purposes
+		self.requestAllReservations()
+	
 	def pickleAndSend(self, object):
 		# Create a TCP/IP socket to the server
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		try:
 			sock.connect(self.server_address)
 		except ConnectionRefusedError:
-			print ('connection refused')
+			my_logger.error ('connection refused')
 			return
 		data_string = pickle.dumps(object, -1)
 		try:
@@ -31,11 +44,11 @@ class PIClient:
 			sock.sendall(size)
 			data = sock.recv(8)
 			if data != b'received':
-				print("communication error")
+				my_logger.error("communication error")
 			sock.sendall(data_string)
 			data = sock.recv(8)
 			if data != b'received':
-				print("communication error")
+				my_logger.error("communication error")
 
 		finally:
 			sock.close()
@@ -47,38 +60,41 @@ class PIClient:
 		self.pickleAndSend(machine)	
 			
 	def requestAllReservations(self):
-		client.pickleAndSend(Command("request reservations"))
+		self.pickleAndSend(Command("request reservations"))
 			
 	def requestAllMachines(self):
-		client.pickleAndSend(Command("request machines"))
+		self.pickleAndSend(Command("request machines"))
 		
 
 class service(socketserver.BaseRequestHandler):
 	def handle(self):
 		data = 'dummy'
-		print ("Client connected with ", self.client_address)
+		my_logger.info("Client connected with " + str(self.client_address))
 		data = self.request.recv(4)
 		length = socket.ntohl(struct.unpack("I",data)[0])
 		self.request.send(b'received')
 		data = self.request.recv(length+2)
 		self.request.send(b'received')
 		self.request.close()
+		my_logger.debug(len(data))
 		loadedObject = pickle.loads(data)
 		if type(loadedObject) is Reservation:
-			print('reservation received: ' + loadedObject.name)
+			my_logger.info('reservation received: ' + loadedObject.name)
 			# add locally made reservation to local list of reservations
 		elif type(loadedObject) is dict:
 			if type(next (iter (loadedObject.values()))) is Machine:
 				client.machines = loadedObject
-				print('replaced machine database')
+				my_logger.debug(next (iter (loadedObject.values())))
+				my_logger.info('replaced machine database')
 			elif type(next (iter (loadedObject.values()))) is Reservation:
+				my_logger.debug(len(loadedObject))
 				client.reservations = loadedObject
-				print('replaced reservation database')
+				my_logger.info('replaced reservation database')
 			else:
-				print('unknown dictionary type')
+				my_logger.debug('unknown dictionary type')
 		else:
-			print ('unknown object type')
-			print (type(loadedObject))
+			my_logger.debug ('unknown object type')
+			my_logger.debug (type(loadedObject))
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 	pass
@@ -94,10 +110,10 @@ class PIServer:
 		
 	def runTCPServer():
 		try:
-			print ('starting server')
+			my_logger.info('starting server')
 			PIServer.t.serve_forever()
 		finally:
-			print('TCP server was stopped')	
+			my_logger.info('TCP server was stopped')	
 			
 	def stop(self):
 		PIServer.t.shutdown()
@@ -107,17 +123,10 @@ if len(sys.argv)<2:
 	host = 'localhost'
 else:
 	host = sys.argv[1]
-client = PIClient(host,10000)
+	
 server = PIServer(host,20000)
-
-
-client.requestAllReservations()
-client.requestAllMachines()
-
-
-machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
-machine.status = MachineStatus.BUSY
-client.sendMachineUpdate(machine)
+client = PIClient(host,10000)
+client.requestUpdate()
 
 	
 os.system('pause')
