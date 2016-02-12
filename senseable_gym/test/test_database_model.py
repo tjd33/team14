@@ -204,6 +204,19 @@ class TestDatabaseModel(unittest.TestCase):
             res_2 = Reservation(machine_2, user, self.time_2, self.time_4)
             self.db.add_reservation(res_2)
 
+    def test_add_same_reservation(self):
+        machine_1 = Machine(MachineType.BICYCLE, [1, 1, 1])
+        user_1 = User('u1', 'f1', 'l1')
+
+        self.db.add_machine(machine_1)
+        self.db.add_user(user_1)
+
+        res_1 = Reservation(machine_1, user_1, self.time_1, self.time_2)
+        self.db.add_reservation(res_1)
+
+        with self.assertRaises(ReservationError):
+            self.db.add_reservation(res_1)
+
     def test_current_machine_user_relationship(self):
         user = User('user', 'first', 'last')
         machine = Machine(MachineType.BICYCLE, [1, 2, 2])
