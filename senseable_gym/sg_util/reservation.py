@@ -56,10 +56,10 @@ class Reservation(Base):
 
     def is_overlapping_reservation(self, res) -> bool:
         "Returns true if res overlaps this reservation"
-        if self.start_time > res.start_time and self.start_time < res.end_time:
+        if self.start_time >= res.start_time and self.start_time <= res.end_time:
             return True
 
-        if self.end_time > res.start_time and self.end_time < res.end_time:
+        if self.end_time >= res.start_time and self.end_time <= res.end_time:
             return True
 
     def __repr__(self):
