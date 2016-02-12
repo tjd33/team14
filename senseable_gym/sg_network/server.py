@@ -148,21 +148,7 @@ else:
 	host = sys.argv[1]
 
 
-#dbtest, this will become init of unit test
-database = DatabaseModel('test', 'team14')
-machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
-try:
-	database.add_machine(machine)
-except MachineError:
-	my_logger.debug('db already contains machine')
-machineListtt = database.get_machines()
-machine = machineListtt[0]
-user = User('dgd8', 'daniel', 'dehoog')
-database.add_user(user)
-reservation = Reservation(machine, user, datetime(2016, 6, 1, 1, 30, 0), datetime(2016, 6, 1, 2, 0, 1))
-database.add_reservation(reservation)
-reservationListtt = database.get_reservations()
-my_logger.debug(len(reservationListtt))
+
 
 server = Server(host, 10000)
 client = ServerClient(host, 20000, 'test', 'team14')
