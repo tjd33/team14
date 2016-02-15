@@ -5,7 +5,7 @@ import struct
 import os
 import time
 from threading import Thread
-from Command import Command
+from senseable_gym.sg_network.Command import Command
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.reservation import Reservation
 import pickle
@@ -25,18 +25,24 @@ class PIClient:
 
 		
 	def requestUpdate(self):
-		self.requestAllMachines()
+		success = 1
+		try: 
+			self.requestAllMachines()
+		except ConnectionError:
+			my_logger.debug('connection refused')
+			success = -1
 		time.sleep(0.1) #for debug purposes
-		self.requestAllReservations()
+		try: 
+			self.requestAllReservations()
+		except ConnectionError:
+			my_logger.debug('connection refused')
+			success = -1
+		return success
 	
 	def pickleAndSend(self, object):
 		# Create a TCP/IP socket to the server
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		try:
-			sock.connect(self.server_address)
-		except ConnectionRefusedError:
-			my_logger.error ('connection refused')
-			return
+		sock.connect(self.server_address)
 		data_string = pickle.dumps(object, -1)
 		try:
 			size = len(data_string)
