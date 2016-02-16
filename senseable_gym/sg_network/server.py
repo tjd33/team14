@@ -74,6 +74,7 @@ class ServerClient:
 		sys.stderr = open('trash', 'w')
 		# this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
 		reservationList = database.get_reservations()
+		sys.stderr.close()
 		sys.stderr = save_stderr
 		my_logger.debug(len(reservationList))
 		reservationDict = {reservation.reservation_id:reservation for reservation in reservationList}
@@ -82,12 +83,13 @@ class ServerClient:
 		
 	def sendAllMachines(self):
 		my_logger.info('sending all machines')
+		database = DatabaseModel(self.dbname, self.dbuser)
 		save_stderr = sys.stderr
 		sys.stderr = open('trash', 'w')
 		# this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
-		database = DatabaseModel(self.dbname, self.dbuser)
-		sys.stderr = save_stderr
 		machineList = database.get_machines()
+		sys.stderr.close()
+		sys.stderr = save_stderr
 		my_logger.debug(len(machineList))
 		machineDict = {machine.machine_id:machine for machine in machineList}
 		self.pickleAndSend(machineDict)

@@ -4,6 +4,7 @@ import sys
 import struct
 import os
 import time
+import copy
 from threading import Thread
 from senseable_gym.sg_network.command import Command
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
@@ -18,8 +19,8 @@ my_logger.setLevel(logging.DEBUG)
 
 class PIClient:
 	def __init__(self, host, hostPort):
-		machines = dict()
-		reservations = dict()
+		self.machines = dict()
+		self.reservations = dict()
 		self.server_address = (host, hostPort)
 		my_logger.info('client connected to %s port %s' % self.server_address)
 
@@ -27,13 +28,13 @@ class PIClient:
 	def requestUpdate(self):
 		success = 1
 		try: 
-			self.requestAllMachines()
+			self.requestAllReservations()
 		except ConnectionError:
 			my_logger.debug('connection refused')
 			success = -1
-		time.sleep(0.1) #for debug purposes
+		# time.sleep(1) #for debug purposes
 		try: 
-			self.requestAllReservations()
+			self.requestAllMachines()
 		except ConnectionError:
 			my_logger.debug('connection refused')
 			success = -1
@@ -93,9 +94,10 @@ class service(socketserver.BaseRequestHandler):
 				my_logger.debug(next (iter (loadedObject.values())))
 				my_logger.info('replaced machine database')
 			elif type(next (iter (loadedObject.values()))) is Reservation:
-				my_logger.debug(len(loadedObject))
 				PIServer.client.reservations = loadedObject
+				my_logger.debug(next (iter (loadedObject.values())))
 				my_logger.info('replaced reservation database')
+
 			else:
 				my_logger.debug('unknown dictionary type')
 		else:
@@ -120,6 +122,8 @@ class PIServer:
 			my_logger.info('starting server')
 			PIServer.t.serve_forever()
 		finally:
+			my_logger.debug(len(PIServer.client.machines))
+			my_logger.debug(len(PIServer.client.reservations))
 			my_logger.info('TCP server was stopped')	
 			
 	def stop(self):
