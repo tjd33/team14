@@ -65,3 +65,9 @@ class Reservation(Base):
     def __repr__(self):
         return '<M: {}, U: {}, Start: {}, End: {}>'.format(
                 self.machine_id, self.user_id, self.start_time, self.end_time)
+                
+    def __eq__(self, other):
+        return self.user_id == other.user_id and \
+                self.machine_id == other.machine_id and \
+                self.start_time == other.start_time and \
+                self.end_time == other.end_time

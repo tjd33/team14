@@ -9,6 +9,7 @@ from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.exception import MachineError
 from senseable_gym.sg_util.exception import ReservationError
+from senseable_gym.sg_util.exception import UserError
 from senseable_gym.sg_network.PI import PIClient
 from senseable_gym.sg_network.PI import PIServer
 from senseable_gym.sg_network.server import Server
@@ -19,22 +20,24 @@ from senseable_gym.sg_network.server import ServerClient
 class TestPINetwork(unittest.TestCase):
 	def setUp(self):
 		database = DatabaseModel('test', 'team14')
-		# database.empty()
+		database._empty_db()
 		self.machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
 		try:
 			database.add_machine(self.machine)
 		except MachineError:
-			pass
-			# should raise expection until empty is implemented and uncommented
+			self.fail('database should be empty')
 		machineList = database.get_machines()
 		self.machine = machineList[0]
 		user = User('dgd8', 'daniel', 'dehoog')
-		database.add_user(user)
+		try:
+			database.add_user(user)
+		except UserError:
+			self.fail('database should be empty')
 		self.reservation = Reservation(self.machine, user, datetime(2016, 6, 1, 1, 30, 0), datetime(2016, 6, 1, 2, 0, 1))
 		try:
 			database.add_reservation(self.reservation)
 		except ReservationError:
-			pass
+			self.fail('database should be empty')
 		reservationListtt = database.get_reservations()
 
 	# also tests sendAllReservations and sendAllMachines
