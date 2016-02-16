@@ -5,7 +5,7 @@ import struct
 import os
 import time
 from threading import Thread
-from senseable_gym.sg_network.Command import Command
+from senseable_gym.sg_network.command import Command
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.reservation import Reservation
 import pickle
@@ -18,8 +18,8 @@ my_logger.setLevel(logging.DEBUG)
 
 class PIClient:
 	def __init__(self, host, hostPort):
-		self.machines = dict()
-		self.reservations = dict()
+		machines = dict()
+		reservations = dict()
 		self.server_address = (host, hostPort)
 		my_logger.info('client connected to %s port %s' % self.server_address)
 
@@ -40,11 +40,11 @@ class PIClient:
 		return success
 	
 	def pickleAndSend(self, object):
-		# Create a TCP/IP socket to the server
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		sock.connect(self.server_address)
-		data_string = pickle.dumps(object, -1)
 		try:
+			# Create a TCP/IP socket to the server
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect(self.server_address)
+			data_string = pickle.dumps(object, -1)
 			size = len(data_string)
 			size = struct.pack("I", socket.htonl(size))
 			sock.sendall(size)
@@ -89,12 +89,12 @@ class service(socketserver.BaseRequestHandler):
 			# add locally made reservation to local list of reservations
 		elif type(loadedObject) is dict:
 			if type(next (iter (loadedObject.values()))) is Machine:
-				client.machines = loadedObject
+				PIServer.client.machines = loadedObject
 				my_logger.debug(next (iter (loadedObject.values())))
 				my_logger.info('replaced machine database')
 			elif type(next (iter (loadedObject.values()))) is Reservation:
 				my_logger.debug(len(loadedObject))
-				client.reservations = loadedObject
+				PIServer.client.reservations = loadedObject
 				my_logger.info('replaced reservation database')
 			else:
 				my_logger.debug('unknown dictionary type')
@@ -107,8 +107,9 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 class PIServer:
 	t = None
-
-	def __init__(self, host, port):
+	client = None
+	def __init__(self, host, port, client):
+		PIServer.client = client
 		PIServer.t = ThreadedTCPServer((host,port),service)
 		PIServer.t.allow_reuse_address
 		thread = Thread(target = PIServer.runTCPServer)
@@ -122,6 +123,7 @@ class PIServer:
 			my_logger.info('TCP server was stopped')	
 			
 	def stop(self):
+		sys.stderr = open('trash', 'w')
 		PIServer.t.shutdown()
 		PIServer.t.server_close()
 		
@@ -130,10 +132,10 @@ if len(sys.argv)<2:
 else:
 	host = sys.argv[1]
 	
-server = PIServer(host,20000)
-client = PIClient(host,10000)
-client.requestUpdate()
+# server = PIServer(host,20000)
+# client = PIClient(host,10000)
+# client.requestUpdate()
 
 	
-os.system('pause')
-server.stop()
+# os.system('pause')
+# server.stop()

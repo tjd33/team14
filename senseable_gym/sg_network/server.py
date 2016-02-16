@@ -4,9 +4,8 @@ import socket
 import struct
 import os
 import time
-from datetime import datetime
+
 from threading import Thread
-from Command import Command
 from sqlite3 import ProgrammingError
 import pickle
 import logging
@@ -17,6 +16,7 @@ from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.exception import MachineError
+from senseable_gym.sg_network.command import Command
 
 global_logger_name = 'senseable_logger'
 file_logger_name = global_logger_name + '.server'
@@ -31,20 +31,24 @@ class ServerClient:
 		my_logger.info('connecting to %s port %s' % self.server_address)
 		
 	def sendUpdate(self):
-		self.sendAllMachines()
+		success = 1
+		try:
+			self.sendAllMachines()
+		except ConnectionRefusedError:
+			success = -1
 		time.sleep(0.1)
-		self.sendAllReservations()
+		try:
+			self.sendAllReservations()
+		except ConnectionRefusedError:
+			success = -1
+		return success
 		
 	def pickleAndSend(self, object):
-		# Create a TCP/IP socket to the server
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		try:
+			# Create a TCP/IP socket to the server
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect(self.server_address)
-		except ConnectionRefusedError:
-			my_logger.error('connection refused')
-			return
-		data_string = pickle.dumps(object, -1)
-		try:
+			data_string = pickle.dumps(object, -1)
 			size = len(data_string)
 			size = struct.pack("I", socket.htonl(size))
 			sock.sendall(size)
@@ -103,9 +107,9 @@ class service(socketserver.BaseRequestHandler):
 		loadedObject = pickle.loads(data)
 		if type(loadedObject) is Command:
 			if loadedObject.commandStr == "request reservations":
-				client.sendAllReservations()
+				Server.client.sendAllReservations()
 			elif loadedObject.commandStr == "request machines":
-				client.sendAllMachines()
+				Server.client.sendAllMachines()
 		elif type(loadedObject) is Reservation:
 			my_logger.info('reservation received: ' + loadedObject.name)
 			# add locally made reservation to db
@@ -125,7 +129,10 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 class Server:
 	t = None
-	def __init__(self, host, port):
+	client = None
+	
+	def __init__(self, host, port, client):
+		Server.client = client
 		Server.t = ThreadedTCPServer((host,port),service)
 		Server.t.allow_reuse_address
 		thread = Thread(target = Server.runTCPServer)
@@ -139,6 +146,7 @@ class Server:
 			my_logger.info('TCP server was stopped')	
 			
 	def stop(self):
+		sys.stderr = open('trash', 'w')
 		Server.t.shutdown()
 		Server.t.server_close()
 	
@@ -150,11 +158,10 @@ else:
 
 
 
-server = Server(host, 10000)
-client = ServerClient(host, 20000, 'test', 'team14')
-client.sendUpdate()
+# server = Server(host, 10000)
+# client = ServerClient(host, 20000, 'test', 'team14')
+# client.sendUpdate()
 
-os.system('pause')
-server.stop()
-save_stderr = sys.stderr
-sys.stderr = open('trash', 'w')
+# os.system('pause')
+# server.stop()
+# save_stderr = sys.stderr
