@@ -7,3 +7,6 @@ other:
 
 test:
 	python3 -m unittest discover -v
+
+python:
+	sudo pip3 install -r requirements.txt --upgrade
