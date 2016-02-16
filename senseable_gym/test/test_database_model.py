@@ -158,6 +158,10 @@ class TestDatabaseModel(unittest.TestCase):
         with self.assertRaises(UserError):
             self.db.add_user(user)
 
+        new_user = User('user', 'who', 'cares')
+        with self.assertRaises(UserError):
+            self.db.add_user(new_user)
+
     def test_add_reservation(self):
         machine = Machine(MachineType.BICYCLE, [1, 1, 1])
         user = User('u1', 'f1', 'l1')
