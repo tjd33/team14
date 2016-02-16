@@ -2,3 +2,4 @@
 sqlalchemy
 typing
 click
+flask
