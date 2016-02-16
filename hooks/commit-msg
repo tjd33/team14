@@ -7,11 +7,18 @@ chkr = SpellChecker("en_US")
 
 
 def check_line(line):
+    # Don't check comments
+    if line[0] == '#':
+        return 0
+
     error_count = 0
     chkr.set_text(line)
     for err in chkr:
         try:
-            opt = int(input('Error: `{}`. \n\t1. Error\n\t2. Add to dictionary'.format(err.word)))
+            sys.stdin = open("/dev/tty", "r")
+            with sys.stdin:
+                print('Error: `{}`. \n\t1. Error\n\t2. Add to dictionary'.format(err.word))
+                opt = int(input())
         except EOFError:
             break
 
