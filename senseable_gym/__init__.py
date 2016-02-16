@@ -25,7 +25,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 # }}}
 # {{{ Level Management
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 EXTRA_DEBUG = 5
 # }}}
