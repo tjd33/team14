@@ -91,11 +91,9 @@ class service(socketserver.BaseRequestHandler):
 		elif type(loadedObject) is dict:
 			if type(next (iter (loadedObject.values()))) is Machine:
 				PIServer.client.machines = loadedObject
-				my_logger.debug(next (iter (loadedObject.values())))
 				my_logger.info('replaced machine database')
 			elif type(next (iter (loadedObject.values()))) is Reservation:
 				PIServer.client.reservations = loadedObject
-				my_logger.debug(next (iter (loadedObject.values())))
 				my_logger.info('replaced reservation database')
 
 			else:
@@ -122,8 +120,6 @@ class PIServer:
 			my_logger.info('starting server')
 			PIServer.t.serve_forever()
 		finally:
-			my_logger.debug(len(PIServer.client.machines))
-			my_logger.debug(len(PIServer.client.reservations))
 			my_logger.info('TCP server was stopped')	
 			
 	def stop(self):

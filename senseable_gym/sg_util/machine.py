@@ -90,6 +90,15 @@ class Machine(Base):
             s = status_color[0] + s + status_color[1]
 
         return s
+        
+    def __eq__(self,other):
+        return self.machine_id == other.machine_id and \
+                self._type == other._type and \
+                self._status == other._status and \
+                self.color == other.color and \
+                self._location_x == other._location_x and \
+                self._location_y == other._location_y and \
+                self._location_z == other._location_z
 
 
 class MachineStatus(Enum):

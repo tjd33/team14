@@ -20,25 +20,25 @@ class TestPINetwork(unittest.TestCase):
 	def setUp(self):
 		database = DatabaseModel('test', 'team14')
 		# database.empty()
-		machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
+		self.machine = Machine(type=MachineType.TREADMILL, location = [1,1,1])
 		try:
-			database.add_machine(machine)
+			database.add_machine(self.machine)
 		except MachineError:
 			pass
 			# should raise expection until empty is implemented and uncommented
-		machineListtt = database.get_machines()
-		machine = machineListtt[0]
+		machineList = database.get_machines()
+		self.machine = machineList[0]
 		user = User('dgd8', 'daniel', 'dehoog')
 		database.add_user(user)
-		reservation = Reservation(machine, user, datetime(2016, 6, 1, 1, 30, 0), datetime(2016, 6, 1, 2, 0, 1))
+		self.reservation = Reservation(self.machine, user, datetime(2016, 6, 1, 1, 30, 0), datetime(2016, 6, 1, 2, 0, 1))
 		try:
-			database.add_reservation(reservation)
+			database.add_reservation(self.reservation)
 		except ReservationError:
 			pass
-		
 		reservationListtt = database.get_reservations()
 
-	def test_sendUpdate(self):
+	# also tests sendAllReservations and sendAllMachines
+	def test_sendUpdate(self): 
 		self.server_client = ServerClient('localhost', 20000, 'test', 'team14')
 		self.server = Server('localhost', 10000, self.server_client)
 		self.assertEqual(-1, self.server_client.sendUpdate())
@@ -46,6 +46,7 @@ class TestPINetwork(unittest.TestCase):
 		self.PI_Server = PIServer('localhost', 20000, self.PI_Client)
 		self.assertEqual(1, self.PI_Client.requestUpdate())
 	
+	# also tests requestAllReservations and requestAllMachines
 	def test_requestUpdate(self):
 		self.PI_Client = PIClient('localhost', 10000)
 		self.PI_Server = PIServer('localhost', 20000, self.PI_Client)
@@ -58,8 +59,10 @@ class TestPINetwork(unittest.TestCase):
 		time.sleep(1) # give time for request to send and come back
 		self.assertEqual(1, len(PIServer.client.machines))
 		self.assertEqual(1, len(self.PI_Client.machines))
+		self.assertEqual(self.machine, next(iter(self.PI_Client.machines.values())))
 		self.assertEqual(1, len(PIServer.client.reservations))
 		self.assertEqual(1, len(self.PI_Client.reservations))
+		self.assertEqual(self.reservation, next(iter(self.PI_Client.reservations.values())))
 	
 	def tearDown(self):
 		try:
