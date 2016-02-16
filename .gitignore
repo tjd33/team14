@@ -26,4 +26,7 @@
 *.pyproj
 *.sln
 
+# From Dan Things
 *testdb.db*
+*.db
+trash
