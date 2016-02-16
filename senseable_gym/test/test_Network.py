@@ -39,7 +39,18 @@ class TestPINetwork(unittest.TestCase):
 		except ReservationError:
 			self.fail('database should be empty')
 		reservationListtt = database.get_reservations()
-
+	
+	def test_sendReservation(self):
+		self.server_client = ServerClient('localhost', 20000, 'test', 'team14')
+		self.PI_Client = PIClient('localhost', 10000)
+		self.PI_Server = PIServer('localhost', 20000, self.PI_Client)
+		self.assertEqual(0, self.PI_Client.reservations)
+		self.PI_Server.sendReservation(self.reservation)
+		self.assertEqual(1, self.PI_Client.reservations)
+		self.assertEqual(self.reservation, next(iter(self.PI_Client.reservations.values())))
+		
+		
+	
 	# also tests sendAllReservations and sendAllMachines
 	def test_sendUpdate(self): 
 		self.server_client = ServerClient('localhost', 20000, 'test', 'team14')
