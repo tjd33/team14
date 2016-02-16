@@ -17,13 +17,12 @@ from typing import List
 
 # Third Party Imports
 from sqlalchemy import create_engine, and_
-from sqlalchemy import MetaData
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 # Local Imports
 from senseable_gym import EXTRA_DEBUG, global_logger_name
-from senseable_gym.sg_util.base import Base
+from senseable_gym.sg_util.base import Base, Meta
 from senseable_gym.sg_util.machine import Machine, MachineStatus
 from senseable_gym.sg_util.user import User
 
@@ -49,8 +48,7 @@ class DatabaseModel():
         else:
             self.engine = create_engine('sqlite://')
 
-        self.meta = MetaData(self.engine)
-
+        self.meta = Meta
         self.base = Base
         self.base.metadata.bind = self.engine
         self.base.metadata.create_all()
@@ -59,17 +57,41 @@ class DatabaseModel():
         self.session = scoped_session(self.session_factory)()
 
     def _empty_db(self):
-        """TODO: Docstring for _empty_db.
-        :returns: TODO
-
         """
-        pass
+        Empties the database of any current records.
+            Use with caution :D
+        :returns: None
+        """
+        self.meta.drop_all()
+        self.meta.create_all()
 
-    def _print_table(self, table_name):
+        # TODO: Delete this if it turns out the two lines above thie
+        #           work perfectly fine. Otherwise, we may have to go back to this
+        # machines = self.session.query(Machine).delete()
+        # users = self.session.query(User).delete()
+        # reservations = self.session.query(Reservation).delete()
+
+        # self.logger.debug('Deleted: M={}, U={}, R={}'.format(
+        #     machines, users, reservations)
+        #     )
+        # new_meta = self.meta
+        # print(new_meta)
+        # with closing(self.engine.connect()) as con:
+        #     trans = con.begin()
+        #     self.logger.info('Emptying the database')
+        #     for table in reversed(new_meta.sorted_tables):
+        #         self.logger.debug('Table clearing: {}'.format(table))
+        #         con.execute(table.delete())
+        #     trans.commit()
+        #     self.logger.info('Done emptying the database')
+
+    def _str_table(self, table_name):
         """
         A function to quickly print the contents of a table.
         Currently to just be used for debugging purposes.
         """
+        table_str = '| '
+
         # Fetch the results
         if table_name not in self.meta.tables:
             raise ValueError('Table `{}` not found in database'.format(table_name))
@@ -78,9 +100,11 @@ class DatabaseModel():
         rows = insp.get_columns(table_name)
 
         # Print the results
-        self.logger.info('Printing from table `{}`'.format(table_name))
+        self.logger.debug('Getting Info from table `{}`'.format(table_name))
         for row in rows:
-            print(row)
+            table_str += str(row['name']) + ' | '
+
+        return table_str
 
     # }}}
     # {{{ Adders
