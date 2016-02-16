@@ -97,12 +97,12 @@ class DatabaseModel():
             raise ValueError('Table `{}` not found in database'.format(table_name))
 
         insp = inspect(self.engine)
-        rows = insp.get_columns(table_name)
+        cols = insp.get_columns(table_name)
 
         # Print the results
         self.logger.debug('Getting Info from table `{}`'.format(table_name))
-        for row in rows:
-            table_str += str(row['name']) + ' | '
+        for col in cols:
+            table_str += str(col['name']) + ' | '
 
         return table_str
 
@@ -142,7 +142,7 @@ class DatabaseModel():
         if not isinstance(user, User):
             raise ValueError('User Objects Only')
 
-        result = self.session.query(User).filter(User.user_id == user.user_id).all()
+        result = self.session.query(User).filter(User._user_name == user._user_name).all()
 
         # TODO: This is not currently working as expected.
         if not result:
