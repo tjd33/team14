@@ -14,6 +14,7 @@ TJ DeVries
 # Built-in Imports
 import logging
 from typing import List
+from contextlib import closing
 
 # Third Party Imports
 from sqlalchemy import create_engine, and_
@@ -63,7 +64,17 @@ class DatabaseModel():
         :returns: TODO
 
         """
-        pass
+        self.meta.drop_all()
+        # new_meta = self.meta
+        # print(new_meta)
+        # with closing(self.engine.connect()) as con:
+        #     trans = con.begin()
+        #     self.logger.info('Emptying the database')
+        #     for table in reversed(new_meta.sorted_tables):
+        #         self.logger.debug('Table clearing: {}'.format(table))
+        #         con.execute(table.delete())
+        #     trans.commit()
+        #     self.logger.info('Done emptying the database')
 
     def _print_table(self, table_name):
         """

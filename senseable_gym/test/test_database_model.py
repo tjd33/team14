@@ -31,9 +31,20 @@ class TestDatabaseModel(unittest.TestCase):
         self.time_3 = datetime(2050, 1, 3, 1, 0, 0)
         self.time_4 = datetime(2050, 1, 4, 1, 0, 0)
 
-    @unittest.skip('Not yet implemented')
     def test_empty_db(self):
-        pass
+        machine = Machine(MachineType.TREADMILL, location=[1, 1, 1])
+
+        self.db.add_machine(machine)
+
+        machine = self.db.get_machines()[0]
+
+        self.assertEqual(machine.machine_id, 1)
+
+        self.db._empty_db()
+
+        machines = self.db.get_machines()
+
+        self.assertEqual(machines, [])
 
     @unittest.skip('Not yet implemented')
     def test_get_machine(self):
