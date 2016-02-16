@@ -33,11 +33,9 @@ class TestDatabaseModel(unittest.TestCase):
 
     def test_empty_db(self):
         machine = Machine(MachineType.TREADMILL, location=[1, 1, 1])
-
         self.db.add_machine(machine)
 
         machine = self.db.get_machines()[0]
-
         self.assertEqual(machine.machine_id, 1)
 
         self.db._empty_db()
@@ -45,6 +43,12 @@ class TestDatabaseModel(unittest.TestCase):
         machines = self.db.get_machines()
 
         self.assertEqual(machines, [])
+
+    def test_str_table(self):
+        machine = Machine(MachineType.TREADMILL, location=[1, 1, 1])
+        self.db.add_machine(machine)
+
+        self.assertEqual(type(self.db._str_table('machine')), type(str()))
 
     @unittest.skip('Not yet implemented')
     def test_get_machine(self):
