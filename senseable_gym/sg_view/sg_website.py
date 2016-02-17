@@ -1,5 +1,5 @@
 # Non Local Imports
-from flask import Flask,  render_template, url_for
+from flask import Flask,  render_template
 
 # Local Imports
 from senseable_gym.sg_database.database import DatabaseModel

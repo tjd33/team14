@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+    Written and editted by Ryan Siekman, TJ DeVries
+    Template by:Future Imperfect by HTML5 UP
+    html5up.net | @n33co
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+    <head>
+        <title>Machine Overview</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
+    </head>
+</html>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <h1><a href="index.html">Sense-Able Gym</a></h1>
+        <nav class="links">
+            <ul>
+                <li><a href="project.html">Project</a></li>
+                <li><a href="about.html">Team</a></li>
+                <li><a href="ppfs.html">PPFS</a></li>
+                <li><a href="http://www.calvin.edu/academic/engineering/senior-design/">Senior Design Teams</a></li>
+                <li><a href="http://www.calvin.edu/engineering/">Calvin College Engineering</a></li>
+            </ul>
+        </nav>
+        <nav class="main">
+            <ul>
+                <li class="search">
+                    <a class="fa-search" href="#search">Search</a>
+                    <form id="search" method="get" action="#">
+                        <input type="text" name="query" placeholder="Search" />
+                    </form>
+                </li>
+                <li class="menu">
+                    <a class="fa-bars" href="#menu">Menu</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Content -->
+    <div id="content">{% block content %}{% endblock %}</div>
+
+    <!-- Footer -->
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2016 by <a href="TODO">team14</a>.
+        {% endblock %}
+    </div>
+</body>
