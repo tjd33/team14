@@ -11,37 +11,40 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-        <link rel="stylesheet" href="../../../www/assets/css/main.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
         <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
         <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
     </head>
     <body>
-    <h1>Machine Status</h1>
-    {% if machines %}
-        <ul>
-        {% for machine in machines %}
-            <li>{{ machine.machine_id }} : {{ machine.status }}</li>
-            {% if reservations[machine.machine_id] %}
-                <ul>
-                {% for reservation in reservations[machine.machine_id] %}
-                    <li>Start: {{ reservation.start_time.isocalendar() }},
-                        End: {{ reservation.end_time.isocalendar() }}</li>
+        <div id="main">
+            <article class="post">
+                <h1>Machine Status</h1>
+                {% if machines %}
+                    <ul>
+                    {% for machine in machines %}
+                        <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                        {% if reservations[machine.machine_id] %}
+                            <ul>
+                            {% for reservation in reservations[machine.machine_id] %}
+                                <li>Start: {{ reservation.start_time.isocalendar() }},
+                                    End: {{ reservation.end_time.isocalendar() }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <h2>No Machines Entered into System!</h2>
+                {% endif %}
+                <h1>User List</h1>
+                {% if users %}
+                    {% for user in users %}
+                    <li>{{ user.user_id }} : {{ user.full_name }}</li>
                 {% endfor %}
-                </ul>
-            {% endif %}
-        {% endfor %}
-        </ul>
-    {% else %}
-        <h2>No Machines Entered into System!</h2>
-    {% endif %}
-    <h1>User List</h1>
-    {% if users %}
-        {% for user in users %}
-            <li>{{ user.user_id }} : {{ user.full_name }}</li>
-        {% endfor %}
-    {% else %}
-        <h2>No Users Entered into System!</h2>
-    {% endif %}
-
+                {% else %}
+                    <h2>No Users Entered into System!</h2>
+                {% endif %}
+            </article>
+        </div>
     </body>
 </html>
