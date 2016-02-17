@@ -111,7 +111,7 @@ class PIServer:
     def __init__(self, host, port, client):
         PIServer.client = client
         PIServer.t = ThreadedTCPServer((host, port), Service)
-        PIServer.t.allow_reuse_address
+        PIServer.t.allow_reuse_address = True
         thread = Thread(target=PIServer.run_tcp_server)
         thread.start()
 
@@ -121,6 +121,9 @@ class PIServer:
             PIServer.t.serve_forever()
         finally:
             my_logger.info('TCP server was stopped')
+
+    def send_reservation(self, res):
+        pass
 
     def stop(self):
         sys.stderr = open('trash', 'w')
