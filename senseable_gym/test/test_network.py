@@ -1,19 +1,16 @@
-import unittest
-import time
 from datetime import datetime
+import time
+import unittest
 
 from senseable_gym.sg_database.database import DatabaseModel
-from senseable_gym.sg_util.machine import Machine, MachineType
-from senseable_gym.sg_util.reservation import Reservation
-from senseable_gym.sg_util.user import User
+from senseable_gym.sg_network.sgClient import piClient, webClient
+from senseable_gym.sg_network.sgServer import piServer, webServer
 from senseable_gym.sg_util.exception import MachineError
 from senseable_gym.sg_util.exception import ReservationError
 from senseable_gym.sg_util.exception import UserError
-from senseable_gym.sg_network.PI import PIClient
-from senseable_gym.sg_network.PI import PIServer
-from senseable_gym.sg_network.server import Server
-from senseable_gym.sg_network.server import ServerClient
-
+from senseable_gym.sg_util.machine import Machine, MachineType
+from senseable_gym.sg_util.reservation import Reservation
+from senseable_gym.sg_util.user import User
 
 class TestPINetwork(unittest.TestCase):
     def setUp(self):
@@ -49,54 +46,57 @@ class TestPINetwork(unittest.TestCase):
         self.reservation_list = database.get_reservations()
 
     def test_send_reservation(self):
-        self.PI_client = PIClient('localhost', 10000)
-        self.PI_server = PIServer('localhost', 20000, self.PI_client)
-
+        self.web_server = webServer('localhost', 10000, 'localhost', 20000, 'test', 'team14')
+        self.web_client = self.web_server.client
+        self.pi_server = piServer('localhost', 20000, 'localhost', 10000)
+        self.pi_client = self.pi_server.client
+        
         # Assert that initially the reservation is empty
-        self.assertEqual({}, self.PI_client.reservations)
+        self.assertEqual({}, self.pi_client.reservations)
 
         # Now we send a reservation to the client
-        self.PI_server.send_reservation(self.reservation)
+        self.web_client.send_reservation(self.reservation)
+        time.sleep(1)  # give time for request to be completed
 
         # Now we should have a reservation in our client
-        self.assertEqual(1, self.PI_client.reservations)
-        self.assertEqual(self.reservation, next(iter(self.PI_client.reservations.values())))
+        self.assertEqual(1, len(self.pi_client.reservations))
+        self.assertEqual(self.reservation, next(iter(self.pi_client.reservations.values())))
 
     # also tests send_all_reservations and send_all_machines
     def test_send_update(self):
-        self.server_client = ServerClient('localhost', 20000, 'test', 'team14')
-        self.server = Server('localhost', 10000, self.server_client)
-        self.assertEqual(-1, self.server_client.send_update())
-        self.PI_client = PIClient('localhost', 10000)
-        self.PI_server = PIServer('localhost', 20000, self.PI_client)
-        self.assertEqual(1, self.PI_client.request_update())
+        self.web_server = webServer('localhost', 10000,'localhost', 20000, 'test', 'team14')
+        self.web_client = self.web_server.client
+        self.assertEqual(-1, self.web_client.send_update())
+        self.pi_server = piServer('localhost', 20000, 'localhost', 10000)
+        self.pi_client = self.pi_server.client
+        self.assertEqual(1, self.pi_client.request_update())
 
     # also tests request_all_reservations and request_all_machines
     def test_request_update(self):
-        self.PI_client = PIClient('localhost', 10000)
-        self.PI_server = PIServer('localhost', 20000, self.PI_client)
-        self.assertEqual(-1, self.PI_client.request_update())
-        self.assertEqual(0, len(self.PI_client.machines))
-        self.assertEqual(0, len(self.PI_client.reservations))
-        self.server_client = ServerClient('localhost', 20000, 'test', 'team14')
-        self.server = Server('localhost', 10000, self.server_client)
-        self.assertEqual(1, self.PI_client.request_update())
+        self.pi_server = piServer('localhost', 20000, 'localhost', 10000)
+        self.pi_client = self.pi_server.client
+        self.assertEqual(-1, self.pi_client.request_update())
+        self.assertEqual(0, len(self.pi_client.machines))
+        self.assertEqual(0, len(self.pi_client.reservations))
+        self.web_server = webServer('localhost', 10000, 'localhost', 20000, 'test', 'team14')
+        self.web_client = self.web_server.client
+        self.assertEqual(1, self.pi_client.request_update())
         time.sleep(1)  # give time for request to send and come back
-        self.assertEqual(1, len(PIServer.client.machines))
-        self.assertEqual(1, len(self.PI_client.machines))
-        self.assertEqual(self.machine, next(iter(self.PI_client.machines.values())))
-        self.assertEqual(1, len(PIServer.client.reservations))
-        self.assertEqual(1, len(self.PI_client.reservations))
-        self.assertEqual(self.reservation, next(iter(self.PI_client.reservations.values())))
+        self.assertEqual(1, len(piServer.client.machines))
+        self.assertEqual(1, len(self.pi_client.machines))
+        self.assertEqual(self.machine, next(iter(self.pi_client.machines.values())))
+        self.assertEqual(1, len(piServer.client.reservations))
+        self.assertEqual(1, len(self.pi_client.reservations))
+        self.assertEqual(self.reservation, next(iter(self.pi_client.reservations.values())))
 
     def tearDown(self):
         try:
-            self.server.stop()
-        finally:
+            self.web_server.stop()
+        except:
             pass
         try:
-            self.PI_server.stop()
-        finally:
+            self.pi_server.stop()
+        except:
             pass
 
 if __name__ == '__main__':
