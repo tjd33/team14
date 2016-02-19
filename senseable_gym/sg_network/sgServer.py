@@ -36,9 +36,16 @@ class sgServer(object):
         thread.start()
         
     def stop(self):
-        sys.stderr = open('trash', 'w')
+#         sys.stderr = open('trash', 'w')
+#         sys.stderr.close()
         self.tcp_server.shutdown()
         self.tcp_server.server_close()
+        
+    def pickle_and_send(self, object_to_send):
+        self.client.pickle_and_send(object_to_send)
+        
+    def send_reservation(self, reservation):
+        self.client.send_reservation(reservation)
         
 class webService(socketserver.BaseRequestHandler):
     def handle(self):
@@ -52,9 +59,9 @@ class webService(socketserver.BaseRequestHandler):
         loaded_object = pickle.loads(data)
         if type(loaded_object) is Command:
             if loaded_object.commandStr == "request reservations":
-                webServer.client.send_all_reservations()
+                self.server.client.send_all_reservations()
             elif loaded_object.commandStr == "request machines":
-                webServer.client.send_all_machines()
+                self.server.client.send_all_machines()
         elif type(loaded_object) is Reservation:
             my_logger.info('reservation received: ' + loaded_object.name)
             # add locally made reservation to db
@@ -70,11 +77,19 @@ class webService(socketserver.BaseRequestHandler):
             my_logger.debug('unknown object type')
             
 class webServer(sgServer):
-    client = None
     def __init__(self, server_host, server_port, client_host, client_port, db_name, db_user):
         super().__init__(server_host, server_port, webService)
         self.client = webClient(client_host, client_port, db_name, db_user)
-        webServer.client = self.client
+        self.tcp_server.client = self.client # accessible by webService
+
+    def send_update(self):
+        return self.client.send_update()
+        
+    def send_all_reservations(self):
+        self.client.send_all_reservations()
+        
+    def send_all_machines(self):
+        self.client.send_all_machines()
 
 class piService(socketserver.BaseRequestHandler):
     def handle(self):
@@ -92,10 +107,10 @@ class piService(socketserver.BaseRequestHandler):
             # add locally made reservation to local list of reservations
         elif type(loaded_object) is dict:
             if type(next(iter(loaded_object.values()))) is Machine:
-                piServer.client.machines = loaded_object
+                self.server.client.machines = loaded_object
                 my_logger.info('replaced machine database')
             elif type(next(iter(loaded_object.values()))) is Reservation:
-                piServer.client.reservations = loaded_object
+                self.server.client.reservations = loaded_object
                 my_logger.info('replaced reservation database')
 
             else:
@@ -105,9 +120,20 @@ class piService(socketserver.BaseRequestHandler):
             my_logger.debug(type(loaded_object))
     
 class piServer(sgServer):
-    client = None
     def __init__(self, server_host, server_port, client_host, client_port):
         super().__init__(server_host, server_port, piService)
         self.client = piClient(client_host, client_port)
-        piServer.client = self.client
+        self.tcp_server.client = self.client
         
+    def request_update(self):
+        return self.client.request_update()
+        
+    def request_all_reservations(self):
+        self.client.request_all_reservations()
+    
+    def request_all_machines(self):
+        self.client.request_all_machines()
+        
+    def send_machine_update(self, machine):
+        self.client.send_machine_update(machine)
+    

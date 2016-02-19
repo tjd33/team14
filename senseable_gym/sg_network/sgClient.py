@@ -19,12 +19,12 @@ class sgClient(object):
         self.server_address = (host, port)
         my_logger.info('client connected to %s port %s' % self.server_address)
         
-    def pickle_and_send(self, object):
+    def pickle_and_send(self, object_to_send):
         try:
             # Create a TCP/IP socket to the server
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect(self.server_address)
-            data_string = pickle.dumps(object, -1)
+            data_string = pickle.dumps(object_to_send, -1)
             size = len(data_string)
             size = struct.pack("I", socket.htonl(size))
             sock.sendall(size)
@@ -39,6 +39,7 @@ class sgClient(object):
             sock.close()
                 
     def send_reservation(self, res):
+        my_logger.debug("sending single reservation")
         self.pickle_and_send(res)
 
 class webClient(sgClient):
@@ -51,17 +52,19 @@ class webClient(sgClient):
         success = 1
         try:
             self.send_all_machines()
-        except ConnectionRefusedError:
+        except ConnectionError:
+            my_logger.debug('connection refused')
             success = -1
         time.sleep(0.1)
         try:
             self.send_all_reservations()
-        except ConnectionRefusedError:
+        except ConnectionError:
+            my_logger.debug('connection refused')
             success = -1
         return success
     
     def send_all_reservations(self):
-        my_logger.info('sending all reservations')
+        my_logger.debug('sending all reservations')
         save_stderr = sys.stderr
         sys.stderr = open('trash', 'w')
         database = DatabaseModel(self.dbname, self.dbuser)
@@ -75,10 +78,10 @@ class webClient(sgClient):
         my_logger.debug('all reservations sent')
 
     def send_all_machines(self):
-        my_logger.info('sending all machines')
+        my_logger.debug('sending all machines')
+        database = DatabaseModel(self.dbname, self.dbuser)
         save_stderr = sys.stderr
         sys.stderr = open('trash', 'w')
-        database = DatabaseModel(self.dbname, self.dbuser)
         # this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
         machine_list = database.get_machines()
         sys.stderr.close()
