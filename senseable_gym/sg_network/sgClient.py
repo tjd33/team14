@@ -79,9 +79,9 @@ class webClient(sgClient):
 
     def send_all_machines(self):
         my_logger.debug('sending all machines')
-        database = DatabaseModel(self.dbname, self.dbuser)
         save_stderr = sys.stderr
         sys.stderr = open('trash', 'w')
+        database = DatabaseModel(self.dbname, self.dbuser)
         # this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
         machine_list = database.get_machines()
         sys.stderr.close()

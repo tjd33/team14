@@ -36,8 +36,8 @@ class sgServer(object):
         thread.start()
         
     def stop(self):
-#         sys.stderr = open('trash', 'w')
-#         sys.stderr.close()
+        sys.stderr = open('trash', 'w')
+        sys.stderr.close()
         self.tcp_server.shutdown()
         self.tcp_server.server_close()
         
@@ -103,10 +103,16 @@ class piService(socketserver.BaseRequestHandler):
         my_logger.debug(len(data))
         loaded_object = pickle.loads(data)
         if type(loaded_object) is Reservation:
-            my_logger.info('reservation received: ' + loaded_object.name)
+#             my_logger.info('reservation received: ' + loaded_object.user.full_name)
+            my_logger.info('reservation received')
+            database = DatabaseModel(self.server.db_name, self.server.db_user)
+            database.add_reservation(loaded_object)
             # add locally made reservation to local list of reservations
+            
         elif type(loaded_object) is dict:
-            if type(next(iter(loaded_object.values()))) is Machine:
+            if len(loaded_object) == 0:
+                my_logger.debug("received empty dictionary")
+            elif type(next(iter(loaded_object.values()))) is Machine:
                 self.server.client.machines = loaded_object
                 my_logger.info('replaced machine database')
             elif type(next(iter(loaded_object.values()))) is Reservation:
@@ -120,10 +126,12 @@ class piService(socketserver.BaseRequestHandler):
             my_logger.debug(type(loaded_object))
     
 class piServer(sgServer):
-    def __init__(self, server_host, server_port, client_host, client_port):
+    def __init__(self, server_host, server_port, client_host, client_port, db_name, db_user):
         super().__init__(server_host, server_port, piService)
         self.client = piClient(client_host, client_port)
         self.tcp_server.client = self.client
+        self.tcp_server.db_name = db_name
+        self.tcp_server.db_user = db_user
         
     def request_update(self):
         return self.client.request_update()
