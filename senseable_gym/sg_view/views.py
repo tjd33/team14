@@ -1,12 +1,12 @@
 # Non Local Imports
-from flask import Flask,  render_template
+from flask import render_template, redirect
 
 # Local Imports
+from senseable_gym.sg_view import app
+from senseable_gym.sg_view.forms import MyForm
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.test.basic_example import main
-
-app = Flask(__name__)
 
 
 @app.route('/')
@@ -54,6 +54,14 @@ def example():
 @app.route('/login/')
 def login():
     return 'Login Page'
+
+
+@app.route('/form_practice/', methods=('GET', 'POST'))
+def form_practice():
+    form = MyForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    return render_template('form_practice.html', form=form)
 
 
 @app.errorhandler(404)
