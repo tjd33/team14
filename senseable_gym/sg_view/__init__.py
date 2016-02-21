@@ -4,7 +4,10 @@
 from flask import Flask
 
 app = Flask(__name__)
-app.config('senseable_gym.sg_view.config')
+# TODO: Get the config to work correctly
+app.config.from_object('senseable_gym.sg_view.config')
+
+from senseable_gym.sg_view import views
 
 # TODO: Include database configuration here
 # TODO: Include login configuration here

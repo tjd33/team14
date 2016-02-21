@@ -3,4 +3,5 @@ sqlalchemy
 typing
 click
 flask
+flask-wtf
 pyenchant
