@@ -7,26 +7,27 @@ from senseable_gym.sg_network.sgServer import piServer, webServer
 from senseable_gym.sg_util.exception import MachineError
 from senseable_gym.sg_util.exception import ReservationError
 from senseable_gym.sg_util.exception import UserError
-from senseable_gym.sg_util.machine import Machine, MachineType
+from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.user import User
 
+
 class TestPINetwork(unittest.TestCase):
     def setUp(self):
-        self.database = DatabaseModel('test', 'team14')
-        self.database._empty_db()
+        database = DatabaseModel('test', 'team14')
+        database._empty_db()
 
         # Create and add a machine to the database
         self.machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
         try:
-            self.database.add_machine(self.machine)
+            database.add_machine(self.machine)
         except MachineError:
             self.fail('database should be empty')
 
         # Create and add a user to the database
         self.user = User('dgd8', 'daniel', 'dehoog')
         try:
-            self.database.add_user(self.user)
+            database.add_user(self.user)
         except UserError:
             self.fail('database should be empty')
 
@@ -38,11 +39,11 @@ class TestPINetwork(unittest.TestCase):
                 datetime(2016, 6, 1, 2, 0, 1)
             )
         try:
-            self.database.add_reservation(self.reservation)
+            database.add_reservation(self.reservation)
         except ReservationError:
             self.fail('database should be empty')
 
-        self.reservation_list = self.database.get_reservations()
+        self.reservation_list = database.get_reservations()
 
     def test_send_reservation(self):
         self.web_server = webServer('localhost', 10000, 'localhost', 20000, 'test', 'team14')
@@ -59,6 +60,28 @@ class TestPINetwork(unittest.TestCase):
         # Now we should have a reservation in our client
         self.assertEqual(1, len(self.pi_client.reservations))
         self.assertEqual(self.reservation, next(iter(self.pi_client.reservations.values())))
+
+    def test_send_machine(self):
+        self.web_server = webServer('localhost', 10003, 'localhost', 20003, 'test', 'team14')
+        self.pi_server = piServer('localhost', 20003, 'localhost', 10003, 'test', 'team14')
+         
+        # assert preconditions
+        database = DatabaseModel('test', 'team14')
+        self.assertEqual(1, len(database.get_machines()))
+        machine = database.get_machines()[0]
+        self.assertEqual(MachineStatus.UNKNOWN, machine.status)
+         
+        # send machine update
+        machine.status = MachineStatus.BUSY
+        self.pi_server.send_machine_update(machine)
+        time.sleep(1)
+         
+        # test to see if update applied
+        self.assertEqual(1, len(database.get_machines()))
+        database = DatabaseModel('test', 'team14')
+        machine = database.get_machines()[0]
+        self.assertEqual(MachineStatus.BUSY, machine.status)
+        
 
 #   also tests send_all_reservations and send_all_machines
     def test_send_update(self):

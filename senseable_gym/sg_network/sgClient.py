@@ -68,10 +68,10 @@ class webClient(sgClient):
         my_logger.debug('sending all reservations')
         database = DatabaseModel(self.dbname, self.dbuser)
         save_stderr = sys.stderr
-        sys.stderr = StringIO()
+#         sys.stderr = StringIO()
         # this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
         reservation_list = database.get_reservations()
-        sys.stderr.close()
+#         sys.stderr.close()
         sys.stderr = save_stderr
         my_logger.debug(len(reservation_list))
         reservation_dict = {reservation.reservation_id: reservation for reservation in reservation_list}
@@ -82,10 +82,10 @@ class webClient(sgClient):
         my_logger.debug('sending all machines')
         database = DatabaseModel(self.dbname, self.dbuser)
         save_stderr = sys.stderr
-        sys.stderr = StringIO()
+#         sys.stderr = StringIO()
         # this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
         machine_list = database.get_machines()
-        sys.stderr.close()
+#         sys.stderr.close()
         sys.stderr = save_stderr
         my_logger.debug(len(machine_list))
         machine_dict = {machine.machine_id: machine for machine in machine_list}

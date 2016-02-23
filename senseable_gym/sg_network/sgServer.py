@@ -38,8 +38,8 @@ class sgServer(object):
         thread.start()
         
     def stop(self):
-        sys.stderr = StringIO()
-        sys.stderr.close()
+#         sys.stderr = StringIO()
+#         sys.stderr.close()
         self.tcp_server.shutdown()
         self.tcp_server.server_close()
         
@@ -72,9 +72,8 @@ class webService(socketserver.BaseRequestHandler):
             my_logger.info("machine update received")
             # cannot access database from thread right now
             my_logger.debug(loaded_object.machine_id)
-            database = DatabaseModel(self.dbname, self.dbuser)
-            database.add_machine(loaded_object)  # add for testing purposes
-            # database.set_machine_status(loaded_object, loaded_object.status)
+            database = DatabaseModel(self.server.db_name, self.server.db_user)
+            database.set_machine_status(loaded_object.machine_id, loaded_object.status)
         else:
             my_logger.debug(type(loaded_object))
             my_logger.debug('unknown object type')
