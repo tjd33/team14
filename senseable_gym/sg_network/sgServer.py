@@ -64,10 +64,10 @@ class webService(socketserver.BaseRequestHandler):
                 self.server.client.send_all_reservations()
             elif loaded_object.commandStr == "request machines":
                 self.server.client.send_all_machines()
-#         elif type(loaded_object) is Reservation:
-#             my_logger.info('reservation received: ' + loaded_object.name)
-#             database = DatabaseModel(self.server.db_name, self.server.db_user)
-#             database.add_reservation(loaded_object)
+        elif type(loaded_object) is Reservation:
+            my_logger.info('reservation received: ' + loaded_object.name)
+            database = DatabaseModel(self.server.db_name, self.server.db_user)
+            database.add_reservation(loaded_object)
         elif type(loaded_object) is Machine:
             my_logger.info("machine update received")
             # cannot access database from thread right now

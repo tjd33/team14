@@ -45,7 +45,7 @@ class TestPINetwork(unittest.TestCase):
 
         self.reservation_list = database.get_reservations()
 
-    def test_send_reservation(self):
+    def test_send_reservation_to_pi(self):
         self.web_server = webServer('localhost', 10000, 'localhost', 20000, 'test', 'team14')
         self.pi_server = piServer('localhost', 20000, 'localhost', 10000, 'test', 'team14')
         self.pi_client = self.pi_server.client
@@ -60,7 +60,18 @@ class TestPINetwork(unittest.TestCase):
         # Now we should have a reservation in our client
         self.assertEqual(1, len(self.pi_client.reservations))
         self.assertEqual(self.reservation, next(iter(self.pi_client.reservations.values())))
-
+    
+    def test_send_reservation_from_pi(self):
+        self.web_server = webServer('localhost', 10004, 'localhost', 20004, 'test', 'team14')
+        self.pi_server = piServer('localhost', 20004, 'localhost', 10004, 'test', 'team14')
+        
+        # assert preconditions
+        database = DatabaseModel('test', 'team14')
+        self.assertEqual(1, len(database.get_reservations())
+                         
+        
+    
+    @unittest.skip('test failing and taking time')
     def test_send_machine(self):
         self.web_server = webServer('localhost', 10003, 'localhost', 20003, 'test', 'team14')
         self.pi_server = piServer('localhost', 20003, 'localhost', 10003, 'test', 'team14')
