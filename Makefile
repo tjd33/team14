@@ -10,3 +10,6 @@ test:
 
 python:
 	sudo pip3 install -r requirements.txt --upgrade
+
+clean:
+	find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf
