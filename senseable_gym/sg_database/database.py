@@ -14,6 +14,7 @@ TJ DeVries
 # Built-in Imports
 import logging
 from typing import List
+from datetime import datetime
 
 # Third Party Imports
 from sqlalchemy import create_engine, and_
@@ -24,7 +25,7 @@ from sqlalchemy.pool import StaticPool
 # Local Imports
 from senseable_gym import EXTRA_DEBUG, global_logger_name
 from senseable_gym.sg_util.base import Base, Meta
-from senseable_gym.sg_util.machine import Machine, MachineStatus
+from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
 from senseable_gym.sg_util.user import User
 
 # Relationships
@@ -195,13 +196,13 @@ class DatabaseModel():
     def get_machines(self) -> List[Machine]:
         return self.session.query(Machine).all()
 
-    def get_machine(self, id) -> Machine:
+    def get_machine(self, machine_id: int) -> Machine:
         # Query the equipment table to find the machine by its ID
         #   Then, since the ID is a primary key, there can only be one of them
         #   So, return the first one in that list.
-        return self.session.query(Machine).filter(Machine.machine_id == id).one()
+        return self.session.query(Machine).filter(Machine.machine_id == machine_id).one()
 
-    def get_machine_by_location(self, location) -> Machine:
+    def get_machine_by_location(self, location: List[int]) -> Machine:
         # This is used to get a machine by a specific location.
         #   This is useful because locations need to be unique
         return self.session.query(Machine).filter(and_(
@@ -210,22 +211,22 @@ class DatabaseModel():
             Machine._location_z == location[2])
             ).one()
 
-    def get_machine_status(self, id):
+    def get_machine_status(self, id) -> MachineStatus:
         return self.get_machine(id).status
 
-    def get_machine_location(self, id):
+    def get_machine_location(self, id) -> List[int]:
         return self.get_machine(id).location
 
-    def get_machine_type(self, id):
+    def get_machine_type(self, id) -> MachineType:
         return self.get_machine(id).type
 
-    def get_users(self):
+    def get_users(self) -> List[User]:
         return self.session.query(User).all()
 
-    def get_user(self, user_id):
+    def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()
 
-    def get_machine_user_relationships(self, machine):
+    def get_machine_user_relationships(self, machine) -> MachineCurrentUser:
         """
         Get the current machine and user relationships
         :return: A list of MachineCurrentUser objects
@@ -240,16 +241,24 @@ class DatabaseModel():
 
         return rel
 
-    def get_reservations(self):
+    def get_reservations(self) -> List[Reservation]:
         return self.session.query(Reservation).all()
 
-    def get_reservations_by_machine(self, machine):
+    def get_reservations_by_machine(self, machine: Machine) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine.machine_id).all()
 
-    def get_reservations_by_machine_id(self, machine_id):
+    def get_reservations_by_machine_id(self, machine_id: int) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine_id).all()
+
+    def get_applicable_reservations_by_machine(self, machine: Machine, cut_off_time: datetime) -> List[Reservation]:
+        return self.session.query(Reservation).filter(
+                and_(Reservation.machine_id == machine.machine_id,
+                     # TODO: Not sure about the start time and end time ideas here
+                     Reservation.start_time >= datetime.now(),
+                     Reservation.end_time <= cut_off_time)
+                )
 
     # }}}
     # {{{ Setters
