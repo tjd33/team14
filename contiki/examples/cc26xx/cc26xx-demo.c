@@ -100,7 +100,7 @@
 #include <stdio.h>
 #include <stdint.h>
 /*---------------------------------------------------------------------------*/
-#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND) // * 20
+#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND * 20)
 #define CC26XX_DEMO_LEDS_PERIODIC       LEDS_YELLOW
 #define CC26XX_DEMO_LEDS_BUTTON         LEDS_RED
 #define CC26XX_DEMO_LEDS_REBOOT         LEDS_ALL
@@ -131,7 +131,7 @@ AUTOSTART_PROCESSES(&cc26xx_demo_process);
  * Update sensor readings in a staggered fashion every SENSOR_READING_PERIOD
  * ticks + a random interval between 0 and SENSOR_READING_RANDOM ticks
  */
-#define SENSOR_READING_PERIOD (CLOCK_SECOND) // * 20
+#define SENSOR_READING_PERIOD (CLOCK_SECOND * 20)
 #define SENSOR_READING_RANDOM (CLOCK_SECOND << 4)
 
 // static struct ctimer bmp_timer, opt_timer, hdc_timer, tmp_timer, mpu_timer;
@@ -441,3 +441,4 @@ PROCESS_THREAD(cc26xx_demo_process, ev, data)
  * @}
  * @}
  */
+

@@ -30,3 +30,7 @@
 *testdb.db*
 *.db
 trash
+
+# Eclispe thing
+.project
+.pydevproject
