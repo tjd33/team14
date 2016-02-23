@@ -13,20 +13,20 @@ from senseable_gym.sg_util.user import User
 
 class TestPINetwork(unittest.TestCase):
     def setUp(self):
-        database = DatabaseModel('test', 'team14')
-        database._empty_db()
+        self.database = DatabaseModel('test', 'team14')
+        self.database._empty_db()
 
         # Create and add a machine to the database
         self.machine = Machine(type=MachineType.TREADMILL, location=[1, 1, 1])
         try:
-            database.add_machine(self.machine)
+            self.database.add_machine(self.machine)
         except MachineError:
             self.fail('database should be empty')
 
         # Create and add a user to the database
         self.user = User('dgd8', 'daniel', 'dehoog')
         try:
-            database.add_user(self.user)
+            self.database.add_user(self.user)
         except UserError:
             self.fail('database should be empty')
 
@@ -38,18 +38,18 @@ class TestPINetwork(unittest.TestCase):
                 datetime(2016, 6, 1, 2, 0, 1)
             )
         try:
-            database.add_reservation(self.reservation)
+            self.database.add_reservation(self.reservation)
         except ReservationError:
             self.fail('database should be empty')
 
-        self.reservation_list = database.get_reservations()
+        self.reservation_list = self.database.get_reservations()
 
     def test_send_reservation(self):
         self.web_server = webServer('localhost', 10000, 'localhost', 20000, 'test', 'team14')
         self.pi_server = piServer('localhost', 20000, 'localhost', 10000, 'test', 'team14')
         self.pi_client = self.pi_server.client
          
-        # Assert that initially the reservation is empty
+        # Assert that there are no reservations on the PI
         self.assertEqual({}, self.pi_client.reservations)
  
         # Now we send a reservation to the client

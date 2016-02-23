@@ -11,6 +11,8 @@ from senseable_gym.sg_network.command import Command
 from senseable_gym.sg_network.sgClient import webClient, piClient
 from senseable_gym.sg_util.machine import Machine
 from senseable_gym.sg_util.reservation import Reservation
+from _io import StringIO
+
 
 
 global_logger_name = 'senseable_logger'
@@ -36,7 +38,7 @@ class sgServer(object):
         thread.start()
         
     def stop(self):
-        sys.stderr = open('trash', 'w')
+        sys.stderr = StringIO()
         sys.stderr.close()
         self.tcp_server.shutdown()
         self.tcp_server.server_close()
@@ -62,10 +64,10 @@ class webService(socketserver.BaseRequestHandler):
                 self.server.client.send_all_reservations()
             elif loaded_object.commandStr == "request machines":
                 self.server.client.send_all_machines()
-        elif type(loaded_object) is Reservation:
-            my_logger.info('reservation received: ' + loaded_object.name)
-            database = DatabaseModel(self.server.db_name, self.server.db_user)
-            database.add_reservation(loaded_object)
+#         elif type(loaded_object) is Reservation:
+#             my_logger.info('reservation received: ' + loaded_object.name)
+#             database = DatabaseModel(self.server.db_name, self.server.db_user)
+#             database.add_reservation(loaded_object)
         elif type(loaded_object) is Machine:
             my_logger.info("machine update received")
             # cannot access database from thread right now

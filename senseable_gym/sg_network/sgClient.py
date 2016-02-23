@@ -1,3 +1,4 @@
+from _io import StringIO
 import logging
 import pickle
 import socket
@@ -67,7 +68,7 @@ class webClient(sgClient):
         my_logger.debug('sending all reservations')
         database = DatabaseModel(self.dbname, self.dbuser)
         save_stderr = sys.stderr
-        sys.stderr = open('trash', 'w')
+        sys.stderr = StringIO()
         # this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
         reservation_list = database.get_reservations()
         sys.stderr.close()
@@ -81,7 +82,7 @@ class webClient(sgClient):
         my_logger.debug('sending all machines')
         database = DatabaseModel(self.dbname, self.dbuser)
         save_stderr = sys.stderr
-        sys.stderr = open('trash', 'w')
+        sys.stderr = StringIO()
         # this database call sometimes prints thread complaints to stderr. Can't catch them and can't fix them, so I'm silencing them.
         machine_list = database.get_machines()
         sys.stderr.close()
