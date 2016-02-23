@@ -61,13 +61,13 @@ class TestPINetwork(unittest.TestCase):
         self.assertEqual(1, len(self.pi_client.reservations))
         self.assertEqual(self.reservation, next(iter(self.pi_client.reservations.values())))
     
-    def test_send_reservation_from_pi(self):
-        self.web_server = webServer('localhost', 10004, 'localhost', 20004, 'test', 'team14')
-        self.pi_server = piServer('localhost', 20004, 'localhost', 10004, 'test', 'team14')
-        
-        # assert preconditions
-        database = DatabaseModel('test', 'team14')
-        self.assertEqual(1, len(database.get_reservations())
+#     def test_send_reservation_from_pi(self):
+#         self.web_server = webServer('localhost', 10004, 'localhost', 20004, 'test', 'team14')
+#         self.pi_server = piServer('localhost', 20004, 'localhost', 10004, 'test', 'team14')
+#         
+#         # assert preconditions
+#         database = DatabaseModel('test', 'team14')
+#         self.assertEqual(1, len(database.get_reservations())
                          
         
     
