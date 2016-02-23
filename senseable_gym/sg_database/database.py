@@ -19,6 +19,7 @@ from typing import List
 from sqlalchemy import create_engine, and_
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.pool import StaticPool
 
 # Local Imports
 from senseable_gym import EXTRA_DEBUG, global_logger_name
@@ -44,7 +45,7 @@ class DatabaseModel():
 
         # Set up the connection to the database
         if dbname:
-            self.engine = create_engine('sqlite:///{}.db'.format(dbname))
+            self.engine = create_engine('sqlite:///{}.db'.format(dbname), connect_args={'check_same_thread': False}, poolclass=StaticPool)
         else:
             self.engine = create_engine('sqlite://')
 
