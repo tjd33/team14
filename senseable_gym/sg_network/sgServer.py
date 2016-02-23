@@ -64,7 +64,8 @@ class webService(socketserver.BaseRequestHandler):
                 self.server.client.send_all_machines()
         elif type(loaded_object) is Reservation:
             my_logger.info('reservation received: ' + loaded_object.name)
-            # add locally made reservation to db
+            database = DatabaseModel(self.server.db_name, self.server.db_user)
+            database.add_reservation(loaded_object)
         elif type(loaded_object) is Machine:
             my_logger.info("machine update received")
             # cannot access database from thread right now
@@ -81,6 +82,8 @@ class webServer(sgServer):
         super().__init__(server_host, server_port, webService)
         self.client = webClient(client_host, client_port, db_name, db_user)
         self.tcp_server.client = self.client # accessible by webService
+        self.tcp_server.db_name = db_name
+        self.tcp_server.db_user = db_user
 
     def send_update(self):
         return self.client.send_update()
@@ -105,10 +108,7 @@ class piService(socketserver.BaseRequestHandler):
         if type(loaded_object) is Reservation:
 #             my_logger.info('reservation received: ' + loaded_object.user.full_name)
             my_logger.info('reservation received')
-            database = DatabaseModel(self.server.db_name, self.server.db_user)
-            database.add_reservation(loaded_object)
-            # add locally made reservation to local list of reservations
-            
+            self.server.client.reservations[loaded_object.reservation_id] = loaded_object
         elif type(loaded_object) is dict:
             if len(loaded_object) == 0:
                 my_logger.debug("received empty dictionary")
@@ -130,8 +130,6 @@ class piServer(sgServer):
         super().__init__(server_host, server_port, piService)
         self.client = piClient(client_host, client_port)
         self.tcp_server.client = self.client
-        self.tcp_server.db_name = db_name
-        self.tcp_server.db_user = db_user
         
     def request_update(self):
         return self.client.request_update()
