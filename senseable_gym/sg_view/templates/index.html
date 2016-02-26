@@ -1,14 +1,26 @@
-<!doctype html>
+{% extends "base.html" %}
 
-<html>
-	<head>
-		<title>Index</title>
-	</head>
-	
-	<body>
-	<h1>Index</h1>
-		<a href="/">/</a>
-		<a href="index/">index/</a>
-		<a href="hello/">hello/</a>  
-	</body>
-</html>
+
+
+{% block content %}
+    <div id="main">
+        <div>
+            Welcome
+        </div>
+        <div>
+        {% if user %}
+            <ul>
+                <li> view usage </li>
+                <li> reserve machine </li>
+                <li> my account </li>
+            </ul>
+        {% else %}
+            <ul>
+                <li> view usage </li>
+                <li> login or signup </li>
+            </ul>
+        {% endif %}
+        </div>
+    </div>
+{% endblock content %}
+

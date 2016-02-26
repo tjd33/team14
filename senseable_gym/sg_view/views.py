@@ -9,7 +9,7 @@ from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.test.basic_example import main
 
 
-@app.route('/')
+@app.route('/machine_view')
 def home(database=None):
     if database is None:
         db = main(level='INFO', dbname='none')
@@ -34,10 +34,11 @@ def home(database=None):
                            reservations=reservation_dict
                            )
 
-
+@app.route('/')            
 @app.route('/index/')
 def index():
-    return render_template('index.html')
+    user = None
+    return render_template('index.html', user=user)
 
 
 @app.route('/hello/')
