@@ -9,8 +9,15 @@ app.config.from_object('senseable_gym.sg_view.config')
 
 from senseable_gym.sg_view import views
 
+# create database
+
 # TODO: Include database configuration here
-# TODO: Include login configuration here
+login_manager = LoginManager()
+login_manager.init_app(app)
+@login_manager.user_loader
+def load_user(user_id):
+    # database get/add user
+    return user 
 # TODO: Include openID configuration here
 # TODO: Include logging configuration here
 

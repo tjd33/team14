@@ -10,9 +10,9 @@
         <article class="post">
         {% if user %}
             <ul>
-                <li><a href="machine_view.html">  view usage </a> </li>
-                <li> reserve machine </li>
-                <li> my account </li>
+                <li><a href={{url_for('machine_view')}}>  View Usage </a> </li>
+                <li><a href={{url_for('reserve')}}>  Reserve Machine </a> </li>
+                <li><a href={{url_for('settings')}}>  My Account </a> </li>
             </ul>
         {% else %}
             <ul>

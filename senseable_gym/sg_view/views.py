@@ -40,7 +40,7 @@ def machine_view(database=None):
 @app.route('/index')
 @app.route('/index.html/')
 def index():
-    user = None
+    user = "test"
     return render_template('index.html', user=user)
 
 
@@ -62,8 +62,7 @@ def login():
         return redirect('/index')
     return render_template('login.html', 
                            title='Sign In',
-                           form=form,
-                           providers = app.config['OPENID_PROVIDERS'])
+                           form=form)
     
 @app.route('/signup', methods=('GET', 'POST'))
 def signup():
@@ -80,6 +79,10 @@ def about():
 @app.route('/reserve')
 def reserve():
     return 'reserve page'
+    
+@app.route('/settings')
+def settings():
+    return 'settings'
     
 @app.route('/form_practice/', methods=('GET', 'POST'))
 def form_practice():
