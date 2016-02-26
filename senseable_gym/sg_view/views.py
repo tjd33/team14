@@ -1,16 +1,17 @@
 # Non Local Imports
-from flask import render_template, redirect
+from flask import render_template, redirect, flash
 
 # Local Imports
 from senseable_gym.sg_view import app
-from senseable_gym.sg_view.forms import MyForm
+from senseable_gym.sg_view.forms import MyForm, LoginForm, SignupForm
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.test.basic_example import main
 
 
 @app.route('/machine_view')
-def home(database=None):
+@app.route('/machine_view.html/')
+def machine_view(database=None):
     if database is None:
         db = main(level='INFO', dbname='none')
     else:
@@ -34,29 +35,52 @@ def home(database=None):
                            reservations=reservation_dict
                            )
 
-@app.route('/')            
-@app.route('/index/')
+         
+@app.route('/')
+@app.route('/index')
+@app.route('/index.html/')
 def index():
     user = None
     return render_template('index.html', user=user)
 
 
-@app.route('/hello/')
+@app.route('/hello')
 @app.route('/hello/<name>')
 def hello(name=None):
     return render_template('hello.html', name=name)
 
 
-@app.route('/example/')
+@app.route('/example')
 def example():
     return render_template('example.html')
 
 
-@app.route('/login/')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'Login Page'
-
-
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect('/index')
+    return render_template('login.html', 
+                           title='Sign In',
+                           form=form,
+                           providers = app.config['OPENID_PROVIDERS'])
+    
+@app.route('/signup', methods=('GET', 'POST'))
+def signup():
+    form = SignupForm()
+    if form.validate_on_submit():
+        return redirect('/index')
+    return render_template('signup.html', form=form)
+    
+@app.route('/about')
+def about():
+    return 'About page'
+    
+    
+@app.route('/reserve')
+def reserve():
+    return 'reserve page'
+    
 @app.route('/form_practice/', methods=('GET', 'POST'))
 def form_practice():
     form = MyForm()

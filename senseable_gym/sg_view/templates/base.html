@@ -16,14 +16,16 @@
 <body>
     <!-- Header -->
     <header id="header">
-        <h1><a href="index.html">Sense-Able Gym</a></h1>
+        <h1><a href={{ url_for('index')}}>Sense-Able Gym</a></h1>
         <nav class="links">
             <ul>
-                <li><a href="project.html">Project</a></li>
-                <li><a href="about.html">Team</a></li>
-                <li><a href="ppfs.html">PPFS</a></li>
+                <li><a href={{ url_for('machine_view')}}>View Usage</a></li>
+                <li><a href={{ url_for('reserve')}}>Reserve</a></li>
+                <li><a href="/static/ppfs.html">PPFS</a></li>
+                <li><a href="/static/about.html">About</a></li>
                 <li><a href="http://www.calvin.edu/academic/engineering/senior-design/">Senior Design Teams</a></li>
                 <li><a href="http://www.calvin.edu/engineering/">Calvin College Engineering</a></li>
+                <li><a href={{ url_for('login')}}>Login</a></li>
             </ul>
         </nav>
         <nav class="main">
@@ -42,7 +44,7 @@
     </header>
 
     <!-- Content -->
-    <div id="content">{% block content %}{% endblock %}</div>
+    {% block content %}{% endblock %}</div>
 
     <!-- Footer -->
     <div id="footer">
