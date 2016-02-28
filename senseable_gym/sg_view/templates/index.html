@@ -8,7 +8,7 @@
             Welcome
         </section>
         <article class="post">
-        {% if user %}
+        {% if user.authenticated %}
             <ul>
                 <li><a href={{url_for('machine_view')}}>  View Usage </a> </li>
                 <li><a href={{url_for('reserve')}}>  Reserve Machine </a> </li>

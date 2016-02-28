@@ -1,5 +1,6 @@
 # Non Local Imports
 from flask import render_template, redirect, flash
+from flask.ext.login import login_user, current_user, logout_user, login_required
 
 # Local Imports
 from senseable_gym.sg_view import app
@@ -8,30 +9,26 @@ from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.test.basic_example import main
 
+database = DatabaseModel('webTest', 'team14')
+
 
 @app.route('/machine_view')
 @app.route('/machine_view.html/')
-def machine_view(database=None):
-    if database is None:
-        db = main(level='INFO', dbname='none')
-    else:
-        db = DatabaseModel(None, 'ryan')
+def machine_view(db=None):
+    
+    # database = DatabaseModel('webTest', 'team14')
 
-        machine_1 = Machine(MachineType.TREADMILL, [1, 1, 1])
-        machine_1.status = MachineStatus.BUSY
-        db.add_machine(machine_1)
-        machine_2 = Machine(MachineType.TREADMILL, [1, 1, 2])
-        db.add_machine(machine_2)
-
-    machine_list = db.get_machines()
-    user_list = db.get_users()
+    machine_list = database.get_machines()
+    user_list = database.get_users()
+    print(len(user_list))
 
     reservation_dict = {}
     for machine in machine_list:
-        reservation_dict[machine.machine_id] = db.get_reservations_by_machine(machine)
+        reservation_dict[machine.machine_id] = database.get_reservations_by_machine(machine)
     return render_template('machine_view.html',
                            machines=machine_list,
                            users=user_list,
+                           user=current_user,
                            reservations=reservation_dict
                            )
 
@@ -40,8 +37,7 @@ def machine_view(database=None):
 @app.route('/index')
 @app.route('/index.html/')
 def index():
-    user = "test"
-    return render_template('index.html', user=user)
+    return render_template('index.html', user=current_user)
 
 
 @app.route('/hello')
@@ -59,11 +55,38 @@ def example():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        return redirect('/index')
+        
+
+        user = database.get_users()[0]
+        if user:
+            if user.password == form.password.data:
+                user.authenticated = True
+                database.session.add(user)
+                database.session.commit()
+                login_user(user, remember=form.remember_me.data)
+                print(user)
+                print(current_user)
+                return redirect('/index')
+            else:
+                print(str(user) + ' ' + str(user.password))
+        else:
+            print('no such user')
+                
     return render_template('login.html', 
                            title='Sign In',
-                           form=form)
+                           form=form,
+                           user=current_user)
     
+@app.route('/logout')
+@login_required
+def logout():
+    user = current_user
+    user = database.get_user(user.user_id)
+    user.authenticated = False
+    database.session.commit()
+    logout_user()
+    return redirect('/index')
+
 @app.route('/signup', methods=('GET', 'POST'))
 def signup():
     form = SignupForm()

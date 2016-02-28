@@ -8,8 +8,13 @@
       {{ form.hidden_tag() }}
       <p>
           Please enter your username:<br>
-          {{ form.openid(size=80) }}<br>
-          {% for error in form.openid.errors %}
+          {{ form.user(size=80) }}<br>
+          {% for error in form.user.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+          Please enter your password:<br>
+          {{ form.password(size=80) }}<br>
+          {% for error in form.password.errors %}
             <span style="color: red;">[{{ error }}]</span>
           {% endfor %}<br>
       </p>

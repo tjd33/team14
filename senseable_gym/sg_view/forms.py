@@ -12,5 +12,6 @@ class SignupForm(Form):
     repeat_pass = StringField('Repeat Password')
     
 class LoginForm(Form):
-    openid = StringField('openid', validators=[DataRequired()])
+    user = StringField('user', validators=[DataRequired()])
+    password = StringField('password', validators=[DataRequired()])
     remember_me = BooleanField('remember_me', default=False)
