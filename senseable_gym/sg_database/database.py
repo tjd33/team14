@@ -225,6 +225,9 @@ class DatabaseModel():
 
     def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()
+        
+    def get_user_from_user_name(self, user_name) -> User:
+        return self.session.query(User).filter(User._user_name == user_name).one()
 
     def get_machine_user_relationships(self, machine) -> MachineCurrentUser:
         """

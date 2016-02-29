@@ -38,7 +38,7 @@ def main(level, dbname):
     # Create your own database model
     #   You specify the name of the database and then the user accessing the database
     #   TODO: Update with more information as the __init__ becomes more complete
-    db = DatabaseModel(None, 'example')
+    db = DatabaseModel(dbname, 'example')
 
     # Set the database logger to your own custom level
     db.logger.setLevel(getattr(logging, level.upper(), 'INFO'))
@@ -59,7 +59,11 @@ def main(level, dbname):
         temp_machine.status = m_status
 
         # Add the machine to the database
-        db.add_machine(temp_machine)
+        try:
+            db.add_machine(temp_machine)
+        except:
+            pass
+            # already contains machine
 
     # Use the database to retrieve all of the machines
     machine_list = db.get_machines()
@@ -71,10 +75,14 @@ def main(level, dbname):
 
     # Now we add some users to our database model
     for user_id in range(4):
-        temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id))
+        temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id), 'password'+ str(user_id))
 
         # Add the users to the database
-        db.add_user(temp_user)
+        try:
+            db.add_user(temp_user)
+        except:
+            pass
+            # already contains user
 
     user_list = db.get_users()
 
@@ -92,7 +100,10 @@ def main(level, dbname):
     machine_1 = db.get_machine_by_location([1, 1, 1])
 
     # Indicate the a relationship has been made between these two objects
-    db.set_user_machine_status(machine_1, user_1)
+    try:
+        db.get_machine_user_relationships(machine_1)
+    except:
+        db.set_user_machine_status(machine_1, user_1)
 
     # Find out what the status of the machine is (we already know it)
     rel_1 = db.get_machine_user_relationships(machine_1)
@@ -117,11 +128,14 @@ def main(level, dbname):
     res_1 = Reservation(machine_2, user_2, time_1, time_2)
     res_2 = Reservation(machine_3, user_3, time_1, time_3)
     res_3 = Reservation(machine_2, user_2, time_3, time_4)
-
-    db.add_reservation(res_1)
-    db.add_reservation(res_2)
-    db.add_reservation(res_3)
-
+    
+    try:
+        db.add_reservation(res_1)
+        db.add_reservation(res_2)
+        db.add_reservation(res_3)
+    except:
+        pass
+        
     res_list = db.get_reservations()
     [print(res) for res in res_list]
 
