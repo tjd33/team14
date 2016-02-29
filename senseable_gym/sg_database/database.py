@@ -61,10 +61,13 @@ class DatabaseModel():
 
         # Set up the connection to the database
         if dbname:
-            # self.engine = create_engine('sqlite:///{}.db'.format(dbname),
-            self.engine = create_engine('postgresql://tj_chromebook@localhost:5432/sg',
+            self.engine = create_engine('sqlite:///{}.db'.format(dbname),
+                                        connect_args={'check_same_thread': False},
                                         poolclass=StaticPool,
                                         )
+            # self.engine = create_engine('postgresql://tj_chromebook@localhost:5432/sg',
+            #                             poolclass=StaticPool,
+            #                             )
 
         else:
             self.engine = create_engine('sqlite://')
@@ -256,7 +259,7 @@ class DatabaseModel():
 
     def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()
-        
+
     def get_user_from_user_name(self, user_name) -> User:
         return self.session.query(User).filter(User._user_name == user_name).one()
 
