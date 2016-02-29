@@ -21,8 +21,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
-    users = database.get_users()
-    user = users[0]
+    try:
+        user = database.get_user_from_user_name(user_id)
+    except:
+        user = None
     return user 
     
 # TODO: Include openID configuration here

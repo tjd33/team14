@@ -56,8 +56,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         
-
-        user = database.get_users()[0]
+        try:
+            user = database.get_user_from_user_name(form.user.data)
+        except:
+            user = None
         if user:
             if user.password == form.password.data:
                 user.authenticated = True
