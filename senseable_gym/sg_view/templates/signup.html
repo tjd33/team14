@@ -1,0 +1,13 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST" action="/">
+    {{ form.hidden_tag() }}
+    {{ form.user_name.label }} {{ form.user_name }} <br/>
+    {{ form.password.label }} {{ form.password }} <br/>
+    {{ form.repeat_pass.label }} {{ form.repeat_pass }} <br/>
+    Go Die In A Binary Search Tree, cause u can't signup yet <br/>
+    <input type="submit" value="Go">
+</form>
+{% endblock %}

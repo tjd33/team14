@@ -1,14 +1,29 @@
-<!doctype html>
+{% extends "base.html" %}
 
-<html>
-	<head>
-		<title>Index</title>
-	</head>
-	
-	<body>
-	<h1>Index</h1>
-		<a href="/">/</a>
-		<a href="index/">index/</a>
-		<a href="hello/">hello/</a>  
-	</body>
-</html>
+
+
+{% block content %}
+    <div id="main">
+        <section id=intro>
+            Welcome
+        </section>
+        <article class="post">
+        {% if user.authenticated %}
+            <ul>
+                <li><a href={{url_for('machine_view')}}>  View Usage </a> </li>
+                <li><a href={{url_for('reserve')}}>  Reserve Machine </a> </li>
+                <li><a href={{url_for('settings')}}>  My Account </a> </li>
+            </ul>
+        {% else %}
+            <ul>
+                <li><a href={{ url_for('machine_view')}} > view usage </a> </li>
+                <li>
+                    <a href={{ url_for('login')}}>login</a> 
+                    or <a href = {{ url_for('signup')}}>signup </a>
+                </li>
+            </ul>
+        {% endif %}
+        </article>
+    </div>
+{% endblock content %}
+
