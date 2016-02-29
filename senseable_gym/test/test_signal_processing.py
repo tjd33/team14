@@ -8,7 +8,13 @@ class TestSignalProcessing(unittest.TestCase):
 		# Do this every time I run a new test function
 		pass
 
-	def test_processing_with_resting_data(self):
+	def test_read_text_file_data(self):
+		pass
+
+	def test_plot_sensor_data():
+		pass
+
+	def test_is_number():
 		pass
 
 	def tearDown(self):
