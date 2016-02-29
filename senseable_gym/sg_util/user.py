@@ -12,7 +12,7 @@ from senseable_gym.sg_util.base import Base
 class User(Base):
     __tablename__ = 'user'
 
-    def __init__(self, user_name: str,  first_name: str, last_name: str, password_hash: str):
+    def __init__(self, user_name: str,  first_name: str, last_name: str, password_hash: str = ''):
         self._user_name = user_name
         self._first_name = first_name
         self._last_name = last_name
@@ -59,27 +59,27 @@ class User(Base):
                 self.user_name,
                 self.full_name
                 )
-                
+
     @property
     def password(self) -> str:
         return self._password
-             
+
     def is_active(self):
         return True
-        
+
     def get_id(self):
         return self._user_name
-        
+
     def is_authenticated(self):
         return self._authenticated
-        
+
     @property
     def authenticated(self):
         return self._authenticated
-        
+
     @authenticated.setter
     def authenticated(self, value):
         self._authenticated = value
-        
+
     def is_anonymous(self):
         return False
