@@ -86,12 +86,12 @@ class Machine(Base):
                 )
 
         if self.color:
-            status_color = self.get_status().color_string()
+            status_color = self.status.color_string()
             s = status_color[0] + s + status_color[1]
 
         return s
-        
-    def __eq__(self,other):
+
+    def __eq__(self, other):
         return self.machine_id == other.machine_id and \
                 self._type == other._type and \
                 self._status == other._status and \
