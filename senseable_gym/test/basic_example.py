@@ -22,6 +22,7 @@ from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
+from senseable_gym.sg_view import bcrypt
 
 
 # Code begins here
@@ -38,8 +39,9 @@ def main(level, dbname):
     # Create your own database model
     #   You specify the name of the database and then the user accessing the database
     #   TODO: Update with more information as the __init__ becomes more complete
+    
     db = DatabaseModel(dbname, 'example')
-
+    db._empty_db()
     # Set the database logger to your own custom level
     db.logger.setLevel(getattr(logging, level.upper(), 'INFO'))
 
@@ -50,7 +52,7 @@ def main(level, dbname):
             m_status = MachineStatus.BUSY
         else:
             m_type = MachineType.TREADMILL
-            m_status = MachineStatus.UNKNOWN
+            m_status = MachineStatus.OPEN
 
         # Create a Machine Object
         temp_machine = Machine(type=m_type, location=[machine_id, machine_id, 1])
@@ -75,7 +77,7 @@ def main(level, dbname):
 
     # Now we add some users to our database model
     for user_id in range(4):
-        temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id), 'password'+ str(user_id))
+        temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id), bcrypt.generate_password_hash('password'+ str(user_id)))
 
         # Add the users to the database
         try:

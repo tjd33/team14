@@ -190,6 +190,10 @@ class DatabaseModel():
         machine = self.get_machine(id)
 
         self.session.delete(machine)
+        
+    def remove_user(self, id):
+        user = self.get_user(id)
+        self.session.delete(user)
 
     # }}}
     # {{{ Getters

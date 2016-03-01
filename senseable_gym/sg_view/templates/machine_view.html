@@ -9,7 +9,11 @@
             {% if machines %}
                 <ul>
                 {% for machine in machines %}
-                    <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                    {% if machine.status.__str__() == "Open" and user.authenticated==True %}
+                        <li><a href='/reserve'>{{ machine.machine_id }}: {{ machine.status }}</a></li>
+                    {% else %}
+                        <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                    {% endif %}
                     {% if reservations[machine.machine_id] %}
                         <ul>
                         {% for reservation in reservations[machine.machine_id] %}

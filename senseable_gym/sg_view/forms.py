@@ -7,11 +7,13 @@ class MyForm(Form):
     name = StringField('name', validators=[DataRequired()])
     
 class SignupForm(Form):
-    user_name = StringField('User Name')
-    password = StringField('Password')
-    repeat_pass = StringField('Repeat Password')
+    user_name = StringField('User Name', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
+    repeat_pass = StringField('Repeat Password', validators=[DataRequired()])
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
     
 class LoginForm(Form):
-    user = StringField('user', validators=[DataRequired()])
-    password = StringField('password', validators=[DataRequired()])
-    remember_me = BooleanField('remember_me', default=False)
+    user = StringField('User', validators=[DataRequired()])
+    password = StringField('Passwlrd', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me', default=False)

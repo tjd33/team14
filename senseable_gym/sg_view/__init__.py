@@ -9,11 +9,10 @@ from flask.ext.bcrypt import Bcrypt
 app = Flask(__name__)
 # TODO: Get the config to work correctly
 app.config.from_object('senseable_gym.sg_view.config')
-
+bcrypt = Bcrypt(app)
 
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.test.basic_example import main
-
 database = main(level='INFO', dbname='webTest')
 
 # TODO: Include database configuration here
@@ -34,6 +33,8 @@ def load_user(user_id):
 # TODO: Import view-wide modules
 
 
-bcrypt = Bcrypt(app)
+
+
+
 
 from senseable_gym.sg_view import views
