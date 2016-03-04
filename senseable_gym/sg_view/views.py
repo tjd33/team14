@@ -100,9 +100,7 @@ def signup():
     return render_template('signup.html', form=form,
                            user=current_user)
     
-@app.route('/about')
-def about():
-    return 'About page'
+
     
     
 @app.route('/reserve')

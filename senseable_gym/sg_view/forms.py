@@ -16,4 +16,4 @@ class SignupForm(Form):
 class LoginForm(Form):
     user = TextField('User', validators=[DataRequired()])
     password = PasswordField('Passwlrd', validators=[DataRequired()])
-    remember_me = TextField('Remember Me', default=False)
+    remember_me = BooleanField('Remember Me', default=False)

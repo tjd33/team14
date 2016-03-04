@@ -7,56 +7,58 @@
 -->
 <html>
     <head>
-        <title>Machine Overview</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
+        
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sense-Able Gym</title>
+        <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/bootstrap.css') }} />
+        <link href={{ url_for('static', filename='bootstrap/css/navbar-static-top.css') }} rel="stylesheet">
     </head>
-</html>
-<body>
-    <!-- Header -->
-    <header id="header">
-        <h1><a href={{ url_for('index')}}>Sense-Able Gym</a></h1>
-        <nav class="links">
-            <ul>
-                <li><a href={{ url_for('machine_view')}}>View Usage</a></li>
-                <li><a href={{ url_for('reserve')}}>Reserve</a></li>
-                <li><a href="/static/ppfs.html">PPFS</a></li>
-                <li><a href="/static/about.html">About</a></li>
-                <li><a href="http://www.calvin.edu/academic/engineering/senior-design/">Senior Design Teams</a></li>
-                <li><a href="http://www.calvin.edu/engineering/">Calvin College Engineering</a></li>
-                {% if user.authenticated %}
-                    <li><a href={{ url_for('settings')}}>My Account</a></li>
-                    <li><a href={{ url_for('logout')}}>Logout</a></li>
-                {% else %}
-                    <li><a href={{ url_for('login')}}>Login</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-        <nav class="main">
-            <ul>
-                <li class="search">
-                    <a class="fa-search" href="#search">Search</a>
-                    <form id="search" method="get" action="#">
-                        <input type="text" name="query" placeholder="Search" />
-                    </form>
-                </li>
-                <li class="menu">
-                    <a class="fa-bars" href="#menu">Menu</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <!-- Wrapper -->
-    <div id="wrapper">
-        <!-- Content -->
-        {% block content %}{% endblock %}</div>
 
-        <!-- Footer -->
-        <div id="footer">
-            {% block footer %}
-            &copy; Copyright 2016 by <a href="TODO">team14</a>.
-            {% endblock %}
+    <body>
+        <!-- Header -->
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href={{ url_for('index')}}>Sense-Able Gym</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href={{ url_for('machine_view')}}>View Usage</a></li>
+                        <li><a href={{ url_for('reserve')}}>Reserve</a></li>
+                        <li><a href="/static/ppfs.html">PPFS</a></li>
+                        <li><a href="/static/about.html">About</a></li>
+                        {% if user.authenticated %}
+                            <li><a href={{ url_for('settings')}}>My Account</a></li>
+                            <li><a href={{ url_for('logout')}}>Logout</a></li>
+                        {% else %}
+                            <li><a href={{ url_for('login')}}>Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Wrapper -->
+        <div class="container">
+            <!-- Content -->
+            {% block content %}{% endblock %}</div>
+
+            <!-- Footer -->
+            <div id="footer">
+                {% block footer %}
+                &copy; Copyright 2016 by <a href="TODO">team14</a>.
+                {% endblock %}
+            </div>
         </div>
-    </div>
-</body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+        <script src={{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}></script>
+    </body>
+</html>
