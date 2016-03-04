@@ -47,14 +47,16 @@
             </ul>
         </nav>
     </header>
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <!-- Content -->
+        {% block content %}{% endblock %}</div>
 
-    <!-- Content -->
-    {% block content %}{% endblock %}</div>
-
-    <!-- Footer -->
-    <div id="footer">
-        {% block footer %}
-        &copy; Copyright 2016 by <a href="TODO">team14</a>.
-        {% endblock %}
+        <!-- Footer -->
+        <div id="footer">
+            {% block footer %}
+            &copy; Copyright 2016 by <a href="TODO">team14</a>.
+            {% endblock %}
+        </div>
     </div>
 </body>

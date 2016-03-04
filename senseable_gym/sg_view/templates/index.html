@@ -10,18 +10,19 @@
         <article class="post">
         {% if user.authenticated %}
             <ul>
-                <li><a href={{url_for('machine_view')}}>  View Usage </a> </li>
-                <li><a href={{url_for('reserve')}}>  Reserve Machine </a> </li>
-                <li><a href={{url_for('settings')}}>  My Account </a> </li>
+                <li><a href={{url_for('machine_view')}} class="button big">  View Usage </a> </li>
+                <li><a href={{url_for('reserve')}} class="button big">  Reserve Machine </a> </li>
+                <li><a href={{url_for('settings')}} class="button big">  My Account </a> </li>
             </ul>
         {% else %}
-            <ul>
-                <li><a href={{ url_for('machine_view')}} > view usage </a> </li>
-                <li>
-                    <a href={{ url_for('login')}}>login</a> 
-                    or <a href = {{ url_for('signup')}}>signup </a>
-                </li>
-            </ul>
+            <div style="text-align:center; margin:auto">
+            <div style="text-align:center; margin:auto">
+                    <div href={{ url_for('machine_view')}} class="button giant"> view usage </div>
+
+                    <div href={{ url_for('login')}} class="button giant">login</div> 
+                    <div href = {{ url_for('signup')}} class="button giant">signup </div>
+               </div>
+            </div>
         {% endif %}
         </article>
     </div>
