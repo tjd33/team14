@@ -17,8 +17,8 @@
                     {% if reservations[machine.machine_id] %}
                         <ul>
                         {% for reservation in reservations[machine.machine_id] %}
-                            <li>Start: {{ reservation.start_time.isocalendar() }},
-                                End: {{ reservation.end_time.isocalendar() }}</li>
+                            <li>Start: {{ reservation.start_time.strftime("%d. %B %Y %I:%M%p") }},
+                                End: {{ reservation.end_time.strftime("%d. %B %Y %I:%M%p") }}</li>
                         {% endfor %}
                         </ul>
                     {% endif %}

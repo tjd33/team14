@@ -1,6 +1,11 @@
+from datetime import datetime
+
 from flask_wtf import Form
-from wtforms import StringField, BooleanField, TextField, PasswordField
+from wtforms import StringField, BooleanField, TextField, PasswordField, SelectField, IntegerField
 from wtforms.validators import DataRequired
+from wtforms.fields.html5 import DateField
+from wtforms_components import TimeField
+
 
 
 class MyForm(Form):
@@ -15,5 +20,11 @@ class SignupForm(Form):
     
 class LoginForm(Form):
     user = TextField('User', validators=[DataRequired()])
-    password = PasswordField('Passwlrd', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me', default=False)
+    
+class ReserveForm(Form):
+    machine = SelectField('Machine', coerce=int)
+    date = DateField('Date', format='%Y-%m-%d', default=datetime.today())
+    start_time = TimeField('Start time', default = datetime.now())
+    length = IntegerField('Duration in minutes', default=30)

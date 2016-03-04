@@ -1,13 +1,16 @@
+from datetime import datetime, timedelta
+
 # Non Local Imports
 from flask import render_template, redirect, flash
 from flask.ext.login import login_user, current_user, logout_user, login_required
 
 # Local Imports
 from senseable_gym.sg_view import app, bcrypt
-from senseable_gym.sg_view.forms import MyForm, LoginForm, SignupForm
+from senseable_gym.sg_view.forms import MyForm, LoginForm, SignupForm, ReserveForm
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
+from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.test.basic_example import main
 database = DatabaseModel('webTest', 'team14')
 # from senseable_gym.sg_util.user_management import delete_user
@@ -103,9 +106,21 @@ def signup():
 
     
     
-@app.route('/reserve')
+@app.route('/reserve', methods=['GET', 'POST'])
 def reserve():
-    return 'reserve page'
+    form=ReserveForm()
+    machine_list = database.get_machines()
+    choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
+    form.machine.choices = choices
+    if form.validate_on_submit():
+        machine = database.get_machine(form.machine.data)
+        start = datetime.combine(form.date.data, form.start_time.data)
+        time_delta = timedelta(minutes=form.length.data)
+        end = start + time_delta
+        reservation = Reservation(machine, current_user, start, end)
+        database.add_reservation(reservation)
+        return redirect('/index')
+    return render_template('reserve.html', form=form, user=current_user)
     
 
 @app.route('/settings')

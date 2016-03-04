@@ -8,23 +8,23 @@
     </div>
     <div class="jumbotron" style="overflow:auto">
         {% if user.authenticated %}
-            <div class="col-md-4">
+            <div class="col-xs-6 col-sm-4">
                 <a class="btn btn-xlg btn-success" href={{ url_for('machine_view')}}>Machine Usage</a>
             </div>
-            <div class="col-md-4">
+            <div class="col-xs-6 col-sm-4">
                 <a class="btn btn-xlg btn-info" href={{ url_for('reserve')}}>Reserve Machine</a>
             </div>
-            <div class="col-md-4">
+            <div class="col-xs-6 col-sm-4">
                 <a class="btn btn-xlg btn-primary" href={{ url_for('settings')}}>My Account</a>
             </div>
         {% else %}
-            <div class="col-md-4">
+            <div class="col-xs-6 col-sm-4">
                 <a class="btn btn-xlg btn-success" href={{ url_for('machine_view')}}>Machine Usage</a>
             </div>
-            <div class="col-md-4">
+            <div class="col-xs-6 col-sm-4">
                 <a class="btn btn-xlg btn-info" href={{ url_for('login')}}>Login</a>
             </div>
-            <div class="col-md-4">
+            <div class="col-xs-6 col-sm-4">
                 <a class="btn btn-xlg btn-primary" href={{ url_for('signup')}}>Signup</a>
             </div>
         {% endif %}
