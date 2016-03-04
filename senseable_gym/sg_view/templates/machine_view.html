@@ -9,12 +9,16 @@
             {% if machines %}
                 <ul>
                 {% for machine in machines %}
-                    <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                    {% if machine.status.__str__() == "Open" and user.authenticated==True %}
+                        <li><a href='/reserve'>{{ machine.machine_id }}: {{ machine.status }}</a></li>
+                    {% else %}
+                        <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                    {% endif %}
                     {% if reservations[machine.machine_id] %}
                         <ul>
                         {% for reservation in reservations[machine.machine_id] %}
-                            <li>Start: {{ reservation.start_time.isocalendar() }},
-                                End: {{ reservation.end_time.isocalendar() }}</li>
+                            <li>Start: {{ reservation.start_time.strftime("%d. %B %Y %I:%M%p") }},
+                                End: {{ reservation.end_time.strftime("%d. %B %Y %I:%M%p") }}</li>
                         {% endfor %}
                         </ul>
                     {% endif %}
