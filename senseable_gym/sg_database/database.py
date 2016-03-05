@@ -13,8 +13,11 @@ TJ DeVries
 # {{{ Imports
 # Built-in Imports
 import logging
+import time
 from typing import List
 from datetime import datetime
+# from queue import Queue
+from threading import Lock
 
 # Third Party Imports
 from sqlalchemy import create_engine, and_
@@ -35,6 +38,18 @@ from senseable_gym.sg_util.exception import MachineError, UserError, Reservation
 
 # }}}
 
+l = Lock()
+
+
+def enqueue_action(func):
+    l.acquire()
+
+    def func_wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+
+    l.release()
+    return func
+
 
 class DatabaseModel():
     # {{{ Initialization
@@ -46,7 +61,14 @@ class DatabaseModel():
 
         # Set up the connection to the database
         if dbname:
-            self.engine = create_engine('sqlite:///{}.db'.format(dbname), connect_args={'check_same_thread': False}, poolclass=StaticPool)
+            self.engine = create_engine('sqlite:///{}.db'.format(dbname),
+                                        connect_args={'check_same_thread': False},
+                                        poolclass=StaticPool,
+                                        )
+            # self.engine = create_engine('postgresql://tj_chromebook@localhost:5432/sg',
+            #                             poolclass=StaticPool,
+            #                             )
+
         else:
             self.engine = create_engine('sqlite://')
 
@@ -55,17 +77,25 @@ class DatabaseModel():
         self.base.metadata.bind = self.engine
         self.base.metadata.create_all()
 
-        self.session_factory = sessionmaker(bind=self.engine)
-        self.session = scoped_session(self.session_factory)()
+        self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
+        self.session_maker = scoped_session(self.session_factory)
+        self.session = self.session_maker()
 
+        # Spawn a thread, and store in self
+        # Create a queue for that thread
+        # Create
+
+    @enqueue_action
     def _empty_db(self):
         """
         Empties the database of any current records.
             Use with caution :D
         :returns: None
         """
+        time.sleep(.5)
         self.meta.drop_all()
         self.meta.create_all()
+        self.session.commit()
 
         # TODO: Delete this if it turns out the two lines above thie
         #           work perfectly fine. Otherwise, we may have to go back to this
@@ -110,6 +140,7 @@ class DatabaseModel():
 
     # }}}
     # {{{ Adders
+    @enqueue_action
     def add_machine(self, machine):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(machine, Machine):
@@ -139,6 +170,7 @@ class DatabaseModel():
 
         self.session.commit()
 
+    @enqueue_action
     def add_user(self, user):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(user, User):
@@ -154,6 +186,7 @@ class DatabaseModel():
 
         self.session.commit()
 
+    @enqueue_action
     def add_reservation(self, res: Reservation) -> None:
         """
         Adds a reservation to the database.
@@ -190,7 +223,8 @@ class DatabaseModel():
         machine = self.get_machine(id)
 
         self.session.delete(machine)
-        
+        self.session.commit()
+
     def remove_user(self, id):
         user = self.get_user(id)
         self.session.delete(user)
@@ -229,7 +263,7 @@ class DatabaseModel():
 
     def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()
-        
+
     def get_user_from_user_name(self, user_name) -> User:
         return self.session.query(User).filter(User._user_name == user_name).one()
 
@@ -292,6 +326,7 @@ class DatabaseModel():
         relationship = MachineCurrentUser(machine, user)
 
         self.session.add(relationship)
+        self.session.commit()
 
         return relationship
 
