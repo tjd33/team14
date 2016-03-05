@@ -3,27 +3,31 @@
 
 
 {% block content %}
-    <div id="main">
-        <section id=intro>
-            Welcome
-        </section>
-        <article class="post">
+    <div>
+        Welcome
+    </div>
+    <div class="jumbotron" style="overflow:auto">
         {% if user.authenticated %}
-            <ul>
-                <li><a href={{url_for('machine_view')}}>  View Usage </a> </li>
-                <li><a href={{url_for('reserve')}}>  Reserve Machine </a> </li>
-                <li><a href={{url_for('settings')}}>  My Account </a> </li>
-            </ul>
+            <div class="col-xs-6 col-sm-4">
+                <a class="btn btn-xlg btn-success" href={{ url_for('machine_view')}}>Machine Usage</a>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <a class="btn btn-xlg btn-info" href={{ url_for('reserve')}}>Reserve Machine</a>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <a class="btn btn-xlg btn-primary" href={{ url_for('settings')}}>My Account</a>
+            </div>
         {% else %}
-            <ul>
-                <li><a href={{ url_for('machine_view')}} > view usage </a> </li>
-                <li>
-                    <a href={{ url_for('login')}}>login</a> 
-                    or <a href = {{ url_for('signup')}}>signup </a>
-                </li>
-            </ul>
+            <div class="col-xs-6 col-sm-4">
+                <a class="btn btn-xlg btn-success" href={{ url_for('machine_view')}}>Machine Usage</a>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <a class="btn btn-xlg btn-info" href={{ url_for('login')}}>Login</a>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <a class="btn btn-xlg btn-primary" href={{ url_for('signup')}}>Signup</a>
+            </div>
         {% endif %}
-        </article>
     </div>
 {% endblock content %}
 

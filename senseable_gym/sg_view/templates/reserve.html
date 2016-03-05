@@ -1,0 +1,13 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<form action="" method="post" name="reserve">
+    {{ form.hidden_tag() }}
+    {{ form.machine.label }} {{ form.machine }} <br/>
+    {{ form.date.label }} {{ form.date }} <br/>
+    {{ form.start_time.label }} {{ form.start_time}} <br/>
+    {{ form.length.label }} {{ form.length}} <br/>
+    <input type="submit" value="Reserve">
+</form>
+{% endblock %}

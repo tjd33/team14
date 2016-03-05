@@ -225,6 +225,10 @@ class DatabaseModel():
         self.session.delete(machine)
         self.session.commit()
 
+    def remove_user(self, id):
+        user = self.get_user(id)
+        self.session.delete(user)
+
     # }}}
     # {{{ Getters
     def get_machines(self) -> List[Machine]:

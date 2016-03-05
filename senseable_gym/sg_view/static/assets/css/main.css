@@ -1793,6 +1793,18 @@
 			font-size: 0.7em;
 			padding: 0 3em;
 		}
+        
+        input[type="submit"].giant,
+		input[type="reset"].giant,
+		input[type="button"].giant,
+		button.giant,
+		.button.giant {
+			font-size: 1.2em;
+            display: table-cell; 
+            vertical-align: middle;
+			width: 15em;
+            height: 15em
+		}
 
 		input[type="submit"].small,
 		input[type="reset"].small,
