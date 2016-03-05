@@ -6,6 +6,7 @@
     <div id="main">
         <article class="post">
             <h1>Machine Status</h1>
+            <canvas id ="current_machine_status" width="700" height="700"></canvas>
             {% if machines %}
                 <ul>
                 {% for machine in machines %}
@@ -37,4 +38,7 @@
             {% endif %}
         </article>
     </div>
+    <!-- Run the script for creating the machine view in the canvas -->
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery-2.2.1.js') }}" ></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/machine_view.js') }}" ></script>
 {% endblock content %}
