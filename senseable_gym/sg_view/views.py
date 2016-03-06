@@ -6,7 +6,7 @@ from flask.ext.login import login_user, current_user, logout_user, login_require
 
 # Local Imports
 from senseable_gym.sg_view import app, bcrypt
-from senseable_gym.sg_view.forms import LoginForm, SignupForm, ReserveForm
+from senseable_gym.sg_view.forms import LoginForm, SignupForm, ReserveForm, ReserveMachineForm
 from senseable_gym.sg_database.database import DatabaseModel
 # from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
@@ -128,13 +128,15 @@ def reserve():
 
 
 @app.route('/reserve/<machine_id>', methods=['GET', 'POST'])
-def reserve_machine():
-    form = ReserveForm()
+def reserve_machine(machine_id=None):
+    form = ReserveMachineForm()
+
     machine_list = database.get_machines()
     choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
     form.machine.choices = choices
+
     if form.validate_on_submit():
-        machine = database.get_machine(form.machine.data)
+        machine = int(machine_id)
         start = datetime.combine(form.date.data, form.start_time.data)
         time_delta = timedelta(minutes=form.length.data)
         end = start + time_delta
