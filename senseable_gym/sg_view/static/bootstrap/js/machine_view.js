@@ -33,6 +33,8 @@ function draw_machines(machines){
             y_max = machines[i].location[1] + 1;
         }
     }
+    x_max++;
+    y_max++;
 
     // Create a list to hold all of the locations of the centers of the machines
     var locations = [];
