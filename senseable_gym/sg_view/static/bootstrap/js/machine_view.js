@@ -2,13 +2,26 @@ function n(num, max, multiplier) {
     return (num + 1) / max * multiplier;
 }
 
+function collides(rects, x, y) {
+    var isCollision = false;
+    for (var i = 0, len = rects.length; i < len; i++) {
+        var x_rect = rects[i].x, y_rect = rects[i].y, radius = rects[i].r;
+        // console.log(Math.sqrt(Math.pow(x_rect - x, 2) + Math.pow(y_rect - y, 2)));
+        if (Math.sqrt(Math.pow(x_rect - x, 2) + Math.pow(y_rect - y, 2)) < radius) {
+            isCollision = rects[i];
+        }
+    }
+    return isCollision;
+}
+
 function draw_machines(machines){
     var canvas = document.getElementById("current_machine_status");
-    var ctx = canvas.getContext("2d");
+    var elem = canvas.getContext("2d");
 
     // TODO: Get the width and height of the canvas dynamically
     var height = 700;
     var width = 700;
+    var radius = 25;
 
     var x_max = 0;
     var y_max = 0;
@@ -21,17 +34,35 @@ function draw_machines(machines){
         }
     }
 
-    ctx.fillStyle = "rgba(200, 200, 100, .6)";
-    var x_loc = 0;
-    var y_loc = 0;
+    // Create a list to hold all of the locations of the centers of the machines
+    var locations = [];
+
+    // TODO: Set the fill style differently depending on status
+    elem.fillStyle = "rgba(200, 200, 100, .6)";
+    var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
+
     for ( i = 0; i < l; i++) {
-        ctx.beginPath();
+        elem.beginPath();
         x_loc = machines[i].location[0];
         y_loc = machines[i].location[1];
-        ctx.arc(n(x_loc, x_max, width),
-                n(y_loc, y_max, height),
-                10, 50 , 0, Math.PI*2, true);
-        ctx.closePath();
-        ctx.fill();
+        x_norm = n(x_loc, x_max, width);
+        y_norm = n(y_loc, y_max, height);
+        elem.arc(x_norm,
+                y_norm,
+                radius, 50 , 0, Math.PI*2);
+        elem.closePath();
+        elem.fill();
+
+        locations.push({'x': x_norm, 'y': y_norm, 'r': radius});
     }
+
+    $('#current_machine_status').on('click', function(e) {
+        console.log('click: ' + e.offsetX + '/' + e.offsetY);
+        var rect = collides(locations, e.offsetX, e.offsetY);
+        if (rect) {
+            console.log('collision: ' + rect.x + '/' + rect.y);
+        } else {
+            console.log('no collision');
+        }
+    });
 }
