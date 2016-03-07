@@ -1,3 +1,13 @@
+var current_machine_id = -1;
+
+var get_current_machine_id = function() {
+    return current_machine_id;
+};
+
+var set_current_machine_id = function(i) {
+    current_machine_id = i;
+};
+
 function n(num, max, multiplier) {
     return (num + 1) / max * multiplier;
 }
@@ -80,4 +90,23 @@ function draw_machines(machines){
             console.log('no collision');
         }
     });
+
+    $('#current_machine_status').mousemove(
+        // When
+        function(e) {
+            var res = collides(locations, e.offsetX, e.offsetY);
+            var machine = res[0];
+            var c_m_id = get_current_machine_id();
+            if (machine) {
+                if (res[1] != c_m_id) {
+                    console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
+                    set_current_machine_id(res[1]);
+                    $('#machine_summary').html(
+                        machine_summary(machine)
+                    );
+                    // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
+                }
+            }
+        }
+    );
 }
