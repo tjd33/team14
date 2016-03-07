@@ -8,25 +8,19 @@
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
         var machines = [
             {% for machine in machines %}
-                {{ '{ id: ' ~ machine.machine_id ~ ', location: ' ~ machine.location ~ ', status: "'|safe ~ machine.status ~ '" }, '|safe }}
+                {{ '{ machine_id: ' ~ machine.machine_id ~ ', location: ' ~ machine.location ~ ', status: "'|safe ~ machine.status ~ '" }, '|safe }}
             {% endfor %}
             ];
-        $(function(){
-            $("#test").text(function(){
-                var final_str = '';
-                for ( var i = 0, l = machines.length; i < l; i++) {
-                    final_str += machines[i].id;
-                }
-                return final_str;
-            });
-        });
     </script>
-    <div id="test">
+    <div id="canvas">
+        <canvas id ="current_machine_status" width="700" height="700"></canvas>
+    </div>
+    <div id="machine_summary">
+        <p>Please click on a machine to view information</p>
     </div>
     <div id="main">
         <article class="post">
             <h1>Machine Status</h1>
-            <canvas id ="current_machine_status" width="700" height="700"></canvas>
             {% if machines %}
                 <ul>
                 {% for machine in machines %}
