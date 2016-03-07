@@ -72,10 +72,10 @@ function draw_machines(machines){
     $('#current_machine_status').on('click', function(e) {
         console.log('click: ' + e.offsetX + '/' + e.offsetY);
         var res = collides(locations, e.offsetX, e.offsetY);
-        var rect = res[0];
-        if (rect) {
-            console.log('collision {' + res[1] + '}: ' + rect.x + '/' + rect.y);
-            window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
+        var machine = res[0];
+        if (machine) {
+            console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
+            // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
         } else {
             console.log('no collision');
         }
