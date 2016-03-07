@@ -24,6 +24,21 @@ function collides(machines, x, y) {
     return isCollision;
 }
 
+function machine_summary(machine) {
+    var reservation_schedule = [new Date($.now())];
+    var summary = `<ul>
+        <li>ID: ${machine.machine_id}</li>
+        <li>Status: ${machine.status}</li>
+        <li>Reservation Schedule:
+            <ul>
+                <li>${reservation_schedule[0]}</li>
+            </ul>
+            </li>
+    </ul>`;
+
+    return summary;
+}
+
 function draw_machines(machines){
     var canvas = document.getElementById("current_machine_status");
     var elem = canvas.getContext("2d");
