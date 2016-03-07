@@ -8,7 +8,7 @@ function collides(rects, x, y) {
         var x_rect = rects[i].x, y_rect = rects[i].y, radius = rects[i].r;
         // console.log(Math.sqrt(Math.pow(x_rect - x, 2) + Math.pow(y_rect - y, 2)));
         if (Math.sqrt(Math.pow(x_rect - x, 2) + Math.pow(y_rect - y, 2)) < radius) {
-            isCollision = rects[i];
+            return [rects[i], i];
         }
     }
     return isCollision;
@@ -60,9 +60,11 @@ function draw_machines(machines){
 
     $('#current_machine_status').on('click', function(e) {
         console.log('click: ' + e.offsetX + '/' + e.offsetY);
-        var rect = collides(locations, e.offsetX, e.offsetY);
+        var res = collides(locations, e.offsetX, e.offsetY);
+        var rect = res[0];
         if (rect) {
-            console.log('collision: ' + rect.x + '/' + rect.y);
+            console.log('collision {' + res[1] + '}: ' + rect.x + '/' + rect.y);
+            window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
         } else {
             console.log('no collision');
         }

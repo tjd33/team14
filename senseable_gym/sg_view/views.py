@@ -131,12 +131,12 @@ def reserve():
 def reserve_machine(machine_id=None):
     form = ReserveMachineForm()
 
-    machine_list = database.get_machines()
-    choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
-    form.machine.choices = choices
+    # machine_list = database.get_machines()
+    # choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
+    # form.machine.choices = choices
 
     if form.validate_on_submit():
-        machine = int(machine_id)
+        machine = database.get_machine(int(machine_id))
         start = datetime.combine(form.date.data, form.start_time.data)
         time_delta = timedelta(minutes=form.length.data)
         end = start + time_delta
