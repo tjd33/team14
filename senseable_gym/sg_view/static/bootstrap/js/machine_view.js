@@ -2,13 +2,13 @@ function n(num, max, multiplier) {
     return (num + 1) / max * multiplier;
 }
 
-function collides(rects, x, y) {
+function collides(machines, x, y) {
     var isCollision = false;
-    for (var i = 0, len = rects.length; i < len; i++) {
-        var x_rect = rects[i].x, y_rect = rects[i].y, radius = rects[i].r;
-        // console.log(Math.sqrt(Math.pow(x_rect - x, 2) + Math.pow(y_rect - y, 2)));
-        if (Math.sqrt(Math.pow(x_rect - x, 2) + Math.pow(y_rect - y, 2)) < radius) {
-            return [rects[i], i];
+    for (var i = 0, len = machines.length; i < len; i++) {
+        var x_machine = machines[i].x, y_machine = machines[i].y, radius = machines[i].r;
+        // console.log(Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)));
+        if (Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)) < radius) {
+            return [machines[i], i];
         }
     }
     return isCollision;
