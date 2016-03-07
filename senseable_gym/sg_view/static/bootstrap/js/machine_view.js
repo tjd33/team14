@@ -40,10 +40,15 @@ function draw_machines(machines){
     var locations = [];
 
     // TODO: Set the fill style differently depending on status
-    elem.fillStyle = "rgba(200, 200, 100, .6)";
     var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
 
     for ( i = 0; i < l; i++) {
+        if (machines[i].status == "Busy") {
+            elem.fillStyle = "rgba(360, 77, 44, 1)";
+        }
+        else {
+            elem.fillStyle = "rgba(200, 200, 10, 0.6)";
+        }
         elem.beginPath();
         x_loc = machines[i].location[0];
         y_loc = machines[i].location[1];
@@ -55,7 +60,13 @@ function draw_machines(machines){
         elem.closePath();
         elem.fill();
 
-        locations.push({'x': x_norm, 'y': y_norm, 'r': radius});
+        locations.push({'x': x_norm,
+                        'y': y_norm,
+                        'r': radius,
+                        'machine_id': machines[i].machine_id,
+                        'status': machines[i].status,
+                        'reservations': []
+                        });
     }
 
     $('#current_machine_status').on('click', function(e) {
