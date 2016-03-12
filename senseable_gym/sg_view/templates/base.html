@@ -14,7 +14,6 @@
         <title>Sense-Able Gym</title>
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/bootstrap.css') }} />
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/xl-buttons.css') }} />
-        <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
     </head>
 
     <body>
@@ -43,6 +42,7 @@
                             <li><a href={{ url_for('logout')}}>Logout</a></li>
                         {% else %}
                             <li><a href={{ url_for('login')}}>Login</a></li>
+                            <li><a href={{ url_for('register')}}>Register</a></li>
                         {% endif %}
                     </ul>
                 </div>

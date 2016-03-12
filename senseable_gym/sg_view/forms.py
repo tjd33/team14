@@ -11,12 +11,12 @@ class MyForm(Form):
     name = StringField('name', validators=[DataRequired()])
 
 
-class SignupForm(Form):
-    user_name = TextField('User Name', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    repeat_pass = PasswordField('Repeat Password', validators=[DataRequired()])
-    first_name = TextField('First Name', validators=[DataRequired()])
-    last_name = TextField('Last Name', validators=[DataRequired()])
+class RegisterForm(Form):
+    user_name = TextField('User Name', validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})
+    repeat_pass = PasswordField('Repeat Password', validators=[DataRequired()], render_kw={"placeholder": "Confirm Password"})
+    first_name = TextField('First Name', validators=[DataRequired()], render_kw={"placeholder": "First Name"})
+    last_name = TextField('Last Name', validators=[DataRequired()], render_kw={"placeholder": "Last Name"})
 
 
 class LoginForm(Form):
@@ -27,12 +27,12 @@ class LoginForm(Form):
 
 class ReserveForm(Form):
     machine = SelectField('Machine', coerce=int)
-    date = DateField('Date', format='%Y-%m-%d', default=datetime.today())
-    start_time = TimeField('Start time', default=datetime.now())
-    length = IntegerField('Duration in minutes', default=30)
+    date = DateField('Date', format='%Y-%m-%d', default=datetime.today(), validators=[DataRequired()])
+    start_time = TimeField('Start time', default=datetime.now(), validators=[DataRequired()])
+    length = IntegerField('Duration in minutes', default=30, validators=[DataRequired()])
 
 
 class ReserveMachineForm(Form):
-    date = DateField('Date', format='%Y-%m-%d', default=datetime.today())
-    start_time = TimeField('Start time', default=datetime.now())
-    length = IntegerField('Duration in minutes', default=30)
+    date = DateField('Date', format='%Y-%m-%d', default=datetime.today(), validators=[DataRequired()])
+    start_time = TimeField('Start time', default=datetime.now(), validators=[DataRequired()])
+    length = IntegerField('Duration in minutes', default=30, validators=[DataRequired()])

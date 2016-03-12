@@ -6,7 +6,7 @@ from flask.ext.login import login_user, current_user, logout_user, login_require
 
 # Local Imports
 from senseable_gym.sg_view import app, bcrypt
-from senseable_gym.sg_view.forms import LoginForm, SignupForm, ReserveForm, ReserveMachineForm
+from senseable_gym.sg_view.forms import LoginForm, RegisterForm, ReserveForm, ReserveMachineForm
 from senseable_gym.sg_database.database import DatabaseModel
 # from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
@@ -91,9 +91,9 @@ def logout():
     return redirect(previous_page)
 
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = SignupForm()
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data == form.repeat_pass.data:
             new_user = User(form.user_name.data,
@@ -102,7 +102,7 @@ def signup():
                             bcrypt.generate_password_hash(form.password.data))
             database.add_user(new_user)
         return redirect('/index')
-    return render_template('signup.html', form=form,
+    return render_template('register.html', form=form,
                            user=current_user)
 
 
