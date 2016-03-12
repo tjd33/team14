@@ -13,7 +13,6 @@ bcrypt = Bcrypt(app)
 
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.test.basic_example import main
-print('test')
 database = main(level='INFO', dbname='webTest')
 
 # TODO: Include database configuration here

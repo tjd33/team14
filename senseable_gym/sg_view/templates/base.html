@@ -13,7 +13,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Sense-Able Gym</title>
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/bootstrap.css') }} />
-        <link href={{ url_for('static', filename='bootstrap/css/navbar-static-top.css') }} rel="stylesheet">
+        <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/xl-buttons.css') }} />
+        <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
     </head>
 
     <body>
@@ -32,7 +33,9 @@
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href={{ url_for('machine_view')}}>View Usage</a></li>
+                        {% if user.authenticated %}
                         <li><a href={{ url_for('reserve')}}>Reserve</a></li>
+                        {% endif %}
                         <li><a href="/static/ppfs.html">PPFS</a></li>
                         <li><a href="/static/about.html">About</a></li>
                         {% if user.authenticated %}

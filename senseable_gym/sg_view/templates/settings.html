@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+    <script>
+        function delete_account() {
+            if(confirm('Are you sure you want to delete this account?') == true) {
+                window.location.href = '/delete_account';         
+            }
+            else { 
+                return false;
+            }          
+        }
+    </script>
+    <div id="main">
+        <section id=intro>
+            Welcome {{user.full_name}}
+        </section>
+        <article class="post">
+            <ul>
+                <li> 
+                    <input type="button" value="Delete Account" onclick="delete_account()">
+                </li>
+                <li> Edit profile </li>
+                <li> Reservation history </li>
+            </ul>
+        </article>
+    </div>
+{% endblock content %}

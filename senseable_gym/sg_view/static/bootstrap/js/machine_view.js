@@ -100,7 +100,7 @@ function draw_machines(machines){
         var machine = res[0];
         if (machine) {
             console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
-            // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
+            window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
         } else {
             console.log('no collision');
         }

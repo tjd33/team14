@@ -20,8 +20,8 @@ class SignupForm(Form):
 
 
 class LoginForm(Form):
-    user = TextField('User', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    user = TextField('User', validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})
     remember_me = BooleanField('Remember Me', default=False)
 
 

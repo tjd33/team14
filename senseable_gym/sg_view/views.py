@@ -15,11 +15,13 @@ from senseable_gym.sg_util.reservation import Reservation
 database = DatabaseModel('webTest', 'team14')
 # from senseable_gym.sg_util.user_management import delete_user
 
+previous_page = 'test'
 
 @app.route('/machine_view')
 @app.route('/machine_view.html/')
 def machine_view(db=None):
-
+    global previous_page
+    previous_page = '/machine_view'
     # database = DatabaseModel('webTest', 'team14')
 
     machine_list = database.get_machines()
@@ -41,18 +43,10 @@ def machine_view(db=None):
 @app.route('/index')
 @app.route('/index.html/')
 def index():
+    global previous_page
+    previous_page = '/index'
+    
     return render_template('index.html', user=current_user)
-
-
-@app.route('/hello')
-@app.route('/hello/<name>')
-def hello(name=None):
-    return render_template('hello.html', name=name)
-
-
-@app.route('/example')
-def example():
-    return render_template('example.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -72,7 +66,8 @@ def login():
                 login_user(user, remember=form.remember_me.data)
                 print(user)
                 print(current_user)
-                return redirect('/index')
+                print(previous_page)
+                return redirect(previous_page)
             else:
                 print(str(user) + ' ' + str(user.password))
         else:
@@ -87,12 +82,13 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    global previous_page
     user = current_user
     user = database.get_user(user.user_id)
     user.authenticated = False
     database.session.commit()
     logout_user()
-    return redirect('/index')
+    return redirect(previous_page)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -112,6 +108,8 @@ def signup():
 
 @app.route('/reserve', methods=['GET', 'POST'])
 def reserve():
+    global previous_page
+    previous_page = '/index'
     form = ReserveForm()
     machine_list = database.get_machines()
     choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
@@ -129,6 +127,8 @@ def reserve():
 
 @app.route('/reserve/<machine_id>', methods=['GET', 'POST'])
 def reserve_machine(machine_id=None):
+    global previous_page
+    previous_page = '/index'
     form = ReserveMachineForm()
 
     # machine_list = database.get_machines()
@@ -149,6 +149,8 @@ def reserve_machine(machine_id=None):
 @app.route('/settings')
 @login_required
 def settings():
+    global previous_page
+    previous_page = '/index'
     return render_template('settings.html', user=current_user)
 
 

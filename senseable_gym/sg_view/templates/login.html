@@ -3,22 +3,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Sign In</h1>
-  <form action="" method="post" name="login">
+  
+  <form action="" method="post" name="login" class="form-signin">
+      <h1 class="form-signin-heading">Sign In</h1>
       {{ form.hidden_tag() }}
       <p>
-          Please enter your username:<br>
-          {{ form.user(size=80) }}<br>
+          {{ form.user(class_="form-control") }}
           {% for error in form.user.errors %}
             <span style="color: red;">[{{ error }}]</span>
-          {% endfor %}<br>
-          Please enter your password:<br>
-          {{ form.password(size=80) }}<br>
+          {% endfor %}
+          {{ form.password(class_="form-control") }}
           {% for error in form.password.errors %}
             <span style="color: red;">[{{ error }}]</span>
-          {% endfor %}<br>
+          {% endfor %}
+          <div class="checkbox">
+            <label>{{ form.remember_me(class_="checkbox") }} Remember Me </label>
+          <div>
       </p>
-      <p>{{ form.remember_me }} Remember Me</p>
       <p><input type="submit" value="Sign In"></p>
   </form>
 {% endblock %}
