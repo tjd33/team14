@@ -11,6 +11,7 @@ from senseable_gym.sg_database.database import DatabaseModel
 # from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
+from senseable_gym.sg_util.exception import ReservationError
 # from senseable_gym.test.basic_example import main
 database = DatabaseModel('webTest', 'team14')
 # from senseable_gym.sg_util.user_management import delete_user
@@ -107,6 +108,7 @@ def register():
 
 
 @app.route('/reserve', methods=['GET', 'POST'])
+@login_required
 def reserve():
     global previous_page
     previous_page = '/index'
@@ -120,12 +122,17 @@ def reserve():
         time_delta = timedelta(minutes=form.length.data)
         end = start + time_delta
         reservation = Reservation(machine, current_user, start, end)
-        database.add_reservation(reservation)
+        try:
+            database.add_reservation(reservation)
+        except ReservationError:
+            form.start_time.errors.append("Reservation time overlaps with existing reservation")
+            return render_template('reserve.html', form=form, user=current_user)
         return redirect('/index')
     return render_template('reserve.html', form=form, user=current_user)
 
 
 @app.route('/reserve/<machine_id>', methods=['GET', 'POST'])
+@login_required
 def reserve_machine(machine_id=None):
     global previous_page
     previous_page = '/index'
@@ -141,7 +148,11 @@ def reserve_machine(machine_id=None):
         time_delta = timedelta(minutes=form.length.data)
         end = start + time_delta
         reservation = Reservation(machine, current_user, start, end)
-        database.add_reservation(reservation)
+        try:
+            database.add_reservation(reservation)
+        except ReservationError:
+            form.start_time.errors.append("Reservation time overlaps with existing reservation")
+            return render_template('reserve_machine.html', form=form, user=current_user)
         return redirect('/index')
     return render_template('reserve_machine.html', form=form, user=current_user)
 
