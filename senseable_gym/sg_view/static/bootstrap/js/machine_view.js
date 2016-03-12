@@ -101,7 +101,7 @@ function draw_machines(machines){
         if (machine) {
             console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
             // TODO: Only allow users to reserve somethinhg if they are logged in.
-            // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
+            window.location.href = $SCRIPT_ROOT + "/reserve/" + res[0].machine_id;
         } else {
             console.log('no collision');
         }

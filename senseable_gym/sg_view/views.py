@@ -152,9 +152,9 @@ def reserve_machine(machine_id=None):
             database.add_reservation(reservation)
         except ReservationError:
             form.start_time.errors.append("Reservation time overlaps with existing reservation")
-            return render_template('reserve_machine.html', form=form, user=current_user)
+            return render_template('reserve.html', form=form, user=current_user)
         return redirect('/index')
-    return render_template('reserve_machine.html', form=form, user=current_user)
+    return render_template('reserve.html', form=form, user=current_user)
 
 
 @app.route('/settings')
