@@ -188,14 +188,19 @@ def edit_user():
 @app.route('/user_reservations')
 @login_required
 def user_reservations():
-    return "user_reservations"
+    reservations = database.get_reservations_by_user(current_user)
+    machine_list = database.get_machines()
+    machines = {machine.machine_id: machine for machine in machine_list}
+    return render_template('user_reservations.html', 
+                            user=current_user,
+                            reservations=reservations,
+                            machines=machines)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
-
-
+    
 if __name__ == '__main__':
     # Go to "localhost:5000/" to view pages
     app.debug = True
