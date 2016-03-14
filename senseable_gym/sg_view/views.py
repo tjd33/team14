@@ -179,6 +179,16 @@ def delete_account():
     logout()
     database.remove_user(user_id)
     return redirect('/index')
+    
+@app.route('/edit_user')
+@login_required
+def edit_user():
+    return "edit user"
+    
+@app.route('/user_reservations')
+@login_required
+def user_reservations():
+    return "user_reservations"
 
 
 @app.errorhandler(404)
