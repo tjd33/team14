@@ -6,7 +6,7 @@ from flask.ext.login import login_user, current_user, logout_user, login_require
 
 # Local Imports
 from senseable_gym.sg_view import app, bcrypt
-from senseable_gym.sg_view.forms import LoginForm, RegisterForm, ReserveForm, ReserveMachineForm
+from senseable_gym.sg_view.forms import LoginForm, RegisterForm, ReserveForm, ReserveMachineForm, EditUserForm
 from senseable_gym.sg_database.database import DatabaseModel
 # from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
@@ -180,10 +180,55 @@ def delete_account():
     database.remove_user(user_id)
     return redirect('/index')
     
-@app.route('/edit_user')
+@app.route('/edit_user', methods=['GET', 'POST'])
 @login_required
 def edit_user():
-    return "edit user"
+    form = EditUserForm()
+    if form.validate_on_submit():
+        user = current_user
+        change = False
+        
+        print(form.user_name.data)
+        print(user.user_name)
+        if form.user_name.data != user.user_name:
+            try:
+                database.get_user_from_user_name(form.user_name.data)
+                form.user_name.errors.append('Username already in use')
+                return render_template('edit_user.html', form=form,
+                        user=current_user)
+            except:
+                change=True
+        if form.first_name.data != user.first_name or form.last_name.data != user.last_name:
+            change = True
+        if form.password.data != '':
+            passhash = bcrypt.generate_password_hash(form.password.data)
+            if form.password.data == form.repeat_pass.data:
+                change = True
+            else:
+                form.repeat_pass.error.append('Passwords do not match')
+                return render_template('edit_user.html', form=form,
+                        user=current_user)
+        print(change)
+        
+        if change:
+            user = database.get_user(user.user_id)
+            user.user_name = form.user_name.data
+            if form.password.data!='':
+                user.password = passhash
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
+            database.session.commit()
+            login_user(user)
+            return redirect('/settings')
+        else:
+            form.user_name.errors.append('Nothing has been changed')
+    else:
+        form.user_name.data = current_user.user_name
+        form.first_name.data = current_user.first_name
+        form.last_name.data = current_user.last_name
+        
+    return render_template('edit_user.html', form=form,
+                           user=current_user)
     
 @app.route('/user_reservations')
 @login_required
