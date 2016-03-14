@@ -16,7 +16,7 @@ from senseable_gym.sg_util.exception import ReservationError
 database = DatabaseModel('webTest', 'team14')
 # from senseable_gym.sg_util.user_management import delete_user
 
-previous_page = 'test'
+previous_page = '/index'
 
 @app.route('/machine_view')
 @app.route('/machine_view.html/')
@@ -51,7 +51,7 @@ def index():
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login(): 
     form = LoginForm()
     if form.validate_on_submit():
 
@@ -70,9 +70,10 @@ def login():
                 print(previous_page)
                 return redirect(previous_page)
             else:
-                print(str(user) + ' ' + str(user.password))
+                form.password.errors.append('Password does not match user')
         else:
             print('no such user')
+            form.user.errors.append("Username does not exist")
 
     return render_template('login.html',
                            title='Sign In',
@@ -97,12 +98,18 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data == form.repeat_pass.data:
-            new_user = User(form.user_name.data,
-                            form.first_name.data,
-                            form.last_name.data,
-                            bcrypt.generate_password_hash(form.password.data))
-            database.add_user(new_user)
-        return redirect('/index')
+            try:
+                database.get_user_from_user_name(form.user_name.data)
+                form.user_name.errors.append('Username already in use')
+            except:
+                new_user = User(form.user_name.data,
+                                form.first_name.data,
+                                form.last_name.data,
+                                bcrypt.generate_password_hash(form.password.data))
+                database.add_user(new_user)
+                return redirect('/index')
+        else:
+            form.repeat_pass.errors.append('Passwords do not match')
     return render_template('register.html', form=form,
                            user=current_user)
 
@@ -127,7 +134,7 @@ def reserve():
         except ReservationError:
             form.start_time.errors.append("Reservation time overlaps with existing reservation")
             return render_template('reserve.html', form=form, user=current_user)
-        return redirect('/index')
+        return redirect('/machine_view')
     return render_template('reserve.html', form=form, user=current_user)
 
 
@@ -153,7 +160,7 @@ def reserve_machine(machine_id=None):
         except ReservationError:
             form.start_time.errors.append("Reservation time overlaps with existing reservation")
             return render_template('reserve.html', form=form, user=current_user)
-        return redirect('/index')
+        return redirect('/machine_view')
     return render_template('reserve.html', form=form, user=current_user)
 
 
