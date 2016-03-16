@@ -65,9 +65,6 @@ def login():
                 database.session.add(user)
                 database.session.commit()
                 login_user(user, remember=form.remember_me.data)
-                print(user)
-                print(current_user)
-                print(previous_page)
                 return redirect(previous_page)
             else:
                 form.password.errors.append('Password does not match user')
@@ -106,7 +103,11 @@ def register():
                                 form.first_name.data,
                                 form.last_name.data,
                                 bcrypt.generate_password_hash(form.password.data))
+                new_user.authenticated = True
                 database.add_user(new_user)
+                database.session.add(new_user)
+                database.session.commit()
+                login_user(new_user)
                 return redirect('/index')
         else:
             form.repeat_pass.errors.append('Passwords do not match')
