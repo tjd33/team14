@@ -288,8 +288,8 @@ class DatabaseModel():
     def get_reservations_by_machine(self, machine: Machine) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine.machine_id).all()
-                
-    def get_reservations_by_user(self, user:User) -> List[Reservation]:
+
+    def get_reservations_by_user(self, user: User) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.user_id == user.user_id).all()
 
@@ -303,7 +303,7 @@ class DatabaseModel():
                      # TODO: Not sure about the start time and end time ideas here
                      Reservation.start_time >= datetime.now(),
                      Reservation.end_time <= cut_off_time)
-                )
+                ).all()
 
     # }}}
     # {{{ Setters

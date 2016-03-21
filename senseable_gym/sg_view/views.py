@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 # Non Local Imports
-from flask import render_template, redirect
+from flask import render_template, redirect, jsonify
 from flask.ext.login import login_user, current_user, logout_user, login_required
 
 # Local Imports
@@ -17,6 +17,7 @@ database = DatabaseModel('webTest', 'team14')
 # from senseable_gym.sg_util.user_management import delete_user
 
 previous_page = '/index'
+
 
 @app.route('/machine_view')
 @app.route('/machine_view.html/')
@@ -46,12 +47,12 @@ def machine_view(db=None):
 def index():
     global previous_page
     previous_page = '/index'
-    
+
     return render_template('index.html', user=current_user)
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login(): 
+def login():
     form = LoginForm()
     if form.validate_on_submit():
 
@@ -180,7 +181,8 @@ def delete_account():
     logout()
     database.remove_user(user_id)
     return redirect('/index')
-    
+
+
 @app.route('/edit_user', methods=['GET', 'POST'])
 @login_required
 def edit_user():
@@ -188,7 +190,7 @@ def edit_user():
     if form.validate_on_submit():
         user = current_user
         change = False
-        
+
         print(form.user_name.data)
         print(user.user_name)
         if form.user_name.data != user.user_name:
@@ -196,9 +198,9 @@ def edit_user():
                 database.get_user_from_user_name(form.user_name.data)
                 form.user_name.errors.append('Username already in use')
                 return render_template('edit_user.html', form=form,
-                        user=current_user)
+                                       user=current_user)
             except:
-                change=True
+                change = True
         if form.first_name.data != user.first_name or form.last_name.data != user.last_name:
             change = True
         if form.password.data != '':
@@ -208,13 +210,13 @@ def edit_user():
             else:
                 form.repeat_pass.error.append('Passwords do not match')
                 return render_template('edit_user.html', form=form,
-                        user=current_user)
+                                       user=current_user)
         print(change)
-        
+
         if change:
             user = database.get_user(user.user_id)
             user.user_name = form.user_name.data
-            if form.password.data!='':
+            if form.password.data != '':
                 user.password = passhash
             user.first_name = form.first_name.data
             user.last_name = form.last_name.data
@@ -227,26 +229,42 @@ def edit_user():
         form.user_name.data = current_user.user_name
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
-        
+
     return render_template('edit_user.html', form=form,
                            user=current_user)
-    
+
+
 @app.route('/user_reservations')
 @login_required
 def user_reservations():
     reservations = database.get_reservations_by_user(current_user)
     machine_list = database.get_machines()
     machines = {machine.machine_id: machine for machine in machine_list}
-    return render_template('user_reservations.html', 
-                            user=current_user,
-                            reservations=reservations,
-                            machines=machines)
+    return render_template('user_reservations.html',
+                           user=current_user,
+                           reservations=reservations,
+                           machines=machines)
+
+
+@app.route('/_reservation_list/<machine_id>')
+def get_reservation_dict(machine_id):
+    machine = database.get_machine(machine_id)
+    res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
+    res_dict = {'machine_id': int(machine_id)}
+    res_dict['reservations'] = [
+            {
+                'start_time': res.start_time.strftime("%d, %B %Y %I:%M%p"),
+                'end_time': res.end_time.strftime("%d, %B %Y %I:%M%p"),
+            }
+            for res in res_list
+            ]
+    return jsonify(res_dict)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
-    
+
 if __name__ == '__main__':
     # Go to "localhost:5000/" to view pages
     app.debug = True
