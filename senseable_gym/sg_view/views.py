@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 
 # Non Local Imports
-from flask import render_template, redirect, jsonify
+from flask import render_template, redirect, jsonify, session
 from flask.ext.login import login_user, current_user, logout_user, login_required
 
 # Local Imports
 from senseable_gym.sg_view import app, bcrypt
-from senseable_gym.sg_view.forms import LoginForm, RegisterForm, ReserveForm, ReserveMachineForm, EditUserForm
+from senseable_gym.sg_view.forms import *
 from senseable_gym.sg_database.database import DatabaseModel
 # from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
@@ -109,7 +109,7 @@ def register():
                 database.session.add(new_user)
                 database.session.commit()
                 login_user(new_user)
-                return redirect('/index')
+                return redirect(previous_page)
         else:
             form.repeat_pass.errors.append('Passwords do not match')
     return render_template('register.html', form=form,
@@ -208,7 +208,7 @@ def edit_user():
             if form.password.data == form.repeat_pass.data:
                 change = True
             else:
-                form.repeat_pass.error.append('Passwords do not match')
+                form.repeat_pass.errors.append('Passwords do not match')
                 return render_template('edit_user.html', form=form,
                                        user=current_user)
         print(change)
@@ -261,6 +261,41 @@ def get_reservation_dict(machine_id):
     return jsonify(res_dict)
 
 
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_password_wall():
+    global previous_page
+    previous_page='/admin'
+    form = AdminPasswordForm()
+    if form.validate_on_submit():
+        if form.password.data == 'gym':
+            session['can_edit_admins']=True
+            return redirect('/admin_users')
+        else:
+            form.password.errors.append('Incorrect Password')
+    return render_template('admin_password_wall.html', form=form, user=current_user)
+    
+@app.route('/admin_users', methods=['GET', 'POST'])
+def edit_admin_users():
+    global previous_page
+    
+    try:
+        if previous_page != '/admin_users' and session['can_edit_admins']!=True:
+            return redirect('/admin')
+    except:
+        return redirect('/admin')
+    session.pop('can_edit_admins', None)
+    previous_page = '/admin_users'
+    administrators = database.get_administrators()
+    form = AddAdminForm()
+    if form.validate_on_submit():
+        try:
+            user = database.get_user_from_user_name(form.user.data)
+            user.administrator = True
+            database.session.commit()
+        except:
+            form.user.errors.append('User does not exist')
+    return render_template('edit_admin_users.html', user=current_user, admins=administrators, form=form)
+    
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404

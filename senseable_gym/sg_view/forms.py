@@ -43,3 +43,10 @@ class ReserveMachineForm(Form):
     date = DateField('Date', format='%Y-%m-%d', default=datetime.today(), validators=[DataRequired()])
     start_time = TimeField('Start time', default=datetime.now(), validators=[DataRequired()])
     length = IntegerField('Duration in minutes', default=30, validators=[DataRequired()])
+    
+class AdminPasswordForm(Form):
+    password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})
+
+class AddAdminForm(Form):
+    user = TextField('User', validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    
