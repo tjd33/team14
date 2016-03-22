@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+encoding//senseable_gym/sg_database/database.py=utf-8
+encoding//senseable_gym/sg_util/machine.py=utf-8
+encoding//senseable_gym/sg_util/reservation.py=utf-8
+encoding//senseable_gym/sg_util/user.py=utf-8

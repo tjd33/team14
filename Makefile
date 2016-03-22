@@ -10,3 +10,9 @@ test:
 
 python:
 	sudo pip3 install -r requirements.txt --upgrade
+
+website:
+	python3 -m senseable_gym.sg_view.run
+
+clean:
+	find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf

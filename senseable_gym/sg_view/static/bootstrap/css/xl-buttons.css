@@ -1,0 +1,53 @@
+/**
+ * Extra large button extensions. Extends `.btn`.
+ */
+@media(max-width:767px){
+    .btn-xlg {
+        width:100%;
+        font-size: 22px;
+        margin-bottom: 1em;
+        word-wrap: break-word;
+        -webkit-border-radius: 8px;
+           -moz-border-radius: 8px;
+                border-radius: 8px;
+        height: 5em;
+        padding-top:2em;
+    }
+    
+    .btn-xlg > a > div {      
+        position: absolute;
+        top: 0; bottom: 0; left: 0; right: 0;
+        text-align: center;
+        padding-top:2em;
+        vertical-align: middle;
+        white-space: normal; /* line wraps */
+        color: #ffffff;
+    }
+}
+
+
+@media(min-width:768px){
+    .btn-xlg {
+        width:100%;
+        font-size: 22px;
+        margin-bottom: 1em;
+        word-wrap: break-word;
+        -webkit-border-radius: 8px;
+           -moz-border-radius: 8px;
+                border-radius: 8px;
+        padding-top: 50%; 
+        padding-bottom:50%;
+        position: relative;
+    }     
+    
+    .btn-xlg > a > div, .btn-xlg > div {      
+        position: absolute;
+        top: 0; bottom: 0; left: 0; right: 0;
+        text-align: center;
+        padding-top:50%;
+        padding-bottom:50%;
+        vertical-align: middle;
+        white-space: normal; /* line wraps */
+        color: #ffffff;
+    }
+}

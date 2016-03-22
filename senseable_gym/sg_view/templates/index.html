@@ -1,14 +1,45 @@
-<!doctype html>
+{% extends "base.html" %}
 
-<html>
-	<head>
-		<title>Index</title>
-	</head>
-	
-	<body>
-	<h1>Index</h1>
-		<a href="/">/</a>
-		<a href="index/">index/</a>
-		<a href="hello/">hello/</a>  
-	</body>
-</html>
+
+
+{% block content %}
+    <h2>
+        Welcome
+    </h2>
+    <div class="jumbotron" style="overflow:auto">
+        {% if user.authenticated %}
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-success">
+                    <a href={{ url_for('machine_view')}}><div>Machine Usage</div></a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-info" >
+                    <a href={{ url_for('reserve')}}><div>Reserve Machine</div></a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-primary">
+                    <a href={{ url_for('settings')}}><div>My Account</div></a>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-success">
+                    <a href={{ url_for('machine_view')}}><div>Machine Usage</div></a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-info" >
+                    <a href={{ url_for('login')}}><div>Login</div></a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-primary">
+                    <a href={{ url_for('register')}}><div>Register</div></a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}
+

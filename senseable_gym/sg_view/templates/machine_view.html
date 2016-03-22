@@ -3,18 +3,37 @@
 
 
 {% block content %}
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery-2.2.1.js') }}" ></script>
+    <script>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        var machines = [
+            {% for machine in machines %}
+                {{ '{ machine_id: ' ~ machine.machine_id ~ ', location: ' ~ machine.location ~ ', status: "'|safe ~ machine.status ~ '" }, '|safe }}
+            {% endfor %}
+            ];
+    </script>
+    <div id="canvas">
+        <canvas id ="current_machine_status" width="700" height="700"></canvas>
+    </div>
+    <div id="machine_summary">
+        <p>Please click on a machine to view information</p>
+    </div>
     <div id="main">
         <article class="post">
             <h1>Machine Status</h1>
             {% if machines %}
                 <ul>
                 {% for machine in machines %}
-                    <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                    {% if machine.status.__str__() == "Open" and user.authenticated==True %}
+                        <li><a href='/reserve'>{{ machine.machine_id }}: {{ machine.status }}</a></li>
+                    {% else %}
+                        <li>{{ machine.machine_id }} : {{ machine.status }}</li>
+                    {% endif %}
                     {% if reservations[machine.machine_id] %}
                         <ul>
                         {% for reservation in reservations[machine.machine_id] %}
-                            <li>Start: {{ reservation.start_time.isocalendar() }},
-                                End: {{ reservation.end_time.isocalendar() }}</li>
+                            <li>Start: {{ reservation.start_time.strftime("%d. %B %Y %I:%M%p") }},
+                                End: {{ reservation.end_time.strftime("%d. %B %Y %I:%M%p") }}</li>
                         {% endfor %}
                         </ul>
                     {% endif %}
@@ -26,11 +45,16 @@
             <h1>User List</h1>
             {% if users %}
                 {% for user in users %}
-                <li>{{ user.user_id }} : {{ user.full_name }}</li>
+                <li>{{ user.user_id }} : {{ user.full_name }}  {{user.user_name }}</li>
             {% endfor %}
             {% else %}
                 <h2>No Users Entered into System!</h2>
             {% endif %}
         </article>
     </div>
+    <!-- Run the script for creating the machine view in the canvas -->
+    <script src="{{ url_for('static', filename='bootstrap/js/machine_view.js') }}" ></script>
+    <script type='text/javascript'>
+        draw_machines(machines)
+    </script>
 {% endblock content %}

@@ -13,17 +13,22 @@ TJ DeVries
 # {{{ Imports
 # Built-in Imports
 import logging
+import time
 from typing import List
+from datetime import datetime
+# from queue import Queue
+from threading import Lock
 
 # Third Party Imports
 from sqlalchemy import create_engine, and_
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.pool import StaticPool
 
 # Local Imports
 from senseable_gym import EXTRA_DEBUG, global_logger_name
 from senseable_gym.sg_util.base import Base, Meta
-from senseable_gym.sg_util.machine import Machine, MachineStatus
+from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
 from senseable_gym.sg_util.user import User
 
 # Relationships
@@ -32,6 +37,18 @@ from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import MachineError, UserError, ReservationError
 
 # }}}
+
+l = Lock()
+
+
+def enqueue_action(func):
+    l.acquire()
+
+    def func_wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+
+    l.release()
+    return func
 
 
 class DatabaseModel():
@@ -44,7 +61,14 @@ class DatabaseModel():
 
         # Set up the connection to the database
         if dbname:
-            self.engine = create_engine('sqlite:///{}.db'.format(dbname))
+            self.engine = create_engine('sqlite:///{}.db'.format(dbname),
+                                        connect_args={'check_same_thread': False},
+                                        poolclass=StaticPool,
+                                        )
+            # self.engine = create_engine('postgresql://tj_chromebook@localhost:5432/sg',
+            #                             poolclass=StaticPool,
+            #                             )
+
         else:
             self.engine = create_engine('sqlite://')
 
@@ -53,17 +77,25 @@ class DatabaseModel():
         self.base.metadata.bind = self.engine
         self.base.metadata.create_all()
 
-        self.session_factory = sessionmaker(bind=self.engine)
-        self.session = scoped_session(self.session_factory)()
+        self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
+        self.session_maker = scoped_session(self.session_factory)
+        self.session = self.session_maker()
 
+        # Spawn a thread, and store in self
+        # Create a queue for that thread
+        # Create
+
+    @enqueue_action
     def _empty_db(self):
         """
         Empties the database of any current records.
             Use with caution :D
         :returns: None
         """
+        time.sleep(.5)
         self.meta.drop_all()
         self.meta.create_all()
+        self.session.commit()
 
         # TODO: Delete this if it turns out the two lines above thie
         #           work perfectly fine. Otherwise, we may have to go back to this
@@ -108,6 +140,7 @@ class DatabaseModel():
 
     # }}}
     # {{{ Adders
+    @enqueue_action
     def add_machine(self, machine):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(machine, Machine):
@@ -137,6 +170,7 @@ class DatabaseModel():
 
         self.session.commit()
 
+    @enqueue_action
     def add_user(self, user):
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(user, User):
@@ -152,6 +186,7 @@ class DatabaseModel():
 
         self.session.commit()
 
+    @enqueue_action
     def add_reservation(self, res: Reservation) -> None:
         """
         Adds a reservation to the database.
@@ -188,19 +223,24 @@ class DatabaseModel():
         machine = self.get_machine(id)
 
         self.session.delete(machine)
+        self.session.commit()
+
+    def remove_user(self, id):
+        user = self.get_user(id)
+        self.session.delete(user)
 
     # }}}
     # {{{ Getters
     def get_machines(self) -> List[Machine]:
         return self.session.query(Machine).all()
 
-    def get_machine(self, id) -> Machine:
+    def get_machine(self, machine_id: int) -> Machine:
         # Query the equipment table to find the machine by its ID
         #   Then, since the ID is a primary key, there can only be one of them
         #   So, return the first one in that list.
-        return self.session.query(Machine).filter(Machine.machine_id == id).one()
+        return self.session.query(Machine).filter(Machine.machine_id == machine_id).one()
 
-    def get_machine_by_location(self, location) -> Machine:
+    def get_machine_by_location(self, location: List[int]) -> Machine:
         # This is used to get a machine by a specific location.
         #   This is useful because locations need to be unique
         return self.session.query(Machine).filter(and_(
@@ -209,22 +249,25 @@ class DatabaseModel():
             Machine._location_z == location[2])
             ).one()
 
-    def get_machine_status(self, id):
+    def get_machine_status(self, id) -> MachineStatus:
         return self.get_machine(id).status
 
-    def get_machine_location(self, id):
+    def get_machine_location(self, id) -> List[int]:
         return self.get_machine(id).location
 
-    def get_machine_type(self, id):
+    def get_machine_type(self, id) -> MachineType:
         return self.get_machine(id).type
 
-    def get_users(self):
+    def get_users(self) -> List[User]:
         return self.session.query(User).all()
 
-    def get_user(self, user_id):
+    def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()
 
-    def get_machine_user_relationships(self, machine):
+    def get_user_from_user_name(self, user_name) -> User:
+        return self.session.query(User).filter(User._user_name == user_name).one()
+
+    def get_machine_user_relationships(self, machine) -> MachineCurrentUser:
         """
         Get the current machine and user relationships
         :return: A list of MachineCurrentUser objects
@@ -239,16 +282,28 @@ class DatabaseModel():
 
         return rel
 
-    def get_reservations(self):
+    def get_reservations(self) -> List[Reservation]:
         return self.session.query(Reservation).all()
 
-    def get_reservations_by_machine(self, machine):
+    def get_reservations_by_machine(self, machine: Machine) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine.machine_id).all()
 
-    def get_reservations_by_machine_id(self, machine_id):
+    def get_reservations_by_user(self, user: User) -> List[Reservation]:
+        return self.session.query(Reservation).filter(
+                Reservation.user_id == user.user_id).all()
+
+    def get_reservations_by_machine_id(self, machine_id: int) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine_id).all()
+
+    def get_applicable_reservations_by_machine(self, machine: Machine, cut_off_time: datetime) -> List[Reservation]:
+        return self.session.query(Reservation).filter(
+                and_(Reservation.machine_id == machine.machine_id,
+                     # TODO: Not sure about the start time and end time ideas here
+                     Reservation.start_time >= datetime.now(),
+                     Reservation.end_time <= cut_off_time)
+                ).all()
 
     # }}}
     # {{{ Setters
@@ -275,6 +330,7 @@ class DatabaseModel():
         relationship = MachineCurrentUser(machine, user)
 
         self.session.add(relationship)
+        self.session.commit()
 
         return relationship
 
