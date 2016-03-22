@@ -260,6 +260,9 @@ class DatabaseModel():
 
     def get_users(self) -> List[User]:
         return self.session.query(User).all()
+        
+    def get_administrators(self) -> List[User]:
+        return self.session.query(User).filter(User._administrator == True).all()
 
     def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()

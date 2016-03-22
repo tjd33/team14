@@ -78,7 +78,9 @@ def main(level, dbname):
     # Now we add some users to our database model
     for user_id in range(4):
         temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id), bcrypt.generate_password_hash('password'+ str(user_id)))
-
+        
+        if user_id == 2:
+            temp_user.administrator = True
         # Add the users to the database
         try:
             db.add_user(temp_user)
