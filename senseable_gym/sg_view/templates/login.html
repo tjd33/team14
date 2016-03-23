@@ -3,7 +3,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
 <form action="" method="post" name="login" class="form-signin">
     <h1 class="form-signin-heading">Please Sign In</h1>
     {{ form.hidden_tag() }}

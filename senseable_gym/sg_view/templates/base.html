@@ -14,6 +14,7 @@
         <title>Sense-Able Gym</title>
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/bootstrap.css') }} />
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/xl-buttons.css') }} />
+        <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
     </head>
 
     <body>
@@ -61,10 +62,10 @@
             {% block content %}{% endblock %}</div>
         </div>
         <!-- Footer -->
-        <div class="container">
+        <div class="container form-signin" style="text-align:center">
             {% block footer %}
             <br/>
-            &copy; Copyright 2016 by <a href="TODO">team14</a>.
+            &copy; Copyright 2016 by <a href="https://github.com/tjd33/team14">team14</a>.
             {% endblock %}
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
