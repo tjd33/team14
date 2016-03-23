@@ -292,10 +292,17 @@ def edit_admin_users():
             user = database.get_user_from_user_name(form.user.data)
             user.administrator = True
             database.session.commit()
+            administrators = database.get_administrators()
         except:
             form.user.errors.append('User does not exist')
     return render_template('edit_admin_users.html', user=current_user, admins=administrators, form=form)
-    
+ 
+@app.route('/team')
+def team():
+    global previous_page
+    previous_page = '/team'
+    return render_template('team.html', user=current_user)
+ 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
