@@ -107,7 +107,8 @@ class MachineStatus(Enum):
     OPEN = 1
     BUSY = 2
     RESERVED = 3
-    OUT_OF_ORDER = 4
+    RESERVED_AND_BUSY = 4
+    OUT_OF_ORDER = 5
 
     def __str__(self):
         return self.name.capitalize()
