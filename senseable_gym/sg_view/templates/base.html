@@ -47,6 +47,9 @@
                             </ul>
                         {% if user.authenticated %}
                             <li><a href={{ url_for('settings')}}>My Account</a></li>
+                            {% if user.administrator %}
+                                <li><a href={{ url_for('admin_settings')}}>Admin</a></li>
+                            {% endif %}
                             <li><a href={{ url_for('logout')}}>Logout</a></li>
                         {% else %}
                             <li><a href={{ url_for('login')}}>Login</a></li>

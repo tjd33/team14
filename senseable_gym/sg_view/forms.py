@@ -18,13 +18,6 @@ class RegisterForm(Form):
     first_name = TextField('First Name', validators=[DataRequired()], render_kw={"placeholder": "First Name"})
     last_name = TextField('Last Name', validators=[DataRequired()], render_kw={"placeholder": "Last Name"})
     
-class EditUserForm(Form):
-    user_name = TextField('User Name', validators=[DataRequired()], render_kw={"placeholder": "Username"})
-    password = PasswordField('Password', render_kw={"placeholder": "New Password"})
-    repeat_pass = PasswordField('Repeat Password', render_kw={"placeholder": "Confirm Password"})
-    first_name = TextField('First Name', validators=[DataRequired()], render_kw={"placeholder": "First Name"})
-    last_name = TextField('Last Name', validators=[DataRequired()], render_kw={"placeholder": "Last Name"})
-
 
 class LoginForm(Form):
     user = TextField('User', validators=[DataRequired()], render_kw={"placeholder": "Username"})
@@ -43,6 +36,19 @@ class ReserveMachineForm(Form):
     date = DateField('Date', format='%Y-%m-%d', default=datetime.today(), validators=[DataRequired()])
     start_time = TimeField('Start time', default=datetime.now(), validators=[DataRequired()])
     length = IntegerField('Duration in minutes', default=30, validators=[DataRequired()])
+
+class EditUserForm(Form):
+    user_name = TextField('User Name', validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    password = PasswordField('Password', render_kw={"placeholder": "New Password"})
+    repeat_pass = PasswordField('Repeat Password', render_kw={"placeholder": "Confirm Password"})
+    first_name = TextField('First Name', validators=[DataRequired()], render_kw={"placeholder": "First Name"})
+    last_name = TextField('Last Name', validators=[DataRequired()], render_kw={"placeholder": "Last Name"})
+
+class EditMachineForm(Form):
+    machine_type = SelectField('Type', coerce=int)
+    position_x = IntegerField('X coordinate')
+    position_y = IntegerField('Y coordinate')
+    position_z = IntegerField('Z coordinate')
     
 class AdminPasswordForm(Form):
     password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})
