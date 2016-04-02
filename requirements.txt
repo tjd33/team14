@@ -1,6 +1,2 @@
 # This is the requirements document for the senseable_gym python module
-sqlalchemy
-typing
-click
-flask
-pyenchant
+sqlalchemy typing click flask pyenchant numpy
