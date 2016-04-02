@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 
 # Non Local Imports
-from flask import render_template, redirect, jsonify, session
+from flask import render_template, redirect, jsonify, session, abort
 from flask.ext.login import login_user, current_user, logout_user, login_required
 
 # Local Imports
 from senseable_gym.sg_view import app, bcrypt
 from senseable_gym.sg_view.forms import *
 from senseable_gym.sg_database.database import DatabaseModel
-# from senseable_gym.sg_util.machine import Machine, MachineType, MachineStatus
+from senseable_gym.sg_util.machine import MachineType
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import ReservationError
@@ -191,8 +191,6 @@ def edit_user():
         user = current_user
         change = False
 
-        print(form.user_name.data)
-        print(user.user_name)
         if form.user_name.data != user.user_name:
             try:
                 database.get_user_from_user_name(form.user_name.data)
@@ -211,7 +209,6 @@ def edit_user():
                 form.repeat_pass.errors.append('Passwords do not match')
                 return render_template('edit_user.html', form=form,
                                        user=current_user)
-        print(change)
 
         if change:
             user = database.get_user(user.user_id)
@@ -302,6 +299,75 @@ def team():
     global previous_page
     previous_page = '/team'
     return render_template('team.html', user=current_user)
+    
+@app.route('/admin_settings')
+@login_required
+def admin_settings():
+    global previous_page
+    previous_page = '/index'
+    
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    return render_template('admin_settings.html', user=user)
+    
+@app.route('/edit_machines')
+@login_required
+def edit_machines():
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    machine_list = database.get_machines()
+    return render_template('edit_machines.html', user=user, machines=machine_list)
+    
+@app.route('/edit_machine/<machine_id>', methods=['GET', 'POST'])
+@login_required
+def edit_machine(machine_id=None):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    machine = database.get_machine(machine_id)
+    
+    form = EditMachineForm()
+    types = [(member.value, member.name) for member in list(MachineType)]
+    form.machine_type.choices = types
+    
+    if form.validate_on_submit():
+        change = False
+        if form.machine_type.data != machine.type:
+            change = True
+        
+        if change:
+            print('type')
+            print(form.machine_type.data)
+            machine.type = form.machine_type.data
+            machine.location = [form.position_x.data, form.position_y.data, form.position_z.data]
+            database.session.commit()
+            return redirect('/edit_machines')
+        else:
+            form.machine_type.errors.append('Nothing has changed')
+    else:
+        form.machine_type.data = machine.type
+        [form.position_x.data, form.position_y.data, form.position_z.data] = machine.location
+    return render_template('edit_machine.html', user=user, machine=machine, form=form)
+
+
+    
+@app.route('/edit_reservations')
+@login_required
+def edit_reservations():
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    return "edit_reservations"
+    
+@app.route('/machine_history')
+@login_required
+def machine_history():
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    return "machine_history"
  
 @app.errorhandler(404)
 def page_not_found(error):

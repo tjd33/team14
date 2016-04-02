@@ -44,11 +44,12 @@ class Machine(Base):
         return MachineType(self._type)
 
     @type.setter
-    def type(self):
+    def type(self, type):
         if isinstance(type, MachineType):
             self._type = type.value
         else:
             self._type = type
+            
 
     @property
     def location(self):
