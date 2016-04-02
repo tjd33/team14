@@ -250,7 +250,10 @@ class DatabaseModel():
             ).one()
 
     def get_machine_status(self, id) -> MachineStatus:
-        return self.get_machine(id).status
+        current_machine = self.get_machine(id)
+        old_status = current_machine.status
+
+        reservations = self.get_reservations_by_machine(current_machine)
 
     def get_machine_location(self, id) -> List[int]:
         return self.get_machine(id).location
@@ -260,9 +263,9 @@ class DatabaseModel():
 
     def get_users(self) -> List[User]:
         return self.session.query(User).all()
-        
+
     def get_administrators(self) -> List[User]:
-        return self.session.query(User).filter(User._administrator == True).all()
+        return self.session.query(User).filter(User._administrator is True).all()
 
     def get_user(self, user_id) -> User:
         return self.session.query(User).filter(User.user_id == user_id).one()
@@ -307,6 +310,11 @@ class DatabaseModel():
                      Reservation.start_time >= datetime.now(),
                      Reservation.end_time <= cut_off_time)
                 ).all()
+
+    def get_current_reservation_by_machine(self, machine: Machine) -> Reservation or None:
+        all_reservations = self.get_reservations_by_machine(machine)
+
+        return any(res.start_time <= datetime.now() and res.end_time >= datetime.now() for res in all_reservations)
 
     # }}}
     # {{{ Setters
