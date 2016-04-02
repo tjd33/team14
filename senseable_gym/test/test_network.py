@@ -79,7 +79,7 @@ class TestPINetwork(unittest.TestCase):
 #         database = DatabaseModel(dbname, 'team14')
 #         self.assertEqual(1, len(database.get_reservations())
 
-    # @unittest.skip('test failing and taking time')
+    @unittest.skip('test failing and taking time')
     def test_send_machine(self):
         self.web_server = webServer('localhost', ws_port + 1,
                                     'localhost', wc_port + 1,

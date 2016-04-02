@@ -23,15 +23,15 @@ class TestBasicFunctions(unittest.TestCase):
         self.assertEqual(self.controller.get_machines(), list())
 
         # Manually add a machine to our machine dictionary
-        self.controller.model.machines[1] = self.machine1
+        self.controller.model.add_machine(self.machine1)
 
-        self.assertEqual(self.controller.get_machines(), {1: self.machine1})
+        self.assertEqual(self.controller.get_machines()[0], self.machine1)
 
         # Manually add another machine
         machine2 = Machine(MachineType.TREADMILL, [2, 2, 2])
-        self.controller.model.machines[2] = machine2
+        self.controller.model.add_machine(machine2)
 
-        self.assertEqual(self.controller.get_machines(), {1: self.machine1, 2: machine2})
+        self.assertEqual(self.controller.get_machines(), [self.machine1, machine2])
 
     def test_add_machine(self):
         # Add our example machine
@@ -56,21 +56,21 @@ class TestViewFunctions(unittest.TestCase):
         self.view = View(self.controller.get_model())
 
         # Create an example machine
-        self.machine1 = Machine(1, MachineType.TREADMILL, [1, 1, 1])
+        self.machine1 = Machine(MachineType.TREADMILL, [1, 1, 1])
 
     def test_get_machine_type(self):
         # Add our example machine
         self.controller.add_machine(self.machine1)
 
         # self.view.print_machine_type(1)
-        self.assertEqual(self.view.get_machine_type(self.machine1.id), self.machine1.type)
+        self.assertEqual(self.view.get_machine_type(self.machine1.machine_id), self.machine1.type)
 
     def test_display_status(self):
         # Add our example machine
         self.controller.add_machine(self.machine1)
 
         final_string = self.view.format_line(["ID", "Machine Type"]) + \
-            self.view.format_line([self.machine1.id, self.machine1.get_type()])
+            self.view.format_line([self.machine1.machine_id, self.machine1.type])
 
         self.assertEqual(self.view.display_status(), final_string)
 

@@ -9,3 +9,7 @@ flask-login
 flask-bcrypt
 wtforms_components
 numpy
+matplotlib
+cairocffi
+pyserial
+python3-tk
