@@ -20,7 +20,7 @@ class TestBasicFunctions(unittest.TestCase):
 
     def test_get_machines(self):
         # Test on an empty set
-        self.assertEqual(self.controller.get_machines(), dict())
+        self.assertEqual(self.controller.get_machines(), list())
 
         # Manually add a machine to our machine dictionary
         self.controller.model.machines[1] = self.machine1

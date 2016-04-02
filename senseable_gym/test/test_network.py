@@ -54,6 +54,7 @@ class TestPINetwork(unittest.TestCase):
 
         self.reservation_list = database.get_reservations()
 
+    @unittest.skip("Needs works")
     def test_send_reservation_to_pi(self):
         self.web_server = webServer('localhost', ws_port, 'localhost', wc_port, dbname, 'team14')
         self.pi_server = piServer('localhost', wc_port, 'localhost', ws_port, dbname, 'team14')
@@ -106,6 +107,7 @@ class TestPINetwork(unittest.TestCase):
 
 
 #   also tests send_all_reservations and send_all_machines
+    @unittest.skip("Needs workd")
     def test_send_update(self):
         self.web_server = webServer('localhost', ws_port + 2,
                                     'localhost', wc_port + 2,
@@ -118,6 +120,7 @@ class TestPINetwork(unittest.TestCase):
         self.assertEqual(1, self.web_server.send_update())
 
 #     also tests request_all_reservations and request_all_machines
+    @unittest.skip("Needs workd")
     def test_request_update(self):
         self.pi_server = piServer('localhost', 20002, 'localhost', 10002, dbname, 'team14')
         self.pi_client = self.pi_server.client
