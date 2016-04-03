@@ -275,7 +275,8 @@ def update_status(machine_id, new_status):
     except ValueError:
         return 'Error: Status must be a valid machine status'
 
-    return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, new_status)
+    return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, MachineStatus(new_status))
+# }}}
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -285,18 +286,19 @@ def admin_password_wall():
     form = AdminPasswordForm()
     if form.validate_on_submit():
         if form.password.data == 'gym':
-            session['can_edit_admins']=True
+            session['can_edit_admins'] = True
             return redirect('/admin_users')
         else:
             form.password.errors.append('Incorrect Password')
     return render_template('admin_password_wall.html', form=form, user=current_user)
-    
+
+
 @app.route('/admin_users', methods=['GET', 'POST'])
 def edit_admin_users():
     global previous_page
-    
+
     try:
-        if previous_page != '/admin_users' and session['can_edit_admins']!=True:
+        if previous_page != '/admin_users' and session['can_edit_admins'] != True:
             return redirect('/admin')
     except:
         return redirect('/admin')
@@ -313,24 +315,27 @@ def edit_admin_users():
         except:
             form.user.errors.append('User does not exist')
     return render_template('edit_admin_users.html', user=current_user, admins=administrators, form=form)
- 
+
+
 @app.route('/team')
 def team():
     global previous_page
     previous_page = '/team'
     return render_template('team.html', user=current_user)
-    
+
+
 @app.route('/admin_settings')
 @login_required
 def admin_settings():
     global previous_page
     previous_page = '/index'
-    
+
     user = current_user
     if not user.administrator:
         abort(403)
     return render_template('admin_settings.html', user=user)
-    
+
+
 @app.route('/edit_machines')
 @login_required
 def edit_machines():
@@ -339,7 +344,8 @@ def edit_machines():
         abort(403)
     machine_list = database.get_machines()
     return render_template('edit_machines.html', user=user, machines=machine_list)
-    
+
+
 @app.route('/edit_machine/<machine_id>', methods=['GET', 'POST'])
 @login_required
 def edit_machine(machine_id=None):
@@ -347,16 +353,16 @@ def edit_machine(machine_id=None):
     if not user.administrator:
         abort(403)
     machine = database.get_machine(machine_id)
-    
+
     form = EditMachineForm()
     types = [(member.value, member.name) for member in list(MachineType)]
     form.machine_type.choices = types
-    
+
     if form.validate_on_submit():
         change = False
         if form.machine_type.data != machine.type:
             change = True
-        
+
         if change:
             print('type')
             print(form.machine_type.data)
@@ -379,7 +385,8 @@ def edit_reservations():
     if not user.administrator:
         abort(403)
     return "edit_reservations"
-    
+
+
 @app.route('/machine_history')
 @login_required
 def machine_history():
@@ -387,7 +394,8 @@ def machine_history():
     if not user.administrator:
         abort(403)
     return "machine_history"
- 
+
+
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
