@@ -8,7 +8,7 @@ from flask.ext.login import login_user, current_user, logout_user, login_require
 from senseable_gym.sg_view import app, bcrypt
 from senseable_gym.sg_view.forms import *
 from senseable_gym.sg_database.database import DatabaseModel
-from senseable_gym.sg_util.machine import MachineType
+from senseable_gym.sg_util.machine import MachineType, MachineStatus
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import ReservationError
@@ -243,6 +243,7 @@ def user_reservations():
                            machines=machines)
 
 
+# {{{ AJAX Queries
 @app.route('/_reservation_list/<machine_id>')
 def get_reservation_dict(machine_id):
     machine = database.get_machine(machine_id)
@@ -258,10 +259,29 @@ def get_reservation_dict(machine_id):
     return jsonify(res_dict)
 
 
+@app.route('/_update_status/<machine_id>/<new_status>')
+def update_status(machine_id, new_status):
+    # TODO: Add user authentification for this
+    machine = database.get_machine(machine_id)
+    old_status = machine.status
+
+    try:
+        new_status = int(new_status)
+    except ValueError:
+        return 'Error: Status must be an int'
+
+    try:
+        machine.status = MachineStatus(new_status)
+    except ValueError:
+        return 'Error: Status must be a valid machine status'
+
+    return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, new_status)
+
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_password_wall():
     global previous_page
-    previous_page='/admin'
+    previous_page = '/admin'
     form = AdminPasswordForm()
     if form.validate_on_submit():
         if form.password.data == 'gym':
@@ -352,7 +372,6 @@ def edit_machine(machine_id=None):
     return render_template('edit_machine.html', user=user, machine=machine, form=form)
 
 
-    
 @app.route('/edit_reservations')
 @login_required
 def edit_reservations():
