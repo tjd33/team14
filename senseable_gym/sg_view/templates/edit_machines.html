@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-signin">
+    <h1 class="form-signin form-signin-heading">Machines</h1>
+    {% if machines %}
+        
+        {% for machine in machines %}
+            <a href = {{ '/edit_machine/' + machine.machine_id|string }} class="btn btn-lg btn-block btn-primary">
+                {{ machine.machine_id }}: location: {{machine.location}} - {{ machine.type }}
+            </a>
+            <!-- <a href={{ '/edit_machine/' + machine.machine_id|string }} >
+                {{ machine.machine_id }}: location: {{machine.location}} - {{ machine.type }}  
+            </a> -->
+        {% endfor %}
+        
+    {% else %}
+        <h2>No Machines Entered into System!</h2>
+    {% endif %}
+    
+    <a href = {{ url_for('settings')}} class="btn btn-lg btn-block btn-info form-signin">Back</a>
+</div>
+{% endblock content %}

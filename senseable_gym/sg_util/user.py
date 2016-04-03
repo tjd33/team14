@@ -18,6 +18,7 @@ class User(Base):
         self._last_name = last_name
         self._password = password_hash
         self._authenticated = False
+        self._administrator = False
 
     user_id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     _user_name = Column(String(32))
@@ -25,6 +26,7 @@ class User(Base):
     _last_name = Column(String(32))
     _password = Column(String(32))
     _authenticated = Column(Boolean(False))
+    _administrator = Column(Boolean(False))
 
     @property
     def full_name(self) -> str:
@@ -80,6 +82,14 @@ class User(Base):
     @authenticated.setter
     def authenticated(self, value):
         self._authenticated = value
+        
+    @property
+    def administrator(self):
+        return self._administrator
+        
+    @administrator.setter
+    def administrator(self, value):
+        self._administrator = value
 
     def is_anonymous(self):
         return False

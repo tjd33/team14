@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2> Account </h2>
+    <div class="jumbotron" style="overflow:auto">
+    
+    <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-success">
+                    <a href={{ url_for('edit_machines')}}><div>Edit Machines</div></a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-info" >
+                    <a href={{ url_for('edit_reservations')}}><div>Edit Reservations</div></a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="btn btn-xlg btn-primary">
+                    <a href={{ url_for('machine_history')}}><div>View Machine History</div></a>
+                </div>
+            </div>
+{% endblock content %}

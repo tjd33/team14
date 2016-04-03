@@ -2,12 +2,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="" method="post" name="reserve">
+<link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
+<form action="" method="post" name="reserve" class="form-signin">
     {{ form.hidden_tag() }}
-    {{ form.machine.label }} {{ form.machine }} <br/>
-    {{ form.date.label }} {{ form.date }} <br/>
-    {{ form.start_time.label }} {{ form.start_time}} <br/>
-    {{ form.length.label }} {{ form.length}} <br/>
-    <input type="submit" value="Reserve">
+    {% if form.machine %}
+        {{ form.machine.label }} {{ form.machine(class_="form-control") }}
+    {% endif %}
+    {% for error in form.date.errors %}
+        <p style="color: red;">[{{ error }}]</p>
+    {% endfor %}
+    {{ form.date.label }} {{ form.date(class_="form-control") }}
+    {% for error in form.start_time.errors %}
+        <p style="color: red;">[{{ error }}]</p>
+    {% endfor %}
+    {{ form.start_time.label }} {{ form.start_time(class_="form-control")}}
+    {% for error in form.length.errors %}
+        <p style="color: red;">[{{ error }}]</p>
+    {% endfor %}
+    {{ form.length.label }} {{ form.length(class_="form-control")}} 
+     <button class="btn btn-lg btn-primary btn-block" type="submit">Reserve</button>
 </form>
 {% endblock %}

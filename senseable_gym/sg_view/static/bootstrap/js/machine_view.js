@@ -26,7 +26,7 @@ function collides(machines, x, y) {
 
 function machine_summary(machine) {
     var reservation_schedule = [new Date($.now())];
-    var summary = `<ul>
+    /* var summary = `<ul>
         <li>ID: ${machine.machine_id}</li>
         <li>Status: ${machine.status}</li>
         <li>Reservation Schedule:
@@ -35,6 +35,15 @@ function machine_summary(machine) {
             </ul>
             </li>
     </ul>`;
+    */
+
+    var summary = 'hello';
+
+    $.ajax({url: "_reservation_list/" + machine.machine_id, success: function(result){
+        var summary = result;
+        }}
+    );
+
 
     return summary;
 }
@@ -94,20 +103,20 @@ function draw_machines(machines){
                         });
     }
 
-    $('#current_machine_status').on('click', function(e) {
+    $('#current_machine_status').on('dblclick', function(e) {
         console.log('click: ' + e.offsetX + '/' + e.offsetY);
         var res = collides(locations, e.offsetX, e.offsetY);
         var machine = res[0];
         if (machine) {
             console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
             // TODO: Only allow users to reserve somethinhg if they are logged in.
-            // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
+            window.location.href = $SCRIPT_ROOT + "/reserve/" + res[0].machine_id;
         } else {
             console.log('no collision');
         }
     });
 
-    $('#current_machine_status').mousemove(
+    $('#current_machine_status').on('click',
         // When
         function(e) {
             var res = collides(locations, e.offsetX, e.offsetY);
@@ -117,9 +126,30 @@ function draw_machines(machines){
                 if (res[1] != c_m_id) {
                     console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
                     set_current_machine_id(res[1]);
-                    $('#machine_summary').html(
-                        machine_summary(machine)
-                    );
+                    $.ajax({
+                        url: "/_reservation_list/" + machine.machine_id,
+                        success: function(result){
+                            var reservations_html = 
+                            `<table border=1>
+                                <tr>
+                                    <th text-align=center>Start Time</th>
+                                    <th>End Time </th>
+                                </tr>
+                            `;
+                            // cr for current reservation
+                            for (var cr = 0; cr < result.reservations.length; cr++) {
+                                reservations_html += '<tr><td>' + 
+                                    result.reservations[cr].start_time + 
+                                    ' </td><td> ' +
+                                    result.reservations[cr].end_time +
+                                    '</td></tr>';
+                            }
+                            reservations_html += '</ul>';
+                            $('#machine_summary').html(
+                                reservations_html
+                            );
+                        }
+                    });
                     // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
                 }
             }

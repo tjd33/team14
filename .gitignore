@@ -30,6 +30,11 @@
 *.db
 trash
 
+
+
+*dwsync*
+
 # Eclispe thing
 .project
 .pydevproject
+
