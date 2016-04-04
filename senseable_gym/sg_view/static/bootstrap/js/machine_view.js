@@ -79,9 +79,12 @@ function draw_machines(machines){
     for ( i = 0; i < l; i++) {
         if (machines[i].status == "Busy") {
             elem.fillStyle = "rgba(360, 77, 44, 1)";
-        }
-        else {
+        } else if (machines[i].status == "Reserved") {
+            elem.fillStyle = "rgba(0, 0, 200, 1)";
+        } else if (machines[i].status == "Open") {
             elem.fillStyle = "rgba(200, 200, 10, 0.6)";
+        } else {
+            elem.fillStyle = "rgba(0, 0, 0, 0.6)";
         }
         elem.beginPath();
         x_loc = machines[i].location[0];
