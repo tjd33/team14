@@ -65,6 +65,10 @@ class User(Base):
     @property
     def password(self) -> str:
         return self._password
+        
+    @password.setter
+    def password(self, value):
+        self._password = value
 
     def is_active(self):
         return True
