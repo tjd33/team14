@@ -102,6 +102,7 @@ class TestDatabaseModel(unittest.TestCase):
 
     def test_get_machine_status(self):
         machine = Machine(MachineType.TREADMILL, [1, 1, 1])
+        machine.status = MachineStatus.UNKNOWN
 
         self.db.add_machine(machine)
 

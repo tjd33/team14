@@ -253,7 +253,10 @@ class DatabaseModel():
         current_machine = self.get_machine(id)
         old_status = current_machine.status
 
-        reservations = self.get_reservations_by_machine(current_machine)
+        # TODO: Finish checking the status for correct updating
+        # reservations = self.get_reservations_by_machine(current_machine)
+
+        return old_status
 
     def get_machine_location(self, id) -> List[int]:
         return self.get_machine(id).location

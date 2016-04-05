@@ -20,7 +20,7 @@ class TestDatabaseUpdater(unittest.TestCase):
 
         self.db.add_machine(m)
 
-        update_all_machine_statuses(self.db)
+        # update_all_machine_statuses(self.db)
 
 if __name__ == "__main__":
     unittest.main()
