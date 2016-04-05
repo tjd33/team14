@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 # Non Local Imports
-from flask import render_template, redirect, jsonify, session, abort
+from flask import render_template, redirect, jsonify, session, abort, request
 from flask.ext.login import login_user, current_user, logout_user, login_required
 
 # Local Imports
@@ -17,7 +17,6 @@ database = DatabaseModel('webTest', 'team14')
 # from senseable_gym.sg_util.user_management import delete_user
 
 previous_page = '/index'
-
 
 @app.route('/machine_view')
 @app.route('/machine_view.html/')
@@ -190,13 +189,12 @@ def edit_user():
     if form.validate_on_submit():
         user = current_user
         change = False
-
+        error = False
         if form.user_name.data != user.user_name:
             try:
                 database.get_user_from_user_name(form.user_name.data)
                 form.user_name.errors.append('Username already in use')
-                return render_template('edit_user.html', form=form,
-                                       user=current_user)
+                error = True
             except:
                 change = True
         if form.first_name.data != user.first_name or form.last_name.data != user.last_name:
@@ -207,21 +205,20 @@ def edit_user():
                 change = True
             else:
                 form.repeat_pass.errors.append('Passwords do not match')
-                return render_template('edit_user.html', form=form,
-                                       user=current_user)
-
-        if change:
-            user = database.get_user(user.user_id)
-            user.user_name = form.user_name.data
-            if form.password.data != '':
-                user.password = passhash
-            user.first_name = form.first_name.data
-            user.last_name = form.last_name.data
-            database.session.commit()
-            login_user(user)
-            return redirect('/settings')
-        else:
-            form.user_name.errors.append('Nothing has been changed')
+                error = True
+        if not error:
+            if change:
+                user = database.get_user(user.user_id)
+                user.user_name = form.user_name.data
+                if form.password.data != '':
+                    user.password = passhash
+                user.first_name = form.first_name.data
+                user.last_name = form.last_name.data
+                database.session.commit()
+                login_user(user)
+                return redirect('/settings')
+            else:
+                form.user_name.errors.append('Nothing has been changed')
     else:
         form.user_name.data = current_user.user_name
         form.first_name.data = current_user.first_name
@@ -334,33 +331,110 @@ def edit_machine(machine_id=None):
     
     if form.validate_on_submit():
         change = False
-        if form.machine_type.data != machine.type:
+        error = False
+        location = [form.position_x.data, form.position_y.data, form.position_z.data]
+        if form.machine_type.data != machine.type_value:
             change = True
-        
-        if change:
-            print('type')
-            print(form.machine_type.data)
-            machine.type = form.machine_type.data
-            machine.location = [form.position_x.data, form.position_y.data, form.position_z.data]
-            database.session.commit()
-            return redirect('/edit_machines')
-        else:
-            form.machine_type.errors.append('Nothing has changed')
+        if location!=machine.location:
+            try:
+                collision_machine = database.get_machine_by_location(location)
+                form.position_x.errors.append('Machine ' + str(collision_machine.machine_id) + ' is already in that position')
+                error = True
+            except:
+                change= True
+        if not error:
+            if change:
+                machine.type = form.machine_type.data
+                machine.location = location
+                database.session.commit()
+                return redirect('/edit_machines')
+            else:
+                form.machine_type.errors.append('Nothing has changed')
     else:
-        form.machine_type.data = machine.type
+        form.machine_type.data = machine.type_value
         [form.position_x.data, form.position_y.data, form.position_z.data] = machine.location
     return render_template('edit_machine.html', user=user, machine=machine, form=form)
 
 
     
-@app.route('/edit_reservations')
+@app.route('/edit_reservations', methods=['GET', 'POST'])
 @login_required
 def edit_reservations():
     user = current_user
     if not user.administrator:
         abort(403)
-    return "edit_reservations"
+    form = TimePeriodForm()
+    print('test1')
+    if form.validate_on_submit():
+        print('test2')
+        start = datetime.combine(form.date.data, form.start_time.data)
+        end = datetime.combine(form.date.data, form.end_time.data)
+        if start > end:
+            form.end_time.errors.append('End time must be before start time')
+        else:
+            session['reservation_period_start']=start
+            session['reservation_period_end']=end
+            return redirect('/reservations_by_time')
+    else:        
+        form.start_time.data = datetime.now()
+        form.end_time.data = datetime.now()+timedelta(hours=1)
+    return render_template('edit_reservations.html', user=user, form = form)
     
+@app.route('/reservations_by_time')
+@login_required
+def reservations_by_time():
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    start = session['reservation_period_start']
+    end = session['reservation_period_end']
+    reservations = database.get_reservations_by_time_period(start, end)
+    machine_list = database.get_machines()
+    machines = {machine.machine_id: machine for machine in machine_list}
+    return render_template('reservations_by_time.html',
+                            user=user, 
+                            reservations = reservations, 
+                            machines = machines)
+ 
+@app.route('/edit_reservation/<reservation_id>', methods=['GET', 'POST'])
+@login_required
+def edit_reservation(reservation_id=None):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    reservation = database.get_reservation(reservation_id)
+    
+    form = EditReservationForm()
+    
+    machine_list = database.get_machines()
+    choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
+    form.machine.choices = choices
+    
+    if form.validate_on_submit():
+        change = False
+        error = False
+        if form.machine.data != reservation.machine_id:
+            change = True
+        start = datetime.combine(form.date.data, form.start_time.data)
+        end = datetime.combine(form.date.data, form.end_time.data)
+        if start != reservation.start_time or end != reservation.end_time:
+            change = True
+        if not error:
+            if change:
+                reservation.machine_id = form.machine.data
+                reservation.start_time = start
+                reservation.end_time = end
+                database.session.commit()
+                return redirect('/reservations_by_time')
+            else:
+                form.machine_type.errors.append('Nothing has changed')
+    else:
+        form.machine.data = reservation.machine_id
+        form.date.data = reservation.start_time
+        form.start_time.data = reservation.start_time
+        form.end_time.data = reservation.end_time
+    return render_template('edit_reservation.html', user = user, form = form)
+ 
 @app.route('/machine_history')
 @login_required
 def machine_history():
