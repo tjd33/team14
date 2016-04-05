@@ -1,9 +1,10 @@
 import unittest
 
 # Package Imports
-from senseable_gym.sg_util.signal_processing import read_text_file_data
+from senseable_gym.sg_util.signal_processing import TextProcessor
 
 DEBUG = False
+
 
 class TestSignalProcessing(unittest.TestCase):
     def setUp(self):
@@ -11,19 +12,9 @@ class TestSignalProcessing(unittest.TestCase):
         pass
 
     def test_read_text_file_data(self):
-        filename = './senseable_gym/test/data_txt_files/Weight_Machine'
-        _, no_newline, unwanted_newline, invalid_number = read_text_file_data(filename)
-        if DEBUG:
-            print('Filename: ' + filename)
-            print('NO NEWLINE WHERE THERE SHOULD BE ONE:')
-            for line in no_newline:
-                print('- Line ' + str(line))
-            print('NEWLINE WHERE THERE SHOULD NOT BE ONE:')
-            for line in unwanted_newline:
-                print('- Line ' + str(line))
-            print('LINE MUST CONTAIN A VALID NUMBER:')
-            for line in invalid_number:
-                print('- Line ' + str(line))
+        text_proc = TextProcessor('./senseable_gym/test/data_txt_files/Weight_Machine')
+
+        # print(text_proc.read())
 
     def test_plot_sensor_data(self):
         pass
