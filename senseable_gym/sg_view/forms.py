@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask_wtf import Form
 from wtforms import StringField, BooleanField, TextField, PasswordField, SelectField, IntegerField
@@ -49,6 +49,17 @@ class EditMachineForm(Form):
     position_x = IntegerField('X coordinate')
     position_y = IntegerField('Y coordinate')
     position_z = IntegerField('Z coordinate')
+    
+class TimePeriodForm(Form):
+    date = DateField('Date', format='%Y-%m-%d', default=datetime.today(), validators=[DataRequired()])
+    start_time = TimeField('Start time', default=datetime.now(), validators=[DataRequired()])
+    end_time = TimeField('End time', default=datetime.now()+timedelta(hours=1), validators=[DataRequired()])
+    
+class EditReservationForm(Form):
+    machine = SelectField('Machine', coerce=int)
+    date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])
+    start_time = TimeField('Start time', validators=[DataRequired()])
+    end_time = TimeField('End time', validators=[DataRequired()])
     
 class AdminPasswordForm(Form):
     password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})

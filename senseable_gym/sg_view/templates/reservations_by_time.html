@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-signin">
+    <h1 class="form-signin form-signin-heading">Machines</h1>
+    {% if reservations %}
+        {% for reservation in reservations %}
+            <a href = {{ '/edit_reservation/' + reservation.reservation_id|string }} class="btn btn-lg btn-block btn-primary">
+                {{ reservation.start_time.strftime("%I:%M%p") }} - Machine {{reservation.machine_id}} - {{ machines[reservation.machine_id].type }}
+            </a>
+        {% endfor %}
+        
+    {% else %}
+        <h2>No Reservations in that time period</h2>
+    {% endif %}
+    
+    <a href = {{ url_for('admin_settings')}} class="btn btn-lg btn-block btn-info form-signin">Back</a>
+</div>
+{% endblock content %}

@@ -290,7 +290,10 @@ class DatabaseModel():
         rel._user = self.session.query(User).filter(User.user_id == rel.user_id).one()
 
         return rel
-
+    
+    def get_reservation(self, reservation_id) -> Reservation:
+        return self.session.query(Reservation).filter(Reservation.reservation_id == reservation_id).one()
+    
     def get_reservations(self) -> List[Reservation]:
         return self.session.query(Reservation).all()
 
@@ -319,6 +322,10 @@ class DatabaseModel():
 
         return any(res.start_time <= datetime.now() and res.end_time >= datetime.now() for res in all_reservations)
 
+    def get_reservations_by_time_period(self, start_time: datetime, end_time:datetime) -> List[Reservation]:
+        return self.session.query(Reservation).filter(and_(Reservation.start_time >= start_time,
+                                                        Reservation.start_time <= end_time)).all()
+    
     # }}}
     # {{{ Setters
     def set_machine_status(self, id, status):
