@@ -29,4 +29,3 @@ print('Result: {0}'.format(result))
 
 processed = s.process_data(result)
 print('Processed: {0}'.format(processed))
-
