@@ -87,7 +87,7 @@ def logout():
     user.authenticated = False
     database.session.commit()
     logout_user()
-    return redirect(previous_page)
+    return redirect('index')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -169,7 +169,7 @@ def reserve_machine(machine_id=None):
 @login_required
 def settings():
     global previous_page
-    previous_page = '/index'
+    previous_page = '/settings'
     return render_template('settings.html', user=current_user)
 
 
@@ -273,6 +273,7 @@ def update_status(machine_id, new_status):
         return 'Error: Status must be a valid machine status'
 
     return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, MachineStatus(new_status))
+    
 # }}}
 
 
@@ -325,7 +326,7 @@ def team():
 @login_required
 def admin_settings():
     global previous_page
-    previous_page = '/index'
+    previous_page = '/admin_settings'
 
     user = current_user
     if not user.administrator:
@@ -390,13 +391,11 @@ def edit_reservations():
     if not user.administrator:
         abort(403)
     form = TimePeriodForm()
-    print('test1')
     if form.validate_on_submit():
-        print('test2')
         start = datetime.combine(form.date.data, form.start_time.data)
         end = datetime.combine(form.date.data, form.end_time.data)
         if start > end:
-            form.end_time.errors.append('End time must be before start time')
+            form.end_time.errors.append('End time must be after start time')
         else:
             session['reservation_period_start']=start
             session['reservation_period_end']=end
@@ -412,6 +411,8 @@ def reservations_by_time():
     user = current_user
     if not user.administrator:
         abort(403)
+    global previous_page
+    previous_page = '/reservations_by_time'
     start = session['reservation_period_start']
     end = session['reservation_period_end']
     reservations = database.get_reservations_by_time_period(start, end)
@@ -444,22 +445,46 @@ def edit_reservation(reservation_id=None):
         start = datetime.combine(form.date.data, form.start_time.data)
         end = datetime.combine(form.date.data, form.end_time.data)
         if start != reservation.start_time or end != reservation.end_time:
+            if start >= end:
+                form.end_time.errors.append('End time must be after start time')
+                error = True
             change = True
+        if not error:
+            machine = database.get_machine(form.machine.data)
+            user = database.get_user(reservation.user_id)
+            try:
+                database.check_reservation_conflict(form.machine.data, reservation.user_id, start, end, reservation)
+            except ReservationError as e:
+                form.machine.errors.append(str(e))
+                error = True
         if not error:
             if change:
                 reservation.machine_id = form.machine.data
                 reservation.start_time = start
                 reservation.end_time = end
                 database.session.commit()
-                return redirect('/reservations_by_time')
+                return redirect(previous_page)
             else:
-                form.machine_type.errors.append('Nothing has changed')
+                form.machine.errors.append('Nothing has changed')
     else:
         form.machine.data = reservation.machine_id
         form.date.data = reservation.start_time
         form.start_time.data = reservation.start_time
         form.end_time.data = reservation.end_time
-    return render_template('edit_reservation.html', user = user, form = form)
+    return render_template('edit_reservation.html', user = user, form = form, reservation = reservation)
+ 
+@app.route('/delete_reservation/<reservation_id>')
+def delete_reservation(reservation_id):
+    user = current_user
+    try:
+        reservation = database.get_reservation(reservation_id)
+    except:
+        return redirect(previous_page)
+    if not user.administrator and reservation.user_id != user.user_id:
+        abort(403)
+    database.remove_reservation(reservation.reservation_id)
+    return redirect(previous_page)
+    
  
 @app.route('/machine_history')
 @login_required
