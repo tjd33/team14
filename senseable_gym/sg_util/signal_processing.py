@@ -28,40 +28,83 @@ class Processer():
     def process_single_data(self, data) -> bool:
         """
         Takes a list of data, of the form:
-        [ID, gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z]
+        [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z]
         and determines if the machine is busy.
 
         :returns: True if busy, else False
         """
-        gyro_total = abs(data[1]) + abs(data[2]) + abs(data[3])
+        gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
 
         if (gyro_total >= 2):
             return True
         else:
             return False
 
-    def process_data(self, data_dict: dict, num_data: int) -> bool:
+    def process_data(self, data_dict: dict) -> dict:
         """
         Takes a dictionary of data, of the form:
         {
-            time_stamp_1: single_data_1,
-            time_stamp_2: single_data_2,
+            machine_id_1: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            machine_id_2: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
             ...
         }
         and determines if the machine is busy.
 
-        :returns: True if busy, else False
+        :returns: {machine_id_1: True, machine_id_2: False}
         """
-        time_stamps = sorted(data_dict.keys())
+        processed = {}
+        for machine_id in data_dict.keys():
+            num_busy = 0
+            for l in data_dict[machine_id]:
+                num_busy += self.process_single_data(l)
 
-        is_busy = False
-        for i in range(num_data):
-            if self.process_data(time_stamps[i]):
-                is_busy = True
+            if num_busy / len(data_dict[machine_id]) > 0.5:
+                processed[machine_id] = True
+            else:
+                processed[machine_id] = False
 
-        self.data_packets_read += num_data
+        return processed
 
-        return is_busy
+    def transform(self, data: list) -> dict:
+        """
+        Takes a list of lists, of the form:
+        [
+            [ID, gyro_x, ... ]
+            [ID, gyro_x, ... ]
+            [ID, gyro_x, ... ]
+        ]
+
+        and turns it into the form:
+        {
+            machine_id_1: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            machine_id_2: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            ...
+        }
+        """
+        transformed = {}
+        for l in data:
+            if l[0] not in transformed.keys():
+                transformed[l[0]] = []
+
+            transformed[l[0]].append(l[1:])
+
+        return transformed
 
 
 class TextProcessor(Processer):
@@ -146,7 +189,7 @@ class TextProcessor(Processer):
 class StreamProcessor(Processer):
     def __init__(self, port, baudrate):
         self.port = port
-        self.baudrate = baudrate
+        self.baudrate = int(baudrate)
 
         self.ser = serial.Serial()
         self.ser.port = self.port
@@ -161,17 +204,22 @@ class StreamProcessor(Processer):
         # ser.rtscts = False
         # ser.dsrdtr = False
 
-    def read_incremental(self, stream=None):
+    def read_incremental(self, stream=None, debug=False):
         """
         Read one data packet from the stream
 
         Returns the standard packet protocol
         """
         if stream:
+            # TODO: Decide if this will ever even be used
+            #   with an explicit stream
+            # TODO: Update this to follow the other section
+            # TODO: Abstract this section
             data = []
             counter = 0
             while(1):
                 num = str(stream.readline().strip())
+                print(num)
                 if(num != "b''"):
                     counter += 1
                     num2 = num[2:-1]
@@ -179,27 +227,43 @@ class StreamProcessor(Processer):
                 elif(counter == 7):
                     return data
         else:
-            with self.ser.open() as stream:
-                data = []
-                counter = 0
-                while(1):
-                    num = str(stream.readline().strip())
-                    if(num != "b''"):
-                        counter += 1
+            self.ser.open()
+            data = []
+            counter = 0
+            while(1):
+                num = str(self.ser.readline().strip())
+                if debug:
+                    print('Reading: {0}'.format(num))
+                # If we've collected enough data,
+                #   then close the connection and return the data
+                if(counter == 7):
+                    self.ser.close()
+                    return data
+                # Only pay attention to non blank lines
+                elif(num != "b''"):
+                    # We have to start on an integer (that is the ID)
+                    if (counter == 0):
+                        try:
+                            data.append(int(num[2:-1]))
+                            counter += 1
+                        except ValueError:
+                            if debug:
+                                print('Tried to make an int with {}'.format(num))
+                    # Otherwise, we will put an number into the data
+                    else:
                         num2 = num[2:-1]
                         data.append(float(num2))
-                    elif(counter == 7):
-                        return data
+                        counter += 1
 
-    def read(self, num_data):
-        with self.ser.open() as stream:
-            # print(stream)
-            data = []
-            # TODO: fix faulty input values of data, figure out when to start reading data, slow data rate down, get rid of accel data
-            for i in range(num_data):
-                data.append(self.read_incremental(stream))
+    def read(self, num_data, debug=False):
+        # print(stream)
+        data = []
+        # TODO: fix faulty input values of data, figure out when to start reading data, slow data rate down, get rid of accel data
+        for i in range(num_data):
+            data.append(self.read_incremental(debug=debug))
 
-        return data
+        transformed = self.transform(data)
+        return transformed
 
 # def process_data():
 #   pass
