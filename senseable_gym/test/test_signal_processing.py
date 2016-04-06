@@ -12,9 +12,15 @@ class TestSignalProcessing(unittest.TestCase):
         pass
 
     def test_read_text_file_data(self):
-        text_proc = TextProcessor('./senseable_gym/test/data_txt_files/Weight_Machine')
+        text_proc = TextProcessor('./senseable_gym/test/data_txt_files/weight_machine_sample.txt')
 
-        # print(text_proc.read())
+        print()
+        output = text_proc.read(100)
+        for item in output:
+            print('Output: {0}'.format(item))
+        print(text_proc.no_newline)
+        print(text_proc.unwanted_newline)
+        print(text_proc.invalid_number)
 
     def test_plot_sensor_data(self):
         pass

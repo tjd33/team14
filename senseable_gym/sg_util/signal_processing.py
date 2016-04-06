@@ -97,7 +97,7 @@ class TextProcessor(Processer):
             #   Play nice and close it.
             pass
 
-    def read(self, num_data=1):
+    def read(self, num_data=1, debug=True):
         # TODO: Decide on a correct format for a read to return
         # TODO: Break into an incremental read
         # TODO: Set this function into a read certain amount
@@ -124,19 +124,17 @@ class TextProcessor(Processer):
 
             # Initialize and store data into matrix format
             collength = len(datalist)//(rowlength + 1)
-            matrix_data = []
-            for _ in range(rowlength):
-                matrix_data.append([0 for __ in range(collength)])
+            matrix_data = [[0 for x in range(collength)] for x in range(rowlength + 1)]
 
             row = 0
             col = 0
             line = begin + 2
             for each_item in datalist:
+                print('Row: {0}, item: {1}'.format(row, each_item))
                 if row == rowlength:
                     if each_item != '':
                         # print('ERROR - LINE ' + str(line) + ': NO NEWLINE WHERE THERE SHOULD BE ONE')
                         self.no_newline.append(line)
-                        return
                     row = 0
                     col += 1
                 else:
