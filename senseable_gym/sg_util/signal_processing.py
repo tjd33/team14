@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.htmlp
 # from tkinter import *
 # import numpy as np
@@ -9,21 +8,6 @@ import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.htmlp
 rowlength = 6
 # filename = '/Users/paul/Desktop/ZTerm/Treadmill_Front' # Name of file to open
 fields = ['Gyro X (deg/sec)', 'Gyro Y (deg/sec)', 'Gyro Z (deg/sec)', 'Accel X (G)', 'Accel Y (G)', 'Accel Z (G)']
-
-
-def plot_sensor_data(matrix_data):
-    gyro_data = matrix_data[0] + matrix_data[1] + matrix_data[2]
-    accel_data = matrix_data[3] + matrix_data[4] + matrix_data[5]
-    plt.plot(range(1, len(gyro_data)+1), gyro_data)
-    plt.show()
-    plt.plot(range(1, len(accel_data)+1), accel_data)
-    plt.show()
-    # for k in range(0, rowlength):
-    #   plt.plot(range(1,len(matrix_data[0])+1), matrix_data[k])
-    #   plt.xlabel('Time')
-    #   plt.ylabel(fields[k])
-    #   plt.show()
-    return
 
 
 def is_number(s):
