@@ -5,7 +5,6 @@ import math
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
 rowlength = 7
-# filename = '/Users/paul/Desktop/ZTerm/Treadmill_Front' # Name of file to open
 
 def is_number(s):
     try:
@@ -14,6 +13,12 @@ def is_number(s):
     except ValueError:
         return False
 
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 class Processor():
     def __init__(self):
@@ -210,14 +215,16 @@ class StreamProcessor(Processor):
             # For non blank lines, put a number into the data
             if((num != "b''") and (counter < rowlength)):
                 num2 = num[2:-1]
-                if is_number(num2):
+                if((counter != 0) and (is_number(num2))):
                     data.append(float(num2))
+                    counter += 1
+                elif((counter == 0) and (is_int(num2))):
+                    data.append(int(num2))
                     counter += 1
             # If we've collected enough data, return the data
             elif(counter == rowlength):
                 return data
-            # If we read a packet that was too small, too large,
-            # or had a non-numerical value, try again
+            # If we read a packet that was too small or too large, try again
             else:
                 data = []
                 counter = 0
@@ -235,7 +242,3 @@ if __name__ == '__main__':
     p = new Processor()
     tp = new TextProcessor(p, '../test/data_txt_files/Treadmill_Side')
     mdata = tp.read()
-    # matrix_data, _, _, _ = read_text_file_data(filename)
-    # plot_sensor_data(matrix_data)
-    # read_stream_data()
-    # pass
