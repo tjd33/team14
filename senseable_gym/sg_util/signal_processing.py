@@ -39,7 +39,7 @@ class Processor():
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
         acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if (gyro_total >= 2):
+        if((gyro_total >= 4) or (acc_total >= 0.11)):
             return True
         else:
             return False
