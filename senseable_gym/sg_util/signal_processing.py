@@ -2,22 +2,30 @@ import matplotlib.pyplot as plt
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.htmlp
 # from tkinter import *
 # import numpy as np
+import math
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
 rowlength = 6
 # filename = '/Users/paul/Desktop/ZTerm/Treadmill_Front' # Name of file to open
-fields = ['Gyro X (deg/sec)', 'Gyro Y (deg/sec)', 'Gyro Z (deg/sec)', 'Accel X (G)', 'Accel Y (G)', 'Accel Z (G)']
 
 
 def plot_sensor_data(matrix_data):
-    gyro_data = matrix_data[0] + matrix_data[1] + matrix_data[2]
-    accel_data = matrix_data[3] + matrix_data[4] + matrix_data[5]
+    gyro_data = [0 for x in range(len(matrix_data[0]))]
+    accel_data = [0 for x in range(len(matrix_data[0]))]
+    for col in range(0, len(matrix_data[0])):
+        gyro_data[col] = matrix_data[0][col] + matrix_data[1][col] + matrix_data[2][col]
+        accel_data[col] = abs(matrix_data[3][col] + matrix_data[4][col] + matrix_data[5][col] - 1.13)
     plt.plot(range(1, len(gyro_data)+1), gyro_data)
+    plt.xlabel('Time')
+    plt.ylabel('Gyroscope (deg/sec)')
     plt.show()
     plt.plot(range(1, len(accel_data)+1), accel_data)
+    plt.xlabel('Time')
+    plt.ylabel('Accelerometer (G)')
     plt.show()
+    # fields = ['Gyro X (deg/sec)', 'Gyro Y (deg/sec)', 'Gyro Z (deg/sec)', 'Accel X (G)', 'Accel Y (G)', 'Accel Z (G)']
     # for k in range(0, rowlength):
     #   plt.plot(range(1,len(matrix_data[0])+1), matrix_data[k])
     #   plt.xlabel('Time')
@@ -34,7 +42,7 @@ def is_number(s):
         return False
 
 
-class Processer():
+class Processor():
     def __init__(self):
         self.data_packets_read = 0
 
@@ -50,6 +58,7 @@ class Processer():
         :returns: True if busy, else False
         """
         gyro_total = abs(data[1]) + abs(data[2]) + abs(data[3])
+        acc_total = abs(data[4] + data[5] + data[6] - 1.13)
 
         if (gyro_total >= 2):
             return True
@@ -80,10 +89,9 @@ class Processer():
         return is_busy
 
 
-class TextProcessor(Processer):
+class TextProcessor(Processor):
     def __init__(self, filename):
         self.filename = filename
-
         self.no_newline = []
         self.unwanted_newline = []
         self.invalid_number = []
@@ -123,29 +131,26 @@ class TextProcessor(Processer):
                 del datalist[(end + 1):]
 
             # Initialize and store data into matrix format
-            collength = len(datalist)//(rowlength + 1)
+            collength = math.ceil(len(datalist)/(rowlength + 1))
             matrix_data = []
-            for _ in range(rowlength):
-                matrix_data.append([0 for __ in range(collength)])
-
+            # for _ in range(rowlength):
+            #     matrix_data.append([0 for __ in range(collength)])
+            matrix_data = [[0 for x in range(collength)] for x in range(rowlength)]
             row = 0
             col = 0
             line = begin + 2
             for each_item in datalist:
                 if row == rowlength:
                     if each_item != '':
-                        # print('ERROR - LINE ' + str(line) + ': NO NEWLINE WHERE THERE SHOULD BE ONE')
                         self.no_newline.append(line)
                         return
                     row = 0
                     col += 1
                 else:
                     if each_item == '':
-                        # print('ERROR - LINE ' + str(line) + ': NEWLINE WHERE THERE SHOULD NOT BE ONE')
                         self.unwanted_newline.append(line)
                         row = 0
                     elif is_number(each_item) == 0:
-                        # print('ERROR - LINE ' + str(line) + ': LINE MUST CONTAIN A VALID NUMBER')
                         self.invalid_number.append(line)
                         row = 0
                     else:
@@ -153,15 +158,11 @@ class TextProcessor(Processer):
                         row += 1
                 line += 1
 
-            # Print matrix for debugging
-            # for c in range(0, rowlength):
-                # print(matrix_data[c])
-
             # Return matrix
             return matrix_data
 
 
-class StreamProcessor(Processer):
+class StreamProcessor(Processor):
     def __init__(self, port, baudrate):
         self.port = port
         self.baudrate = baudrate
@@ -216,14 +217,10 @@ class StreamProcessor(Processer):
             # TODO: fix faulty input values of data, figure out when to start reading data, slow data rate down, get rid of accel data
             for i in range(num_data):
                 data.append(self.read_incremental(stream))
-
         return data
-
-# def process_data():
-#   pass
 
 if __name__ == '__main__':
     # matrix_data, _, _, _ = read_text_file_data(filename)
     # plot_sensor_data(matrix_data)
     # read_stream_data()
-    pass
+    # pass
