@@ -1,5 +1,6 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.htmlp
 import math
+from plot import plot_sensor_data
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
@@ -126,7 +127,7 @@ class TextProcessor(Processor):
             #   Play nice and close it.
             pass
 
-    def read(self, num_data=1, debug=True):
+    def read(self, num_data=1, debug=False):
         # TODO: Decide on a correct format for a read to return
         # TODO: Break into an incremental read
         # TODO: Set this function into a read certain amount
@@ -174,8 +175,12 @@ class TextProcessor(Processor):
                         row = 0
                     else:
                         matrix_data[row][col] = abs(float(each_item))
+                        # print(matrix_data[row][col])
                         row += 1
                 line += 1
+            # for bb in range(0, rowlength):
+            #     for rvd in range(0, collength):
+            #         print(matrix_data[bb][rvd])
 
             # Return matrix
             return matrix_data
@@ -239,6 +244,6 @@ class StreamProcessor(Processor):
         return transformed
 
 if __name__ == '__main__':
-    p = new Processor()
-    tp = new TextProcessor(p, '../test/data_txt_files/Treadmill_Side')
+    tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
     mdata = tp.read()
+    plot_sensor_data(mdata)
