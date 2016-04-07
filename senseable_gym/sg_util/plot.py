@@ -8,8 +8,8 @@ def plot_sensor_data(matrix_data):
     gyro_data = [0 for x in range(len(matrix_data[0]))]
     accel_data = [0 for x in range(len(matrix_data[0]))]
     for col in range(0, len(matrix_data[0])):
-        gyro_data[col] = matrix_data[0][col] + matrix_data[1][col] + matrix_data[2][col]
-        accel_data[col] = abs(matrix_data[3][col] + matrix_data[4][col] + matrix_data[5][col] - 1.13)
+        gyro_data[col] = matrix_data[1][col] + matrix_data[2][col] + matrix_data[3][col]
+        accel_data[col] = abs(matrix_data[4][col] + matrix_data[5][col] + matrix_data[6][col] - 1.13)
     plt.plot(range(1, len(gyro_data)+1), gyro_data)
     plt.xlabel('Time')
     plt.ylabel('Gyroscope (deg/sec)')

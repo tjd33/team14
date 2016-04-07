@@ -5,7 +5,7 @@ from plot import plot_sensor_data
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
-rowlength = 6
+rowlength = 7
 
 def is_number(s):
     try:
@@ -153,7 +153,7 @@ class TextProcessor(Processor):
                 del datalist[(end + 1):]
 
             # Initialize and store data into matrix format
-            collength = math.ceil(len(datalist)/rowlength)
+            collength = math.ceil(len(datalist)/(rowlength + 1))
             matrix_data = [[0 for x in range(collength)] for x in range(rowlength)]
             row = 0
             col = 0
