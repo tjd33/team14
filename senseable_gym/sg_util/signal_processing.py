@@ -1,4 +1,4 @@
-import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.htmlp
+import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
 from plot import plot_sensor_data
 
@@ -136,6 +136,7 @@ class TextProcessor(Processor):
             datastring = f_stream.read()
             datalist = datastring.split('\n')
 
+            # TODO: fix end of list so that it ends nicer and update collength variable accordingly
             # Format list so that it begins with machine ID and ends with newline
             begin = rowlength
             for n in range(0, begin - 1):
@@ -181,6 +182,20 @@ class TextProcessor(Processor):
             # Return matrix
             return matrix_data
 
+    # def create_test_files(self):
+    #     tempfile = open(self.filename, 'r')
+    #     tempdatastring = tempfile.read()
+    #     tempdatalist = tempdatastring.split('\n')
+    #     numb = 8*17000
+    #     numb2 = 8*22000
+    #     newdatalist = tempdatalist[numb:numb2]
+    #     f = open('../test/data_txt_files/Off', 'w')
+    #     for itemm in newdatalist:
+    #         if itemm == '':
+    #             f.write('\r\n')
+    #         else:
+    #             f.write(itemm)
+    #             f.write('\r\n')
 
 class StreamProcessor(Processor):
     def __init__(self, port, baudrate):
