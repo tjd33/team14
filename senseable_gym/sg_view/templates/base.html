@@ -15,8 +15,9 @@
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/bootstrap.css') }} />
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/xl-buttons.css') }} />
         <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     </head>
-
+    
     <body>
         <!-- Header -->
         <nav class="navbar navbar-default navbar-static-top">
@@ -71,7 +72,7 @@
             &copy; Copyright 2016 by <a href="https://github.com/tjd33/team14">team14</a>.
             {% endblock %}
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        
         <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
         <script src={{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}></script>
     </body>

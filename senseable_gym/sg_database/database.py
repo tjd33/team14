@@ -308,6 +308,17 @@ class DatabaseModel():
     def get_reservations_by_machine(self, machine: Machine) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine.machine_id).all()
+    def get_reservations_by_machine_and_time(self, machine: Machine, start_time = None, end_time = datetime.now()) -> List[Reservation]:
+        if start_time:
+            return self.session.query(Reservation).filter(
+                    and_(Reservation.machine_id == machine.machine_id,
+                        Reservation.start_time >= start_time,
+                         Reservation.start_time <= end_time)).all()
+        else:
+            return self.session.query(Reservation).filter(
+                    and_(Reservation.machine_id == machine.machine_id,
+                         Reservation.start_time <= end_time)).all()
+        
 
     def get_reservations_by_user(self, user: User) -> List[Reservation]:
         return self.session.query(Reservation).filter(

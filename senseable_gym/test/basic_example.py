@@ -123,6 +123,8 @@ def main(level, dbname):
     time_2 = datetime.now() + timedelta(hours=2)
     time_3 = datetime.now() + timedelta(hours=3)
     time_4 = datetime.now() + timedelta(hours=4)
+    time_5 = datetime.now() + timedelta(hours=-4)
+    time_6 = datetime.now() + timedelta(hours=-2)
 
     print('---------- Reservations -----')
     machine_2 = db.get_machine(2)
@@ -133,11 +135,13 @@ def main(level, dbname):
     res_1 = Reservation(machine_2, user_2, time_1, time_2)
     res_2 = Reservation(machine_3, user_3, time_1, time_3)
     res_3 = Reservation(machine_2, user_2, time_3, time_4)
+    res_4 = Reservation(machine_2, user_2, time_5, time_6)
     
     try:
         db.add_reservation(res_1)
         db.add_reservation(res_2)
         db.add_reservation(res_3)
+        db.add_reservation(res_4)
     except ReservationError as e:
         print(e)
         

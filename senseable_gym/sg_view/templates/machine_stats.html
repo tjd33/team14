@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <h1>Machine Stats</h1>
+    {% if machines %}
+        <table class="table">
+            <thead>
+            <tr>
+                <td>Machine</td>
+                <td>Usage in past month</td>
+                <td>Overall usage</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for machine in machines %}
+                <tr class='clickable-row' data-href= {{'/machine_history/' + machine.machine_id|string }}>
+                    <td>{{ machine.machine_id }}: location: {{machine.location}} - {{ machine.type }}</td>
+                    <td> {{ machine_data[machine.machine_id][0]}} </td>
+                    <td> {{ machine_data[machine.machine_id][1]}} </td>
+                </tr>
+            <tbody> 
+            {% endfor %}
+        </table>
+        
+        
+
+    {% else %}
+        <h2>No Machines Entered into System!</h2>
+    {% endif %}
+    
+    <a href={{ url_for('admin_settings')}} class="btn btn-lg btn-block btn-primary">Back</a>
+</div>
+
+
+<script>
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.document.location = $(this).data("href");
+    });
+});
+</script>
+{% endblock content %}

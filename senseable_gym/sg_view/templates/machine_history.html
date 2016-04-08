@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <h1>Machine Stats for machine {{machine.machine_id}}</h1>
+    {% if reservations %}
+        <table class="table">
+            <thead>
+            <tr>
+                <td>Date</td>
+                <td>Start</td>
+                <td>End</td>
+                <td>User</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for reservation in reservations %}
+                <tr class='clickable-row' data-href= {{'/machine_history/' + machine.machine_id|string }}>
+                    <td> {{ reservation_data[reservation.reservation_id][0]}} </td>
+                    <td> {{ reservation_data[reservation.reservation_id][1]}} </td>
+                    <td> {{ reservation_data[reservation.reservation_id][2]}} </td>
+                    <td> {{ reservation_data[reservation.reservation_id][3]}} </td>
+                </tr>
+            <tbody> 
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>No Reservations exist for this machine!</h2>
+    {% endif %}
+</div>
+
+<a href={{ url_for('machine_stats')}} class="btn btn-lg btn-block btn-primary">Back</a>
+
+{% endblock content %}

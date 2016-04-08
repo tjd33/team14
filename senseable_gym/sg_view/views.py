@@ -486,14 +486,39 @@ def delete_reservation(reservation_id):
     return redirect(previous_page)
     
  
-@app.route('/machine_history')
+@app.route('/machine_stats')
 @login_required
-def machine_history():
+def machine_stats():
     user = current_user
     if not user.administrator:
         abort(403)
-    return "machine_history"
+    machine_list = database.get_machines()
+    machine_data = {}
+    for machine in machine_list:
+        reservations = database.get_reservations_by_machine_and_time(machine)
+        total = len(reservations)
+        month = len(database.get_reservations_by_machine_and_time(machine, datetime.now() - timedelta(days=30)))
+        machine_data[machine.machine_id] = [month, total]
+    return render_template('machine_stats.html', user=user, machines=machine_list, machine_data=machine_data)
 
+    
+@app.route('/machine_history/<machine_id>')
+@login_required
+def machine_history(machine_id):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    machine = database.get_machine(machine_id)
+    reservations = database.get_reservations_by_machine(machine)
+    reservation_data = {}
+    for reservation in reservations:
+        date = reservation.start_time.strftime("%d. %B %Y %I:%M%p")
+        start = reservation.start_time.strftime("%d. %B %Y %I:%M%p")
+        end = reservation.start_time.strftime("%d. %B %Y %I:%M%p")
+        user_name = database.get_user(reservation.user_id).user_name
+        data = [date, start, end, user_name]
+        reservation_data[reservation.reservation_id] = data
+    return render_template('machine_history.html', user=user, machine=machine, reservations=reservations, reservation_data = reservation_data)
 
 @app.errorhandler(404)
 def page_not_found(error):
