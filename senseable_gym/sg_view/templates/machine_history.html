@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             {% for reservation in reservations %}
-                <tr class='clickable-row' data-href= {{'/machine_history/' + machine.machine_id|string }}>
+                <tr>
                     <td> {{ reservation_data[reservation.reservation_id][0]}} </td>
                     <td> {{ reservation_data[reservation.reservation_id][1]}} </td>
                     <td> {{ reservation_data[reservation.reservation_id][2]}} </td>

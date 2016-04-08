@@ -51,3 +51,9 @@
         color: #ffffff;
     }
 }
+
+tr.hover {
+   cursor: pointer;
+   background: ghostwhite;
+   /* whatever other hover styles you want */
+}
