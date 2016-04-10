@@ -512,9 +512,9 @@ def machine_history(machine_id):
     reservations = database.get_reservations_by_machine(machine)
     reservation_data = {}
     for reservation in reservations:
-        date = reservation.start_time.strftime("%d. %B %Y %I:%M%p")
-        start = reservation.start_time.strftime("%d. %B %Y %I:%M%p")
-        end = reservation.start_time.strftime("%d. %B %Y %I:%M%p")
+        date = reservation.start_time.strftime("%d. %B %Y")
+        start = reservation.start_time.strftime("%I:%M%p")
+        end = reservation.start_time.strftime("%I:%M%p")
         user_name = database.get_user(reservation.user_id).user_name
         data = [date, start, end, user_name]
         reservation_data[reservation.reservation_id] = data

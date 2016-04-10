@@ -135,7 +135,7 @@ def main(level, dbname):
     res_1 = Reservation(machine_2, user_2, time_1, time_2)
     res_2 = Reservation(machine_3, user_3, time_1, time_3)
     res_3 = Reservation(machine_2, user_2, time_3, time_4)
-    res_4 = Reservation(machine_2, user_2, time_5, time_6)
+    res_4 = Reservation(machine_2, user_3, time_5, time_6)
     
     try:
         db.add_reservation(res_1)
