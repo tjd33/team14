@@ -232,12 +232,18 @@ def edit_user():
 @login_required
 def user_reservations():
     reservations = database.get_reservations_by_user(current_user)
-    machine_list = database.get_machines()
-    machines = {machine.machine_id: machine for machine in machine_list}
+    reservation_data = {}
+    for reservation in reservations:
+        date = reservation.start_time.strftime("%d. %B %Y")
+        start = reservation.start_time.strftime("%I:%M%p")
+        end = reservation.start_time.strftime("%I:%M%p")
+        machine = reservation.machine_id
+        data = [date, start, end, machine]
+        reservation_data[reservation.reservation_id] = data
     return render_template('user_reservations.html',
                            user=current_user,
                            reservations=reservations,
-                           machines=machines)
+                           reservation_data = reservation_data)
 
 
 # {{{ AJAX Queries

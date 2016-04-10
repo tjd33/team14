@@ -6,16 +6,26 @@
     <div>
         <h1>Reservations</h1>
         {% if reservations %}
-            <ul>
-            {% for reservation in reservations %}
-                <li>{{ reservation.start_time.strftime("%d. %B %Y %I:%M%p") }}
-                    <ul>
-                        <li> Machine type: {{ machines[reservation.machine_id].type }} </li>
-                        <li> Machine ID: {{ reservation.machine_id }} </li>
-                        <li> End time: {{ reservation.end_time.strftime("%d. %B %Y %I:%M%p") }}</li>
-                    </ul>
-            {% endfor %}
-            </ul>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Start</td>
+                    <td>End</td>
+                    <td>Machine</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for reservation in reservations %}
+                    <tr>
+                        <td> {{ reservation_data[reservation.reservation_id][0]}} </td>
+                        <td> {{ reservation_data[reservation.reservation_id][1]}} </td>
+                        <td> {{ reservation_data[reservation.reservation_id][2]}} </td>
+                        <td> {{ reservation_data[reservation.reservation_id][3]}} </td>
+                    </tr>
+                <tbody> 
+                {% endfor %}
+            </table>
         {% else %}
             <h2>No reservations are recorded for your account</h2>
         {% endif %}
