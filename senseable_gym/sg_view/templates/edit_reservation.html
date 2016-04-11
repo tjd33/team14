@@ -21,11 +21,13 @@
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
     {{ form.machine(class_="form-control") }}
-    {{ form.user.label }}
-    {% for error in form.user.errors %}
-        <p style="color: red;">[{{ error }}]</p>
-    {% endfor %}
-    {{ form.user(class_="form-control") }}
+    {% if user.administrator %}
+        {{ form.user.label }}
+        {% for error in form.user.errors %}
+            <p style="color: red;">[{{ error }}]</p>
+        {% endfor %}
+        {{ form.user(class_="form-control") }}
+    {% endif %}
     {{ form.date.label }}
     {% for error in form.date.errors %}
         <p style="color: red;">[{{ error }}]</p>
@@ -46,6 +48,6 @@
     
 
 <button onclick="delete_reservation()" class="btn btn-lg btn-block btn-danger form-signin">Delete Reservation</button>
-<a href={{ url_for('reservations_by_time')}} class="btn btn-lg btn-block btn-info form-signin">Back</a>
+<a href={{ previous_page }} class="btn btn-lg btn-block btn-info form-signin">Back</a>
 
 {% endblock %}

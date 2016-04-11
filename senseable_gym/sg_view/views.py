@@ -452,17 +452,17 @@ def reservations_by_time():
 @login_required
 def edit_reservation(reservation_id=None):
     user = current_user
-    if not user.administrator:
-        abort(403)
     reservation = database.get_reservation(reservation_id)
-    
+    if not user.administrator and reservation.user_id != user.user_id:
+        abort(403)
     form = EditReservationForm()
     
     machine_list = database.get_machines()
     choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
     form.machine.choices = choices
-    
+    print('test')
     if form.validate_on_submit():
+        print('test')
         change = False
         error = False
         if form.machine.data != reservation.machine_id:
@@ -478,9 +478,9 @@ def edit_reservation(reservation_id=None):
             new_user = database.get_user_from_user_name(form.user.data)
             if new_user.user_id != reservation.user_id:
                 change = True
-                print('test')
         except:
             form.user.errors.append('User name does not exist')
+            print('test')
             error = True
         if not error:
             machine = database.get_machine(form.machine.data)
@@ -490,7 +490,9 @@ def edit_reservation(reservation_id=None):
             except ReservationError as e:
                 form.machine.errors.append(str(e))
                 error = True
+        print(error)
         if not error:
+            print('test')
             if change:
                 reservation.machine_id = form.machine.data
                 reservation.user_id = new_user.user_id
@@ -506,7 +508,7 @@ def edit_reservation(reservation_id=None):
         form.date.data = reservation.start_time
         form.start_time.data = reservation.start_time
         form.end_time.data = reservation.end_time
-    return render_template('edit_reservation.html', user = user, form = form, reservation = reservation)
+    return render_template('edit_reservation.html', user = user, form = form, reservation = reservation, previous_page = previous_page)
  
 @app.route('/delete_reservation/<reservation_id>')
 def delete_reservation(reservation_id):

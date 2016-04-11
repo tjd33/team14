@@ -57,7 +57,7 @@ class TimePeriodForm(Form):
     
 class EditReservationForm(Form):
     machine = SelectField('Machine', coerce=int)
-    user = StringField('Username', validators=[DataRequired()])
+    user = StringField('Username')
     date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])
     start_time = TimeField('Start time', validators=[DataRequired()])
     end_time = TimeField('End time', validators=[DataRequired()])

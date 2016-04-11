@@ -75,6 +75,8 @@ class Reservation(Base):
                 self.machine_id, self.user_id, self.start_time, self.end_time)
                 
     def __eq__(self, other):
+        if not other:
+            return False
         return self.user_id == other.user_id and \
                 self.machine_id == other.machine_id and \
                 self.start_time == other.start_time and \
