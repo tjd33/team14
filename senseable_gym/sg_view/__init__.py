@@ -1,3 +1,5 @@
+import os.path 
+
 # Configure the flask app from here.
 #   This way it automagically gets called on startup of the view
 
@@ -13,7 +15,11 @@ bcrypt = Bcrypt(app)
 
 from senseable_gym.sg_database.database import DatabaseModel
 from senseable_gym.test.basic_example import main
-database = main(level='INFO', dbname='webTest')
+
+if os.path.isfile('webTest.db'):
+    database = DatabaseModel('webTest', 'team14')
+else:
+    database = main(level='INFO', dbname='webTest')
 
 # TODO: Include database configuration here
 login_manager = LoginManager()
