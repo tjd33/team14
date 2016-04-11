@@ -7,18 +7,21 @@
     {% if form.machine %}
         {{ form.machine.label }} {{ form.machine(class_="form-control") }}
     {% endif %}
+    {{ form.date.label }} 
     {% for error in form.date.errors %}
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
-    {{ form.date.label }} {{ form.date(class_="form-control") }}
+    {{ form.date(class_="form-control") }}
+    {{ form.start_time.label }}
     {% for error in form.start_time.errors %}
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
-    {{ form.start_time.label }} {{ form.start_time(class_="form-control")}}
+     {{ form.start_time(class_="form-control")}}
+    {{ form.length.label }}
     {% for error in form.length.errors %}
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
-    {{ form.length.label }} {{ form.length(class_="form-control")}} 
+    {{ form.length(class_="form-control")}} 
      <button class="btn btn-lg btn-primary btn-block" type="submit">Reserve</button>
 </form>
 {% endblock %}

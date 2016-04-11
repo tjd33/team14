@@ -64,7 +64,7 @@ def login():
                 user.authenticated = True
                 database.session.add(user)
                 database.session.commit()
-                login_user(user, remember=form.remember_me.data)
+                login_user(user, remember=True)
                 return redirect(previous_page)
             else:
                 form.password.errors.append('Password does not match user')
@@ -87,7 +87,7 @@ def logout():
     user.authenticated = False
     database.session.commit()
     logout_user()
-    return redirect(previous_page)
+    return redirect('index')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -125,17 +125,27 @@ def reserve():
     choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
     form.machine.choices = choices
     if form.validate_on_submit():
+        error = False
         machine = database.get_machine(form.machine.data)
         start = datetime.combine(form.date.data, form.start_time.data)
+        if start <= datetime.now():
+            form.date.errors.append('Reservation must be in the future')
+            form.start_time.errors.append('Reservation must be in the future')
+            error = True
+        if form.length.data<0:
+            form.length.errors.append('Length must be positive')
+            error = True
         time_delta = timedelta(minutes=form.length.data)
         end = start + time_delta
-        reservation = Reservation(machine, current_user, start, end)
-        try:
-            database.add_reservation(reservation)
-        except ReservationError:
-            form.start_time.errors.append("Reservation time overlaps with existing reservation")
-            return render_template('reserve.html', form=form, user=current_user)
-        return redirect('/machine_view')
+        if not error:
+            reservation = Reservation(machine, current_user, start, end)
+            try:
+                database.add_reservation(reservation)
+            except ReservationError:
+                form.start_time.errors.append("Reservation time overlaps with existing reservation")
+                error = True
+        if not error:
+            return redirect('/machine_view')
     return render_template('reserve.html', form=form, user=current_user)
 
 
@@ -169,7 +179,7 @@ def reserve_machine(machine_id=None):
 @login_required
 def settings():
     global previous_page
-    previous_page = '/index'
+    previous_page = '/settings'
     return render_template('settings.html', user=current_user)
 
 
@@ -232,12 +242,18 @@ def edit_user():
 @login_required
 def user_reservations():
     reservations = database.get_reservations_by_user(current_user)
-    machine_list = database.get_machines()
-    machines = {machine.machine_id: machine for machine in machine_list}
+    reservation_data = {}
+    for reservation in reservations:
+        date = reservation.start_time.strftime("%d. %B %Y")
+        start = reservation.start_time.strftime("%I:%M%p")
+        end = reservation.start_time.strftime("%I:%M%p")
+        machine = reservation.machine_id
+        data = [date, start, end, machine]
+        reservation_data[reservation.reservation_id] = data
     return render_template('user_reservations.html',
                            user=current_user,
                            reservations=reservations,
-                           machines=machines)
+                           reservation_data = reservation_data)
 
 
 # {{{ AJAX Queries
@@ -273,6 +289,7 @@ def update_status(machine_id, new_status):
         return 'Error: Status must be a valid machine status'
 
     return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, MachineStatus(new_status))
+    
 # }}}
 
 
@@ -325,7 +342,7 @@ def team():
 @login_required
 def admin_settings():
     global previous_page
-    previous_page = '/index'
+    previous_page = '/admin_settings'
 
     user = current_user
     if not user.administrator:
@@ -359,6 +376,15 @@ def edit_machine(machine_id=None):
         change = False
         error = False
         location = [form.position_x.data, form.position_y.data, form.position_z.data]
+        if location[0]<0:
+            form.position_x.errors.append('Coordinate must be positive')
+            error = True
+        if location[1]<0:
+            form.position_y.errors.append('Coordinate must be positive')
+            error = True
+        if location[2]<0:
+            form.position_z.errors.append('Coordinate must be positive')
+            error = True
         if form.machine_type.data != machine.type_value:
             change = True
         if location!=machine.location:
@@ -390,13 +416,11 @@ def edit_reservations():
     if not user.administrator:
         abort(403)
     form = TimePeriodForm()
-    print('test1')
     if form.validate_on_submit():
-        print('test2')
         start = datetime.combine(form.date.data, form.start_time.data)
         end = datetime.combine(form.date.data, form.end_time.data)
         if start > end:
-            form.end_time.errors.append('End time must be before start time')
+            form.end_time.errors.append('End time must be after start time')
         else:
             session['reservation_period_start']=start
             session['reservation_period_end']=end
@@ -412,6 +436,8 @@ def reservations_by_time():
     user = current_user
     if not user.administrator:
         abort(403)
+    global previous_page
+    previous_page = '/reservations_by_time'
     start = session['reservation_period_start']
     end = session['reservation_period_end']
     reservations = database.get_reservations_by_time_period(start, end)
@@ -426,17 +452,17 @@ def reservations_by_time():
 @login_required
 def edit_reservation(reservation_id=None):
     user = current_user
-    if not user.administrator:
-        abort(403)
     reservation = database.get_reservation(reservation_id)
-    
+    if not user.administrator and reservation.user_id != user.user_id:
+        abort(403)
     form = EditReservationForm()
     
     machine_list = database.get_machines()
     choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
     form.machine.choices = choices
-    
+    print('test')
     if form.validate_on_submit():
+        print('test')
         change = False
         error = False
         if form.machine.data != reservation.machine_id:
@@ -444,31 +470,92 @@ def edit_reservation(reservation_id=None):
         start = datetime.combine(form.date.data, form.start_time.data)
         end = datetime.combine(form.date.data, form.end_time.data)
         if start != reservation.start_time or end != reservation.end_time:
+            if start >= end:
+                form.end_time.errors.append('End time must be after start time')
+                error = True
             change = True
+        try:
+            new_user = database.get_user_from_user_name(form.user.data)
+            if new_user.user_id != reservation.user_id:
+                change = True
+        except:
+            form.user.errors.append('User name does not exist')
+            print('test')
+            error = True
         if not error:
+            machine = database.get_machine(form.machine.data)
+            new_user = database.get_user_from_user_name(form.user.data)
+            try:
+                database.check_reservation_conflict(form.machine.data, new_user.user_id, start, end, reservation)
+            except ReservationError as e:
+                form.machine.errors.append(str(e))
+                error = True
+        print(error)
+        if not error:
+            print('test')
             if change:
                 reservation.machine_id = form.machine.data
+                reservation.user_id = new_user.user_id
                 reservation.start_time = start
                 reservation.end_time = end
                 database.session.commit()
-                return redirect('/reservations_by_time')
+                return redirect(previous_page)
             else:
-                form.machine_type.errors.append('Nothing has changed')
+                form.machine.errors.append('Nothing has changed')
     else:
         form.machine.data = reservation.machine_id
+        form.user.data = database.get_user(reservation.user_id).user_name
         form.date.data = reservation.start_time
         form.start_time.data = reservation.start_time
         form.end_time.data = reservation.end_time
-    return render_template('edit_reservation.html', user = user, form = form)
+    return render_template('edit_reservation.html', user = user, form = form, reservation = reservation, previous_page = previous_page)
  
-@app.route('/machine_history')
+@app.route('/delete_reservation/<reservation_id>')
+def delete_reservation(reservation_id):
+    user = current_user
+    try:
+        reservation = database.get_reservation(reservation_id)
+    except:
+        return redirect(previous_page)
+    if not user.administrator and reservation.user_id != user.user_id:
+        abort(403)
+    database.remove_reservation(reservation.reservation_id)
+    return redirect(previous_page)
+    
+ 
+@app.route('/machine_stats')
 @login_required
-def machine_history():
+def machine_stats():
     user = current_user
     if not user.administrator:
         abort(403)
-    return "machine_history"
+    machine_list = database.get_machines()
+    machine_data = {}
+    for machine in machine_list:
+        reservations = database.get_reservations_by_machine_and_time(machine)
+        total = len(reservations)
+        month = len(database.get_reservations_by_machine_and_time(machine, datetime.now() - timedelta(days=30)))
+        machine_data[machine.machine_id] = [month, total]
+    return render_template('machine_stats.html', user=user, machines=machine_list, machine_data=machine_data)
 
+    
+@app.route('/machine_history/<machine_id>')
+@login_required
+def machine_history(machine_id):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    machine = database.get_machine(machine_id)
+    reservations = database.get_reservations_by_machine(machine)
+    reservation_data = {}
+    for reservation in reservations:
+        date = reservation.start_time.strftime("%d. %B %Y")
+        start = reservation.start_time.strftime("%I:%M%p")
+        end = reservation.start_time.strftime("%I:%M%p")
+        user_name = database.get_user(reservation.user_id).user_name
+        data = [date, start, end, user_name]
+        reservation_data[reservation.reservation_id] = data
+    return render_template('machine_history.html', user=user, machine=machine, reservations=reservations, reservation_data = reservation_data)
 
 @app.errorhandler(404)
 def page_not_found(error):

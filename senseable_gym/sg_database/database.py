@@ -192,31 +192,35 @@ class DatabaseModel():
         Adds a reservation to the database.
         Also checks for overlapping pertinent reservations.
         """
+        
+        self.check_reservation_conflict(res.machine_id, res.user_id, res.start_time, res.end_time)         
+        self.session.add(res)
+        self.session.commit()
+    
+
+                    
+    def check_reservation_conflict(self, machine_id, user_id, start_time, end_time, ignore_reservation = None) -> None:
         machine_reservations = self.session.query(Reservation).filter(
-                Reservation.machine_id == res.machine_id).all()
+        Reservation.machine_id == machine_id).all()
         self.logger.log(EXTRA_DEBUG, 'Machine {} Reservations: {}'.format(
-                            res.machine_id, machine_reservations)
+                            machine_id, machine_reservations)
                         )
 
         for m_r in machine_reservations:
-            if res.is_overlapping_reservation(m_r):
+            if m_r.is_overlapping_reservation(start_time, end_time) and m_r!=ignore_reservation:
                 raise ReservationError('Overlapping Reservations with Machine {}'.format(
-                    res.machine_id))
+                    machine_id))
 
         user_reservations = self.session.query(Reservation).filter(
-                Reservation.user_id == res.user_id).all()
+                Reservation.user_id == user_id).all()
         self.logger.debug('User {} Reservations: {}'.format(
-            res.user_id, user_reservations))
+            user_id, user_reservations))
 
         for u_r in user_reservations:
-            if res.is_overlapping_reservation(u_r):
+            if u_r.is_overlapping_reservation(start_time, end_time) and not u_r==ignore_reservation:
                 raise ReservationError('Overlapping Reservations with User {}'.format(
-                    res.user_id))
-
-        self.session.add(res)
-
-        self.session.commit()
-
+                    user_id))
+    
     # }}}
     # {{{ Removers
     def remove_machine(self, id):
@@ -229,6 +233,10 @@ class DatabaseModel():
         user = self.get_user(id)
         self.session.delete(user)
 
+    def remove_reservation(self, id):
+        reservation = self.get_reservation(id)
+        self.session.delete(reservation)
+        self.session.commit()
     # }}}
     # {{{ Getters
     def get_machines(self) -> List[Machine]:
@@ -300,6 +308,17 @@ class DatabaseModel():
     def get_reservations_by_machine(self, machine: Machine) -> List[Reservation]:
         return self.session.query(Reservation).filter(
                 Reservation.machine_id == machine.machine_id).all()
+    def get_reservations_by_machine_and_time(self, machine: Machine, start_time = None, end_time = datetime.now()) -> List[Reservation]:
+        if start_time:
+            return self.session.query(Reservation).filter(
+                    and_(Reservation.machine_id == machine.machine_id,
+                        Reservation.start_time >= start_time,
+                         Reservation.start_time <= end_time)).all()
+        else:
+            return self.session.query(Reservation).filter(
+                    and_(Reservation.machine_id == machine.machine_id,
+                         Reservation.start_time <= end_time)).all()
+        
 
     def get_reservations_by_user(self, user: User) -> List[Reservation]:
         return self.session.query(Reservation).filter(

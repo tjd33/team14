@@ -4,14 +4,17 @@
 <link rel="stylesheet" href={{ url_for('static', filename='bootstrap/css/signin.css') }} />
 <form action="" method="post" name="edit_reservations" class="form-signin">
     {{ form.hidden_tag() }}
+    {{ form.date.label }}
     {% for error in form.date.errors %}
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
     {{ form.date.label }} {{ form.date(class_="form-control") }}
+    {{ form.start_time.label }}
     {% for error in form.start_time.errors %}
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
     {{ form.start_time.label }} {{ form.start_time(class_="form-control")}}
+    {{ form.end_time.label }}
     {% for error in form.end_time.errors %}
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}

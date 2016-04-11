@@ -23,6 +23,7 @@ from senseable_gym.sg_util.machine import Machine, MachineStatus, MachineType
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_view import bcrypt
+from senseable_gym.sg_util.exception import ReservationError
 
 
 # Code begins here
@@ -122,6 +123,8 @@ def main(level, dbname):
     time_2 = datetime.now() + timedelta(hours=2)
     time_3 = datetime.now() + timedelta(hours=3)
     time_4 = datetime.now() + timedelta(hours=4)
+    time_5 = datetime.now() + timedelta(hours=-4)
+    time_6 = datetime.now() + timedelta(hours=-2)
 
     print('---------- Reservations -----')
     machine_2 = db.get_machine(2)
@@ -132,13 +135,15 @@ def main(level, dbname):
     res_1 = Reservation(machine_2, user_2, time_1, time_2)
     res_2 = Reservation(machine_3, user_3, time_1, time_3)
     res_3 = Reservation(machine_2, user_2, time_3, time_4)
+    res_4 = Reservation(machine_2, user_3, time_5, time_6)
     
     try:
         db.add_reservation(res_1)
         db.add_reservation(res_2)
         db.add_reservation(res_3)
-    except:
-        pass
+        db.add_reservation(res_4)
+    except ReservationError as e:
+        print(e)
         
     res_list = db.get_reservations()
     [print(res) for res in res_list]
