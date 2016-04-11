@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             {% for reservation in reservations %}
-                <tr>
+                <tr class='clickable-row' data-href= {{'/edit_reservation/' + reservation.reservation_id|string }}>
                     <td> {{ reservation_data[reservation.reservation_id][0]}} </td>
                     <td> {{ reservation_data[reservation.reservation_id][1]}} </td>
                     <td> {{ reservation_data[reservation.reservation_id][2]}} </td>
@@ -31,5 +31,15 @@
 </div>
 
 <a href={{ url_for('machine_stats')}} class="btn btn-lg btn-block btn-primary">Back</a>
+
+<script>
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.document.location = $(this).data("href");
+    }).hover( function() {
+    $(this).toggleClass('hover');
+    });
+});
+</script>
 
 {% endblock content %}

@@ -474,17 +474,26 @@ def edit_reservation(reservation_id=None):
                 form.end_time.errors.append('End time must be after start time')
                 error = True
             change = True
+        try:
+            new_user = database.get_user_from_user_name(form.user.data)
+            if new_user.user_id != reservation.user_id:
+                change = True
+                print('test')
+        except:
+            form.user.errors.append('User name does not exist')
+            error = True
         if not error:
             machine = database.get_machine(form.machine.data)
-            user = database.get_user(reservation.user_id)
+            new_user = database.get_user_from_user_name(form.user.data)
             try:
-                database.check_reservation_conflict(form.machine.data, reservation.user_id, start, end, reservation)
+                database.check_reservation_conflict(form.machine.data, new_user.user_id, start, end, reservation)
             except ReservationError as e:
                 form.machine.errors.append(str(e))
                 error = True
         if not error:
             if change:
                 reservation.machine_id = form.machine.data
+                reservation.user_id = new_user.user_id
                 reservation.start_time = start
                 reservation.end_time = end
                 database.session.commit()
@@ -493,6 +502,7 @@ def edit_reservation(reservation_id=None):
                 form.machine.errors.append('Nothing has changed')
     else:
         form.machine.data = reservation.machine_id
+        form.user.data = database.get_user(reservation.user_id).user_name
         form.date.data = reservation.start_time
         form.start_time.data = reservation.start_time
         form.end_time.data = reservation.end_time

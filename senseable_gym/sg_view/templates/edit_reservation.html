@@ -21,6 +21,11 @@
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
     {{ form.machine(class_="form-control") }}
+    {{ form.user.label }}
+    {% for error in form.user.errors %}
+        <p style="color: red;">[{{ error }}]</p>
+    {% endfor %}
+    {{ form.user(class_="form-control") }}
     {{ form.date.label }}
     {% for error in form.date.errors %}
         <p style="color: red;">[{{ error }}]</p>
