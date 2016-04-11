@@ -255,6 +255,8 @@ class StreamProcessor(Processor):
         return transformed
 
 if __name__ == '__main__':
-    tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
-    mdata = tp.read()
-    plot_sensor_data(mdata)
+    # tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
+    # mdata = tp.read()
+    # plot_sensor_data(mdata)
+    sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Intsruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
+    print(sp.read(10))
