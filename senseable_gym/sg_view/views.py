@@ -64,7 +64,7 @@ def login():
                 user.authenticated = True
                 database.session.add(user)
                 database.session.commit()
-                login_user(user, remember=form.remember_me.data)
+                login_user(user, remember=True)
                 return redirect(previous_page)
             else:
                 form.password.errors.append('Password does not match user')
@@ -125,17 +125,27 @@ def reserve():
     choices = [(machine.machine_id, machine.machine_id) for machine in machine_list]
     form.machine.choices = choices
     if form.validate_on_submit():
+        error = False
         machine = database.get_machine(form.machine.data)
         start = datetime.combine(form.date.data, form.start_time.data)
+        if start <= datetime.now():
+            form.date.errors.append('Reservation must be in the future')
+            form.start_time.errors.append('Reservation must be in the future')
+            error = True
+        if form.length.data<0:
+            form.length.errors.append('Length must be positive')
+            error = True
         time_delta = timedelta(minutes=form.length.data)
         end = start + time_delta
-        reservation = Reservation(machine, current_user, start, end)
-        try:
-            database.add_reservation(reservation)
-        except ReservationError:
-            form.start_time.errors.append("Reservation time overlaps with existing reservation")
-            return render_template('reserve.html', form=form, user=current_user)
-        return redirect('/machine_view')
+        if not error:
+            reservation = Reservation(machine, current_user, start, end)
+            try:
+                database.add_reservation(reservation)
+            except ReservationError:
+                form.start_time.errors.append("Reservation time overlaps with existing reservation")
+                error = True
+        if not error:
+            return redirect('/machine_view')
     return render_template('reserve.html', form=form, user=current_user)
 
 
@@ -366,6 +376,15 @@ def edit_machine(machine_id=None):
         change = False
         error = False
         location = [form.position_x.data, form.position_y.data, form.position_z.data]
+        if location[0]<0:
+            form.position_x.errors.append('Coordinate must be positive')
+            error = True
+        if location[1]<0:
+            form.position_y.errors.append('Coordinate must be positive')
+            error = True
+        if location[2]<0:
+            form.position_z.errors.append('Coordinate must be positive')
+            error = True
         if form.machine_type.data != machine.type_value:
             change = True
         if location!=machine.location:

@@ -6,17 +6,17 @@
 <form action="" method="post" name="login" class="form-signin">
     <h1 class="form-signin-heading">Please Sign In</h1>
     {{ form.hidden_tag() }}
+    {{ form.user.label}}
     {% for error in form.user.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+        <div style="color: red;">[{{ error }}]</div>
     {% endfor %}
     {{ form.user(class_="form-control") }}
+    {{ form.password.label }}
     {% for error in form.password.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+        <div style="color: red;">[{{ error }}]</div>
     {% endfor %}
     {{ form.password(class_="form-control") }}
-    <div class="checkbox">
-        <label>{{ form.remember_me(class_="checkbox") }} Remember Me </label>
-    <div><br/>
+    <br/>
     <button type="submit" class="btn btn-lg btn-primary btn-block">Sign in</button>
 </form>
 {% endblock %}

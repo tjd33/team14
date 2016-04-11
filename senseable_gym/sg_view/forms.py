@@ -46,9 +46,9 @@ class EditUserForm(Form):
 
 class EditMachineForm(Form):
     machine_type = SelectField('Type', coerce=int)
-    position_x = IntegerField('X coordinate')
-    position_y = IntegerField('Y coordinate')
-    position_z = IntegerField('Z coordinate')
+    position_x = IntegerField('X Coordinate')
+    position_y = IntegerField('Y Coordinate')
+    position_z = IntegerField('Z Coordinate')
     
 class TimePeriodForm(Form):
     date = DateField('Date', format='%Y-%m-%d', default=datetime.today(), validators=[DataRequired()])
@@ -65,5 +65,5 @@ class AdminPasswordForm(Form):
     password = PasswordField('Password', validators=[DataRequired()], render_kw={"placeholder": "Password"})
 
 class AddAdminForm(Form):
-    user = TextField('User', validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    user = TextField('Username', validators=[DataRequired()], render_kw={"placeholder": "Username"})
     
