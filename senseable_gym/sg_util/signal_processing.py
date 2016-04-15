@@ -1,14 +1,11 @@
-import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.htmlp
-# from tkinter import *
-# import numpy as np
+import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
+import math
+# from plot import plot_sensor_data
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
-rowlength = 6
-# filename = '/Users/paul/Desktop/ZTerm/Treadmill_Front' # Name of file to open
-fields = ['Gyro X (deg/sec)', 'Gyro Y (deg/sec)', 'Gyro Z (deg/sec)', 'Accel X (G)', 'Accel Y (G)', 'Accel Z (G)']
-
+rowlength = 7
 
 def is_number(s):
     try:
@@ -17,8 +14,14 @@ def is_number(s):
     except ValueError:
         return False
 
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
 
-class Processer():
+class Processor():
     def __init__(self):
         self.data_packets_read = 0
 
@@ -34,8 +37,9 @@ class Processer():
         :returns: True if busy, else False
         """
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
+        acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if (gyro_total >= 2):
+        if((gyro_total >= 4) or (acc_total >= 0.11)):
             return True
         else:
             return False
@@ -107,10 +111,9 @@ class Processer():
         return transformed
 
 
-class TextProcessor(Processer):
+class TextProcessor(Processor):
     def __init__(self, filename):
         self.filename = filename
-
         self.no_newline = []
         self.unwanted_newline = []
         self.invalid_number = []
@@ -124,7 +127,7 @@ class TextProcessor(Processer):
             #   Play nice and close it.
             pass
 
-    def read(self, num_data=1, debug=True):
+    def read(self, num_data=1, debug=False):
         # TODO: Decide on a correct format for a read to return
         # TODO: Break into an incremental read
         # TODO: Set this function into a read certain amount
@@ -133,7 +136,8 @@ class TextProcessor(Processer):
             datastring = f_stream.read()
             datalist = datastring.split('\n')
 
-            # Format list so that it begins with gyro x and ends with newline
+            # TODO: fix end of list so that it ends nicer and update collength variable accordingly
+            # Format list so that it begins with machine ID and ends with newline
             begin = rowlength
             for n in range(0, begin - 1):
                 if datalist[n] == '':
@@ -150,27 +154,24 @@ class TextProcessor(Processer):
                 del datalist[(end + 1):]
 
             # Initialize and store data into matrix format
-            collength = len(datalist)//(rowlength + 1)
-            matrix_data = [[0 for x in range(collength)] for x in range(rowlength + 1)]
-
+            collength = math.ceil(len(datalist)/(rowlength + 1))
+            matrix_data = [[0 for x in range(collength)] for x in range(rowlength)]
             row = 0
             col = 0
             line = begin + 2
             for each_item in datalist:
-                print('Row: {0}, item: {1}'.format(row, each_item))
+                if debug:
+                    print('Row: {0}, item: {1}'.format(row, each_item))
                 if row == rowlength:
                     if each_item != '':
-                        # print('ERROR - LINE ' + str(line) + ': NO NEWLINE WHERE THERE SHOULD BE ONE')
                         self.no_newline.append(line)
                     row = 0
                     col += 1
                 else:
                     if each_item == '':
-                        # print('ERROR - LINE ' + str(line) + ': NEWLINE WHERE THERE SHOULD NOT BE ONE')
                         self.unwanted_newline.append(line)
                         row = 0
                     elif is_number(each_item) == 0:
-                        # print('ERROR - LINE ' + str(line) + ': LINE MUST CONTAIN A VALID NUMBER')
                         self.invalid_number.append(line)
                         row = 0
                     else:
@@ -178,15 +179,25 @@ class TextProcessor(Processer):
                         row += 1
                 line += 1
 
-            # Print matrix for debugging
-            # for c in range(0, rowlength):
-                # print(matrix_data[c])
-
             # Return matrix
             return matrix_data
 
+    # def create_test_files(self):
+    #     tempfile = open(self.filename, 'r')
+    #     tempdatastring = tempfile.read()
+    #     tempdatalist = tempdatastring.split('\n')
+    #     numb = 8*17000
+    #     numb2 = 8*22000
+    #     newdatalist = tempdatalist[numb:numb2]
+    #     f = open('../test/data_txt_files/Off', 'w')
+    #     for itemm in newdatalist:
+    #         if itemm == '':
+    #             f.write('\r\n')
+    #         else:
+    #             f.write(itemm)
+    #             f.write('\r\n')
 
-class StreamProcessor(Processer):
+class StreamProcessor(Processor):
     def __init__(self, port, baudrate):
         self.port = port
         self.baudrate = int(baudrate)
@@ -196,13 +207,13 @@ class StreamProcessor(Processer):
         self.ser.baudrate = self.baudrate
 
         # Old options
-        # ser.bytesize = 8
-        # ser.parity = 'N'
-        # ser.stopbits = 1
-        # ser.timeout = None
-        # ser.xonxoff = False
-        # ser.rtscts = False
-        # ser.dsrdtr = False
+        # self.ser.bytesize = 8
+        # self.ser.parity = 'N'
+        # self.ser.stopbits = 1
+        # self.ser.timeout = None
+        # self.ser.xonxoff = False
+        # self.ser.rtscts = False
+        # self.ser.dsrdtr = False
 
     def read_incremental(self, stream=None, debug=False):
         """
@@ -210,66 +221,42 @@ class StreamProcessor(Processer):
 
         Returns the standard packet protocol
         """
-        if stream:
-            # TODO: Decide if this will ever even be used
-            #   with an explicit stream
-            # TODO: Update this to follow the other section
-            # TODO: Abstract this section
-            data = []
-            counter = 0
-            while(1):
-                num = str(stream.readline().strip())
-                print(num)
-                if(num != "b''"):
-                    counter += 1
-                    num2 = num[2:-1]
+        # TODO: Abstract this section
+        data = []
+        counter = 0
+        while(1):
+            num = str(stream.readline().strip())
+            if debug:
+                print('Reading: {0}'.format(num))
+            # For non blank lines, put a number into the data
+            if((num != "b''") and (counter < rowlength)):
+                num2 = num[2:-1]
+                if((counter != 0) and (is_number(num2))):
                     data.append(float(num2))
-                elif(counter == 7):
-                    return data
-        else:
-            self.ser.open()
-            data = []
-            counter = 0
-            while(1):
-                num = str(self.ser.readline().strip())
-                if debug:
-                    print('Reading: {0}'.format(num))
-                # If we've collected enough data,
-                #   then close the connection and return the data
-                if(counter == 7):
-                    self.ser.close()
-                    return data
-                # Only pay attention to non blank lines
-                elif(num != "b''"):
-                    # We have to start on an integer (that is the ID)
-                    if (counter == 0):
-                        try:
-                            data.append(int(num[2:-1]))
-                            counter += 1
-                        except ValueError:
-                            if debug:
-                                print('Tried to make an int with {}'.format(num))
-                    # Otherwise, we will put an number into the data
-                    else:
-                        num2 = num[2:-1]
-                        data.append(float(num2))
-                        counter += 1
+                    counter += 1
+                elif((counter == 0) and (is_int(num2))):
+                    data.append(int(num2))
+                    counter += 1
+            # If we've collected enough data, return the data
+            elif(counter == rowlength):
+                return data
+            # If we read a packet that was too small or too large, try again
+            else:
+                data = []
+                counter = 0
 
     def read(self, num_data, debug=False):
-        # print(stream)
         data = []
-        # TODO: fix faulty input values of data, figure out when to start reading data, slow data rate down, get rid of accel data
+        self.ser.open()
         for i in range(num_data):
-            data.append(self.read_incremental(debug=debug))
-
+            data.append(self.read_incremental(stream=self.ser, debug=debug))
+        self.ser.close()
         transformed = self.transform(data)
         return transformed
 
-# def process_data():
-#   pass
-
 if __name__ == '__main__':
-    # matrix_data, _, _, _ = read_text_file_data(filename)
-    # plot_sensor_data(matrix_data)
-    # read_stream_data()
-    pass
+    # tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
+    # mdata = tp.read()
+    # plot_sensor_data(mdata)
+    sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
+    print(sp.read(10))
