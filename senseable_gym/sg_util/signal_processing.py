@@ -1,6 +1,6 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
-# from plot import plot_sensor_data
+from senseable_gym.sg_util.plot import plot_sensor_data
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
@@ -267,5 +267,5 @@ if __name__ == '__main__':
     # tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
     # mdata = tp.read()
     # plot_sensor_data(mdata)
-    sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
-    print(sp.read(10))
+    # sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
+    # print(sp.read(10))
