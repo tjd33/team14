@@ -1,6 +1,6 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
-from senseable_gym.sg_util.plot import plot_sensor_data
+# from senseable_gym.sg_util.plot import plot_sensor_data
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
@@ -39,7 +39,7 @@ class Processor():
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
         acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if((gyro_total >= 4) or (acc_total >= 0.11)):
+        if(gyro_total >= 100): # or (acc_total >= 0.11)):
             return True
         else:
             return False
@@ -269,3 +269,4 @@ if __name__ == '__main__':
     # plot_sensor_data(mdata)
     # sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
     # print(sp.read(10))
+    pass

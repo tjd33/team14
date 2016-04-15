@@ -20,7 +20,7 @@ s = StreamProcessor(config['SERIAL']['port'], config['SERIAL']['baudrate'])
 
 
 while (True):
-    result = s.read(1000, debug=True)
+    result = s.read(100, debug=True)
 
     processed = s.process_data(result)
     print('Processed: {0}'.format(processed))
