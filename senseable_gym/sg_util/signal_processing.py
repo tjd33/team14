@@ -224,8 +224,12 @@ class StreamProcessor(Processor):
         # TODO: Abstract this section
         data = []
         counter = 0
+
+        if not stream:
+            self.ser.open()
+
         while(1):
-            num = str(stream.readline().strip())
+            num = str(self.ser.readline().strip())
             if debug:
                 print('Reading: {0}'.format(num))
             # For non blank lines, put a number into the data
@@ -239,11 +243,16 @@ class StreamProcessor(Processor):
                     counter += 1
             # If we've collected enough data, return the data
             elif(counter == rowlength):
+                if not stream:
+                    self.ser.close()
                 return data
             # If we read a packet that was too small or too large, try again
             else:
                 data = []
                 counter = 0
+
+        if not stream:
+            self.ser.close()
 
     def read(self, num_data, debug=False):
         data = []
