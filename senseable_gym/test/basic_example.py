@@ -88,7 +88,7 @@ def main(level, dbname):
         except:
             pass
             # already contains user
-
+    
     user_list = db.get_users()
 
     # Print the users that we have

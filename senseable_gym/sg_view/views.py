@@ -54,7 +54,6 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-
         try:
             user = database.get_user_from_user_name(form.user.data)
         except:
@@ -71,7 +70,6 @@ def login():
         else:
             print('no such user')
             form.user.errors.append("Username does not exist")
-
     return render_template('login.html',
                            title='Sign In',
                            form=form,
@@ -272,9 +270,12 @@ def get_reservation_dict(machine_id):
     return jsonify(res_dict)
 
 
-@app.route('/_update_status/<machine_id>/<new_status>')
-def update_status(machine_id, new_status):
-    # TODO: Add user authentification for this
+@app.route('/_update_status')
+def update_status():
+    if request.args.get('pass', '')!='ajax_update':
+        return "Authentication failed"
+    machine_id = request.args.get('id', '')
+    new_status = request.args.get('status', '')
     machine = database.get_machine(machine_id)
     old_status = machine.status
 

@@ -10,3 +10,4 @@ flask-bcrypt
 wtforms_components
 matplotlib
 pyserial
+requests
