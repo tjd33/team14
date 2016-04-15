@@ -3,6 +3,7 @@ import configparser
 
 # Senseable Gym Imports
 from senseable_gym.sg_util.signal_processing import StreamProcessor
+from senseable_gym.sg_run.machine_updater import send_update
 config = configparser.ConfigParser()
 config.read('./senseable_gym/sg_run/machine_updater.ini')
 
@@ -23,3 +24,9 @@ while (True):
 
     processed = s.process_data(result)
     print('Processed: {0}'.format(processed))
+    
+    for machine_id in processed:
+        if processed[machine_id] == True:
+            send_update(machine_id, 2)
+        else:
+            send_update(machine_id, 1)
