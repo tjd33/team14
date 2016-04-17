@@ -8,7 +8,7 @@ from flask.ext.login import login_user, current_user, logout_user, login_require
 from senseable_gym.sg_view import app, bcrypt
 from senseable_gym.sg_view.forms import *
 from senseable_gym.sg_database.database import DatabaseModel
-from senseable_gym.sg_util.machine import MachineType, MachineStatus
+from senseable_gym.sg_util.machine import MachineType, MachineStatus, Machine
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import ReservationError
@@ -408,6 +408,43 @@ def edit_machine(machine_id=None):
         [form.position_x.data, form.position_y.data, form.position_z.data] = machine.location
     return render_template('edit_machine.html', user=user, machine=machine, form=form)
 
+@app.route('/add_machine', methods=['GET', 'POST'])
+@login_required
+def add_machine(machine_id=None):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+
+    form = EditMachineForm()
+    types = [(member.value, member.name) for member in list(MachineType)]
+    form.machine_type.choices = types
+
+    if form.validate_on_submit():
+        error = False
+        location = [form.position_x.data, form.position_y.data, form.position_z.data]
+        if location[0]<0:
+            form.position_x.errors.append('Coordinate must be positive')
+            error = True
+        if location[1]<0:
+            form.position_y.errors.append('Coordinate must be positive')
+            error = True
+        if location[2]<0:
+            form.position_z.errors.append('Coordinate must be positive')
+            error = True
+        try:
+            collision_machine = database.get_machine_by_location(location)
+            form.position_x.errors.append('Machine ' + str(collision_machine.machine_id) + ' is already in that position')
+            error = True
+        except:
+            pass
+        if not error:
+            machine = Machine(MachineType(form.machine_type.data), location)
+            try:
+                database.add_machine(machine)
+                return redirect('/edit_machines')
+            except:
+                pass
+    return render_template('edit_machine.html', user=user, form=form)
 
  
 @app.route('/edit_reservations', methods=['GET', 'POST'])
