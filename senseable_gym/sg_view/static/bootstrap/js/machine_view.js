@@ -48,63 +48,80 @@ function machine_summary(machine) {
     return summary;
 }
 
-function draw_machines(machines){
-    var canvas = document.getElementById("current_machine_status");
-    var elem = canvas.getContext("2d");
 
+var first = true;
+var locations = []
+
+function draw_machines(elem){
     // TODO: Get the width and height of the canvas dynamically
-    var height = 700;
-    var width = 700;
-    var radius = 25;
+    var height = 700, width = 700, radius = 25;
+    var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
+
+    // Create a list to hold all of the locations of the centers of the machines
+    //var locations = [];
+    
 
     var x_max = 0;
     var y_max = 0;
-    for ( var i = 0, l = machines.length; i < l; i++) {
-        if (x_max < machines[i].location[0] + 1) {
-            x_max = machines[i].location[0] + 1;
+    
+    $.ajax({
+        url: "/_machine_list",
+        success: function(result){
+            machines = result.machines;
+            for ( var i = 0; i < machines.length; i++) {
+                if (x_max < machines[i].location[0] + 1) {
+                    x_max = machines[i].location[0] + 1;
+                }
+                if (y_max < machines[i].location[1] + 1) {
+                    y_max = machines[i].location[1] + 1;
+                }
+            }
+            x_max++;
+            y_max++;
+            
+            for ( i = 0; i < machines.length; i++) {
+                if (machines[i].status == "BUSY") {
+                    elem.fillStyle = "rgba(360, 77, 44, 1)";
+                } else if (machines[i].status == "RESERVED") {
+                    elem.fillStyle = "rgba(0, 0, 200, 1)";
+                } else if (machines[i].status == "OPEN") {
+                    elem.fillStyle = "rgba(200, 200, 10, 0.6)";
+                } else {
+                    elem.fillStyle = "rgba(0, 0, 0, 0.6)";
+                }
+                elem.beginPath();
+                x_loc = machines[i].location[0];
+                y_loc = machines[i].location[1];
+                x_norm = n(x_loc, x_max, width);
+                y_norm = n(y_loc, y_max, height);
+                elem.arc(x_norm,
+                        y_norm,
+                        radius, 50 , 0, Math.PI*2);
+                elem.closePath();
+                elem.fill();
+
+                if(first){
+                    locations.push({'x': x_norm,
+                                    'y': y_norm,
+                                    'r': radius,
+                                    'machine_id': machines[i].machine_id,
+                                    'status': machines[i].status,
+                                    'reservations': []
+                    });
+                }
+            } 
+            first = false;
+            
         }
-        if (y_max < machines[i].location[1] + 1) {
-            y_max = machines[i].location[1] + 1;
-        }
-    }
-    x_max++;
-    y_max++;
+    });
+}
 
-    // Create a list to hold all of the locations of the centers of the machines
-    var locations = [];
+function setup_canvas(){
+    var canvas = document.getElementById("current_machine_status");
+    var elem = canvas.getContext("2d");
 
-    // TODO: Set the fill style differently depending on status
-    var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
-
-    for ( i = 0; i < l; i++) {
-        if (machines[i].status == "Busy") {
-            elem.fillStyle = "rgba(360, 77, 44, 1)";
-        } else if (machines[i].status == "Reserved") {
-            elem.fillStyle = "rgba(0, 0, 200, 1)";
-        } else if (machines[i].status == "Open") {
-            elem.fillStyle = "rgba(200, 200, 10, 0.6)";
-        } else {
-            elem.fillStyle = "rgba(0, 0, 0, 0.6)";
-        }
-        elem.beginPath();
-        x_loc = machines[i].location[0];
-        y_loc = machines[i].location[1];
-        x_norm = n(x_loc, x_max, width);
-        y_norm = n(y_loc, y_max, height);
-        elem.arc(x_norm,
-                y_norm,
-                radius, 50 , 0, Math.PI*2);
-        elem.closePath();
-        elem.fill();
-
-        locations.push({'x': x_norm,
-                        'y': y_norm,
-                        'r': radius,
-                        'machine_id': machines[i].machine_id,
-                        'status': machines[i].status,
-                        'reservations': []
-                        });
-    }
+    draw_machines(elem);
+    setInterval(function(){draw_machines(elem)}, 1000);
 
     $('#current_machine_status').on('dblclick', function(e) {
         console.log('click: ' + e.offsetX + '/' + e.offsetY);

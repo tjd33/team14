@@ -257,6 +257,7 @@ def user_reservations():
 # {{{ AJAX Queries
 @app.route('/_reservation_list/<machine_id>')
 def get_reservation_dict(machine_id):
+    print(machine_id)
     machine = database.get_machine(machine_id)
     res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
     res_dict = {'machine_id': int(machine_id)}
@@ -268,6 +269,14 @@ def get_reservation_dict(machine_id):
             for res in res_list
             ]
     return jsonify(res_dict)
+    
+@app.route('/_machine_list')
+def get_machine_list():
+    machine_list = database.get_machines()
+    machines = {}
+    machines['machines'] = [{'location': machine.location, 'status': machine.status.name, 'machine_id':machine.machine_id} for machine in machine_list]
+    # print(machines)
+    return jsonify(machines)
 
 
 @app.route('/_update_status')
