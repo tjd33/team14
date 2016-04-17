@@ -439,6 +439,7 @@ def add_machine(machine_id=None):
             pass
         if not error:
             machine = Machine(MachineType(form.machine_type.data), location)
+            machine.status = MachineStatus.OPEN
             try:
                 database.add_machine(machine)
                 return redirect('/edit_machines')
@@ -446,7 +447,14 @@ def add_machine(machine_id=None):
                 pass
     return render_template('edit_machine.html', user=user, form=form)
 
- 
+@app.route('/delete_machine/<machine_id>')
+def delete_machine(machine_id):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    database.remove_machine(machine_id)
+    return redirect('/edit_machines')
+    
 @app.route('/edit_reservations', methods=['GET', 'POST'])
 @login_required
 def edit_reservations():

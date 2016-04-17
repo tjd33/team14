@@ -2,6 +2,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+    function delete_machine() {
+        if(confirm('Are you sure you want to delete this machine?') == true) {
+            
+            window.location.href = '/delete_machine/' + {{machine.machine_id}};         
+        }
+        else { 
+            return false;
+        }          
+    }
+</script>
 <form action="" method="post" name="register" class="form-signin">
     
     <h1 class="form-signin-heading">
@@ -40,7 +51,9 @@
         {% endif %}
     </button>
 </form>
-
+{% if machine %}
+    <button onclick="delete_machine()" class="btn btn-lg btn-block btn-danger form-signin">Delete Machine</button>
+{% endif %}
 <a href = {{ url_for('admin_settings')}} class="btn btn-lg btn-block btn-info form-signin">Back</a>
 
 {% endblock %}
