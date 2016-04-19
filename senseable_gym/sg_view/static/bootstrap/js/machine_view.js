@@ -116,63 +116,94 @@ function draw_machines(elem){
     });
 }
 
-function setup_canvas(){
+function setup_canvas(auth){
     var canvas = document.getElementById("current_machine_status");
     var elem = canvas.getContext("2d");
 
     draw_machines(elem);
     setInterval(function(){draw_machines(elem)}, 1000);
 
-    $('#current_machine_status').on('dblclick', function(e) {
-        console.log('click: ' + e.offsetX + '/' + e.offsetY);
-        var res = collides(locations, e.offsetX, e.offsetY);
-        var machine = res[0];
-        if (machine) {
-            console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
-            // TODO: Only allow users to reserve somethinhg if they are logged in.
-            window.location.href = $SCRIPT_ROOT + "/reserve/" + res[0].machine_id;
-        } else {
-            console.log('no collision');
-        }
-    });
+    if(typeof window.orientation !== 'undefined'){ // if mobile
+        $('#machine_summary').html("test");
+        var pressTimer
+        
+        X0 = canvas.getBoundingClientRect().left
+        Y0 = canvas.getBoundingClientRect().top
+        
+        $('#current_machine_status').on('touchstart', function(e) {
+            console.log(e.type)
+            pressTimer = window.setTimeout(function() {
+                x = Math.round(e.originalEvent.touches[0].pageX) - X0;
+                y = Math.round(e.originalEvent.touches[0].pageY) - Y0;
+                reserve(x, y, auth);
+            },1000)
+        }).on('click', function(e) {
+            status_popup(e.offsetX, e.offsetY);
+        }).on('touchend', function(e) {
+            console.log('touchend')
+            clearTimeout(pressTimer)
+        });
+    } else {
+        $('#current_machine_status').on('dblclick', function(e) {
+            reserve(e.offsetX, e.offsetY, auth)
+        });
+        
+        $('#current_machine_status').on('click', function(e) {
+            status_popup(e.offsetX, e.offsetY)
+        });
+    }  
+}
 
-    $('#current_machine_status').on('click',
-        // When
-        function(e) {
-            var res = collides(locations, e.offsetX, e.offsetY);
-            var machine = res[0];
-            var c_m_id = get_current_machine_id();
-            if (machine) {
-                if (res[1] != c_m_id) {
-                    console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
-                    set_current_machine_id(res[1]);
-                    $.ajax({
-                        url: "/_reservation_list/" + machine.machine_id,
-                        success: function(result){
-                            var reservations_html = 
-                            `<table border=1>
-                                <tr>
-                                    <th text-align=center>Start Time</th>
-                                    <th>End Time </th>
-                                </tr>
-                            `;
-                            // cr for current reservation
-                            for (var cr = 0; cr < result.reservations.length; cr++) {
-                                reservations_html += '<tr><td>' + 
-                                    result.reservations[cr].start_time + 
-                                    ' </td><td> ' +
-                                    result.reservations[cr].end_time +
-                                    '</td></tr>';
-                            }
-                            reservations_html += '</ul>';
-                            $('#machine_summary').html(
-                                reservations_html
-                            );
-                        }
-                    });
-                    // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
+function reserve(x,y, auth){
+    if (auth != "True"){
+        return;
+    }
+    console.log('double or long click: ' + x + '/' + y);
+    var res = collides(locations, x, y);
+    var machine = res[0];
+    if (machine) {
+        console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
+        // TODO: Only allow users to reserve somethinhg if they are logged in.
+        window.location.href = $SCRIPT_ROOT + "/reserve/" + res[0].machine_id;
+    } else {
+        console.log('no collision');
+    }
+}
+
+function status_popup(x,y){
+    console.log('click: ' + x + '/' + y);
+    var res = collides(locations, x, y);
+    var machine = res[0];
+    var c_m_id = get_current_machine_id();
+    if (machine) {
+        if (res[1] != c_m_id) {
+            console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
+            set_current_machine_id(res[1]);
+            $.ajax({
+                url: "/_reservation_list/" + machine.machine_id,
+                success: function(result){
+                    var reservations_html = 
+                    `<table border=1>
+                        <tr>
+                            <th text-align=center>Start Time</th>
+                            <th>End Time </th>
+                        </tr>
+                    `;
+                    // cr for current reservation
+                    for (var cr = 0; cr < result.reservations.length; cr++) {
+                        reservations_html += '<tr><td>' + 
+                            result.reservations[cr].start_time + 
+                            ' </td><td> ' +
+                            result.reservations[cr].end_time +
+                            '</td></tr>';
+                    }
+                    reservations_html += '</ul>';
+                    $('#machine_summary').html(
+                        reservations_html
+                    );
                 }
-            }
+            });
+            // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
         }
-    );
+    }
 }
