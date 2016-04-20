@@ -173,6 +173,12 @@ def reserve_machine(machine_id=None):
     return render_template('reserve.html', form=form, user=current_user)
 
 
+@app.route('/login_before_reserve/<machine_id>', methods=['GET', 'POST'])
+def login_before_reserve(machine_id):
+    global previous_page
+    previous_page = '/reserve/' + machine_id
+    return redirect('/login')
+    
 @app.route('/settings')
 @login_required
 def settings():
@@ -257,8 +263,10 @@ def user_reservations():
 # {{{ AJAX Queries
 @app.route('/_reservation_list/<machine_id>')
 def get_reservation_dict(machine_id):
+    print(machine_id)
     machine = database.get_machine(machine_id)
     res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
+    print(len(res_list))
     res_dict = {'machine_id': int(machine_id)}
     res_dict['reservations'] = [
             {
@@ -268,6 +276,14 @@ def get_reservation_dict(machine_id):
             for res in res_list
             ]
     return jsonify(res_dict)
+    
+@app.route('/_machine_list')
+def get_machine_list():
+    machine_list = database.get_machines()
+    machines = {}
+    machines['machines'] = [{'location': machine.location, 'status': machine.status.name, 'machine_id':machine.machine_id} for machine in machine_list]
+    # print(machines)
+    return jsonify(machines)
 
 
 @app.route('/_update_status')
@@ -439,6 +455,7 @@ def add_machine(machine_id=None):
             pass
         if not error:
             machine = Machine(MachineType(form.machine_type.data), location)
+            machine.status = MachineStatus.OPEN
             try:
                 database.add_machine(machine)
                 return redirect('/edit_machines')
@@ -446,7 +463,14 @@ def add_machine(machine_id=None):
                 pass
     return render_template('edit_machine.html', user=user, form=form)
 
- 
+@app.route('/delete_machine/<machine_id>')
+def delete_machine(machine_id):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    database.remove_machine(machine_id)
+    return redirect('/edit_machines')
+    
 @app.route('/edit_reservations', methods=['GET', 'POST'])
 @login_required
 def edit_reservations():
