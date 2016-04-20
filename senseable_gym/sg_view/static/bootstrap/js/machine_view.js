@@ -131,12 +131,12 @@ function setup_canvas(auth){
         Y0 = canvas.getBoundingClientRect().top
         
         $('#current_machine_status').on('touchstart', function(e) {
-            console.log(e.type)
+            x = Math.round(e.originalEvent.touches[0].pageX) - X0;
+            y = Math.round(e.originalEvent.touches[0].pageY) - Y0;
+            console.log(e.type + '/' + x + '/' + y)
             pressTimer = window.setTimeout(function() {
-                x = Math.round(e.originalEvent.touches[0].pageX) - X0;
-                y = Math.round(e.originalEvent.touches[0].pageY) - Y0;
                 reserve(x, y, auth);
-            },1000)
+            },500)
         }).on('click', function(e) {
             status_popup(e.offsetX, e.offsetY);
         }).on('touchend', function(e) {
@@ -156,7 +156,8 @@ function setup_canvas(auth){
 
 function reserve(x,y, auth){
     if (auth != "True"){
-        return;
+        window.location.href = '/login_before_reserve/1';
+        return false;
     }
     console.log('double or long click: ' + x + '/' + y);
     var res = collides(locations, x, y);

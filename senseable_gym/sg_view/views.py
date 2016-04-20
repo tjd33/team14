@@ -173,6 +173,12 @@ def reserve_machine(machine_id=None):
     return render_template('reserve.html', form=form, user=current_user)
 
 
+@app.route('/login_before_reserve/<machine_id>', methods=['GET', 'POST'])
+def login_before_reserve(machine_id):
+    global previous_page
+    previous_page = '/reserve/' + machine_id
+    return redirect('/login')
+    
 @app.route('/settings')
 @login_required
 def settings():
@@ -260,6 +266,7 @@ def get_reservation_dict(machine_id):
     print(machine_id)
     machine = database.get_machine(machine_id)
     res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
+    print(len(res_list))
     res_dict = {'machine_id': int(machine_id)}
     res_dict['reservations'] = [
             {
