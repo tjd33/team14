@@ -229,6 +229,19 @@ several more years. It also has the modern capabilities to use Python and other 
 
 % TODO: Dan & TJ
 \subsection{Hub to Server Communication}
+The server must communicate with the hub to determine the status of the machines and communicate reservations to the displays
+
+\subsubsection{Design Criteria}
+The communication between the hub and the server must be reliable, and fast enough to transfer all the required data.
+
+\subsubsection{Design Alternatives}
+One alternative is for the hub and the server to communicate via TCP sockets. The hub and the server would both setup sockets listening for updates. This has the advantage of being fast, reliable, and relatively easy to implement.
+
+A second alternative is for the hub to use http requests to send updates through the server's http server that delivers the website, and also use those requests to get updates from the server. This has the advantage of being simple, and streamlining the database access methods on the server. This option is slower than the TCP socket method.
+
+\subsubsection{Design Decisions}
+The http request method was chosen because the database was reporting errors when updated from multiple TCP socket transmissions, which could impede reliability. Because the http requests go through the http server, this thus reducing the threads accessing the database to one, the http request method does not present this problem. Any issues that may arise due to the slower speed of the HTTP method can be negated if the data transferred is aggregated before being sent, thus reducing the number of packets sent.
+
 
 % TODO: Paul & Ryan
 \subsection{Contiki}
