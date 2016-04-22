@@ -6,24 +6,22 @@
 \section{Integration, Test, and Debug}
 Testing will be a crucial part of the design process, as it will determine whether or not the system meets the design requirements.
 
-% TODO: Change to tests passed, tests failed, and tests planned for production
-\subsection{Single Feature Tests}
+\subsection{Tests passed}
 The sensors will be tested to make sure they are sensitive enough to detect the vibrations of functioning equipment.  To do this, single sensors will be installed on Calvin College gym equipment. The output from the sensors when the machine is in use as opposed to the noise will determine whether they are sensitive enough. This test will also determine whether the physical connection of the sensor to the equipment is sufficient to endure normal use.
-The display interfaces will be tested to determine whether all the required information can be displayed while maintaining good visibility from a distance of about 7'. This will be accomplished by a simple visual check. Tests with single units on actual equipment will also be done to verify the physical connection to gym equipment. The displays will be user-tested to determine their ease of use and intuitiveness.
-
-Both the sensors and the displays will be tested for battery life. This will be done by measuring and recording the battery level of each type of device after running for one week and extrapolating an estimate of the total battery life of the device.
-
-The network will be tested to verify that all devices communicate properly and that the mesh network is working as expected. Multiple devices will be activated one at a time; each should connect to the network rapidly without disrupting the other devices connection. Devices will be added outside the range of the central hub with intermediate devices in between to verify that the devices are properly forming a mesh network instead of all directly connecting to the hub. No data transmitted over this network should be corrupted.
 
 The hub and server will be tested to make sure that information is properly propagated between the sensors, the display interfaces, and the server. It should take less than one minute for information to be transmitted from any device to any other device, including the server. This will be tested by stimulating the sensors, recording the response time of the server detecting the change, and recording the response time of the displays to changes made on the server.
+
+Unit tests will be written for the software to verify that the code function correctly at all times.
+\subsection{Tests failed}
+Both the sensors and the displays will be tested for battery life. This will be done by measuring and recording the battery level of each type of device after running for one week and extrapolating an estimate of the total battery life of the device.
+\subsection{Future tests}
+The display interfaces will be tested to determine whether all the required information can be displayed while maintaining good visibility from a distance of about 7'. This will be accomplished by a simple visual check. Tests with single units on actual equipment will also be done to verify the physical connection to gym equipment. The displays will be user-tested to determine their ease of use and intuitiveness.
+
+The network will be tested to verify that all devices communicate properly and that the mesh network is working as expected. Multiple devices will be activated one at a time; each should connect to the network rapidly without disrupting the other devices connection. Devices will be added outside the range of the central hub with intermediate devices in between to verify that the devices are properly forming a mesh network instead of all directly connecting to the hub. No data transmitted over this network should be corrupted.
 
 The website will be tested by verifying that current usage and reservation information is received without any communication errors and is displayed to the user. Reservations made using the application should also be transmitted to the server without any errors. The website will be user-tested to determine whether its ease of use is sufficient.
 
 All the equipment will be left running for multiple days with some occasional artificial activity (such as manually moving a sensor to simulate a running machine) during typical gym hours to verify that the system will work without crashing for at least 24 hours.
-
-Unit tests will be written for the software to verify that the code function correctly at all times.
-
-\subsection{Integration Testing}
 
 Once all the single feature tests are completed, integration testing will be performed in order to determine that the system works properly in a real gym environment. This involves setting the system up in a gym and letting it run during a regular day. This will confirm or invalidate the results of the single feature tests as the integration test is a more realistic testing scenario. The same devices being used across different equipment will determine the generality of those devices. The status of the gym according to the sensors will be monitored and regularly cross-checked with actual gym usage to ensure that the gym usage information is correct.
 
