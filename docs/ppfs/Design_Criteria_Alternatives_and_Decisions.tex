@@ -5,7 +5,7 @@
 %--------------------------------------------------------------------------------
 \section{Design Criteria, Alternatives, and Decisions}
 
-The design criteria, alternatives, and decisions for the project were divided into four parts based on the four main components of the gym reservation system. These four main components are the sensor system, the display interfaces, the hub, and the server.
+The design criteria, alternatives, and decisions for the project were divided into many parts based on the main software and hardware components of the gym reservation system. These main components are described below.
 
 \subsection{Sensor Systems}
 
@@ -37,7 +37,6 @@ Another option for sensors are TI SensorTags, which contain all of the desired s
 
 As seen in the previous section, each one of the design alternatives lacked one of the three main characteristics desired for the sensors with the exception of the TI SensorTags. As can be seen in \refFig{fig:TISensorTag1} and \refFig{fig:TISensorTag2}, the TI SensorTags possess the desired sensors in addition to many other sensors. These include a 9-axis motion sensor, a temperature sensor, a humidity sensor, an altimeter/pressure sensor, and an ambient light sensor. In addition, the TI SensorTags have the ability to communicate in a mesh network using Bluetooth, Zigbee, or 6LoWPAN. The battery lifetime for these sensors is about one year, and the data collection rate from the sensors can be modified as desired. In addition, the price per SensorTag is \$29, which is much lower than some of the other design alternatives. Because the TI SensorTags satisfied the criteria of having the desired sensors, operating reliably in a mesh network at low power, and having a lower cost, they are chosen to be implemented in the design. Each of the other design alternatives lacks one of the desired design criteria, as demonstrated in the decision matrix in \textbf{Table \ref{tab:sensorsMatrix}}. \cite{SensorTag}
 
-% I will fill this in in a little while
 \begin{table}[H]
    	\begin{center}
    		\caption{Sensor Systems Decision Matrix}
@@ -221,11 +220,33 @@ It was chosen to use Ubuntu 14.04 as the server. It provides the reliability req
 % Need exact date
 several more years. It also has the modern capabilities to use Python and other libraries to create secure and consistent connection with the Hub. Also because the hub is running Linux, it makes sense to continue to use the same operating system for ease of upkeep. It also aligns with the teams goal of transparency because Linux is an Open Source solution to the problem the team is faced with.
 
-% TODO: TJ
-\subsection{Database}
+% TODO: Paul & Ryan
+\subsection{Sensortag Network Type}
+% 6lowpan, bluetooth, zigbee, uart, etc.
 
-% TODO: Dan & TJ
-\subsection{Website}
+\subsubsection{Design Criteria}
+
+\subsubsection{Design Alternatives}
+
+\subsubsection{Design Decisions}
+
+% TODO: Paul
+\subsection{Sensor Data Acquisition and Communication}
+
+\subsubsection{Design Criteria}
+
+\subsubsection{Design Alternatives}
+
+\subsubsection{Design Decisions}
+
+% TODO: Ryan
+\subsection{Display Technique and Communication}
+
+\subsubsection{Design Criteria}
+
+\subsubsection{Design Alternatives}
+
+\subsubsection{Design Decisions}
 
 % TODO: Dan & TJ
 \subsection{Hub to Server Communication}
@@ -242,12 +263,10 @@ A second alternative is for the hub to use http requests to send updates through
 \subsubsection{Design Decisions}
 The http request method was chosen because the database was reporting errors when updated from multiple TCP socket transmissions, which could impede reliability. Because the http requests go through the http server, this thus reducing the threads accessing the database to one, the http request method does not present this problem. Any issues that may arise due to the slower speed of the HTTP method can be negated if the data transferred is aggregated before being sent, thus reducing the number of packets sent.
 
+% TODO: TJ
+\subsection{Database}
 
-% TODO: Paul & Ryan
-\subsection{Contiki}
-
-% TODO: Paul & Ryan
-\subsection{Sensortag Network}
-% 6lopan, bluetooth, zigbee, uart, etc.
+% TODO: Dan & TJ
+\subsection{Website}
 
 \end{document}
