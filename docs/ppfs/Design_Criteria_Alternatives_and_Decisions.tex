@@ -226,6 +226,9 @@ several more years. It also has the modern capabilities to use Python and other 
 \subsubsection{Design Alternatives}
 
 \subsubsection{Design Decisions}
+Contiki is an open source real time operating system that can run on the sensortags and utilizes 6lowpan wireless networking. Its website describes contiki as "The Open Source OS for the Internet of Things". The team decided to use contiki primarily becasue it was the only way found to use 6lowpan networking with the sensortags and it provides several examples and tutorials on how to use it and get started with it. Contiki is publicly available through a git repository and there are pre built .bin files that can be flashed to the sensortags using the debugger for several different examples. 
+
+Contiki also offers an easy way to get a development environment up and running with something they call instant contiki. This is a download from their site which is an ubuntu image made to run in VMWare and already has all the tools and library's needed to work with contiki. There are many more tools for contiki than what we used, some of which are meant to simulate a larger scale implementation of a sensor network and others made to just help in tweaking the code. The only thing that seemed to be missing from the contiki tool kit is a good debugger, but this is likely because they'd have to make a different debugger for each board contiki is available for, which is quite a few. This only impacted the project in that in order to test and changes to the contiki codes, it needed to be flashed to a sensortag and tested directly. 
 
 % TODO: Paul
 \subsection{Sensor Data Acquisition and Communication}
@@ -238,12 +241,18 @@ several more years. It also has the modern capabilities to use Python and other 
 
 % TODO: Ryan
 \subsection{Display Software and Communication}
+The sensortag displays can be utilized by a few different RTOS's or networking methods. The watch devpack display is used with the CC2650 sensortags from TI. 
 
 \subsubsection{Design Criteria}
+The display software and communication needs to be reliable, secure, and quick to update. It needs to also display the information in a way that is easily seen and understood by the user. 
 
 \subsubsection{Design Alternatives}
+The display software and communication has two different options. It could work with contiki using 6lowpan, which would be preferable as it would then share a network with the other sensortags that aren't acting as displays. However with this path there are no display driver's currently available with contiki so they would have to be completely re written from TI-RTOS to work on contiki. 
+
+The second option is to use the existing bluetooth phone app available from TI. With this option the sensortags would have the default TI-RTOS running on them, and just need an over the air (OTA) update from the app in order for the display to work with them. Once updated there is a textbox in the app, and whatever is entered their is then displayed on the sensortag. This wouldn't use a mesh network, but would require much less work to get functioning with our database to automatically read the reservation status of the machines. 
 
 \subsubsection{Design Decisions}
+Several weeks were spent trying to re write the device drivers to work on contiki. However after that time it was decided that the team would switch and add to the bluetooth app for the demo, as some of the files that the driver's interface with for TI-RTOS weren't available or found for contiki, primarily one to interface with the device pins (where the display attaches) and one providing power to peripheral devices (needed to power the display). The functionality that needs to be added to the android app is to automatically check the database or website for the reservation status of a specific machine. Using the bluetooth app for this is primarily for the senior design night demo, for a production scale system we would have a custom built and designed board and display, utilizing a mesh network technology. 
 
 % TODO: Dan & TJ
 \subsection{Hub to Server Communication}
