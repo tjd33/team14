@@ -201,6 +201,7 @@ The final board that was chosen was the Raspberry Pi 2 Model B. This board was c
        \end{table}
 
 % TJ
+Flask was chosen because it was simple to start, easy to use, and provided very good documentation. Additionally, it interacted very well with our Python databse, written in SQLAlchemy, and when interacting with the native Python objects that represent machines, reservations, etc.
 \subsection{Server}
 The server will handle all connections requesting information about the current status of the machines, along with making and viewing reservations for the equipment. It will also handle sending historical data for administrators and personal historical data for individual users. It takes all the data from the server and stores it, creating these services for the client.
 
@@ -274,25 +275,34 @@ The http request method was chosen because the database was reporting errors whe
 
 % TODO: TJ
 \subsection{Database}
+The database must be able to scale with both large amounts of traffic and large records. The large amount of traffic scalability is required so that when the website has large amounts of visitors, they do not experience long wait times when attempting to view information. In terms of the large records scalability, the database needs to be able to handle queries on large amounts of data quickly so that when managers want to look at historical usage of machines over extended periods of time, they are able to without having to wait inordinate amounts of time between requests.
 
 \subsubsection{Design Criteria}
+The database must be well structured, easy to add features to, and well abstracted.
 
 \subsubsection{Design Alternatives}
+An alternative to the database would have been in memory storage or file storage for historical data. In memory storage, while fast, is not reliable and if the system were to go down or restart, all the data would be lost. While file storage is easy to set up, it is very slow to read through large files and parse them. This would not allow the database to be scalable as required.
 
 \subsubsection{Design Decisions}
+The team decided to use the SQLAlchemy framework in Python for a variety of reasons. The first reason was that our model was already well defined in Python, so to interact with the database in native Python is a large advantage. Also, SQLAlchemy provides an abstraction layer above the database, which allows us to easily switch between different database implementations. This allows us to test many different scenarios, as well as have a production version of the database that can be changed later if necessary.
 
 % TODO: Dan & TJ
 \subsection{Website}
 The website serves as an interfaces with the end users, including gym users wanting to check what machines are available or reserve machines, and gym administrators wanting to edit the system or view machine statistics 
 
 \subsubsection{Design Criteria}
-% TJ talk about back end, why we chose flask
+From a design standpoint, we wanted the website to easily be able to interact with both our database and our model. These are both written in Python, so it would follow to use a website that could take advantage of Python.
+
 The website needs to look good for the end user so that it will not detract from their experience using our system. We are also assuming that most gym users will be using the website on their phones, so mobile-friendliness is also essential.
 
 \subsubsection{Design Alternatives}
+A major alternative to Flask is Django. While Django is appealing, it has more setup and configuration options that the team was not familiar with how to set up.
+
 There are many front end packages intended to make beautiful and mobile friendly websites. The first alternative was using the same one used for our team website, called future imperfect.
 The second alternative considered is the bootstrap framework, a popular front-end framework which advertises itself as "the world's most popular HTML, CSS and JS framework for making responsive, mobile first projects on the web"
 
 \subsubsection{Design Decisions}
+Flask was chosen because it was simple to start, easy to use, and provided very good documentation. Additionally, it interacted very well with our Python database, written in SQLAlchemy, and when interacting with the native Python objects that represent machines, reservations, etc.
+
 The bootstrap framework was chosen because it was more general and allowed more features, whereas the future imperfect package is designed for making website centered around articles and posts.
 \end{document}
