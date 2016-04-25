@@ -218,12 +218,15 @@ It was chosen to use Ubuntu 14.04 as the server. It provides the reliability req
 several more years. It also has the modern capabilities to use Python and other libraries to create secure and consistent connection with the Hub. Also because the hub is running Linux, it makes sense to continue to use the same operating system for ease of upkeep. It also aligns with the teams goal of transparency because Linux is an Open Source solution to the problem the team is faced with.
 
 % TODO: Paul & Ryan
-\subsection{Sensortag Network Type}
+\subsection{SensorTag Network Type}
 % 6lowpan, bluetooth, zigbee, uart, etc.
+In order to pass information between SensorTags, a type of network protocol must be used. Each network protocol has various strengths and weaknesses, and some network types are better suited for the requirements and application of this project.
 
 \subsubsection{Design Criteria}
+As listed in the requirements section, each sensor must have network capabilities and have the ability to form a mesh network where the sensors can communicate with and pass data to one another. This communication must be reliable and timely in order to give the user real-time data about machine usage. In addition, the network type used must be capable of communicating over long distances so that information from a SensorTag at the edge of the gym is able to reach the hub, either directly or through a series of other sensors.
 
 \subsubsection{Design Alternatives}
+The design alternatives for the type of network used with the SensorTags was dependent on the kinds of networks that were compatible with the SensorTags and could be flashed onto them. One alternative was Bluetooth, which comes installed on the SensorTags and is easy to use. However, the Bluetooth option could primarily only be used with a mobile application, and Bluetooth does not support mesh networking. Another alternative was Zigbee, which does support mesh networking and can communicate over longer distances. However, very little to no documentation about using Zigbee with SensorTags is provided, and it was not obvious as to how to get Zigbee working properly in this context. The last alternative was 6LoWPAN, which also supports mesh networking and can communicate over longer distances than Zigbee. 6LoWPAN is relatively new, but enough documentation and open source code is provided for it to be implemented on the SensorTags. This open source code is Contiki, an operating system written for small sensor nodes such as a SensorTag.
 
 \subsubsection{Design Decisions}
 Contiki is an open source real time operating system that can run on the sensortags and utilizes 6lowpan wireless networking. Its website describes contiki as "The Open Source OS for the Internet of Things". The team decided to use contiki primarily becasue it was the only way found to use 6lowpan networking with the sensortags and it provides several examples and tutorials on how to use it and get started with it. Contiki is publicly available through a git repository and there are pre built .bin files that can be flashed to the sensortags using the debugger for several different examples. 
