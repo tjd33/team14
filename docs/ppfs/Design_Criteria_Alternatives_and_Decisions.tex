@@ -236,12 +236,21 @@ Contiki also offers an easy way to get a development environment up and running 
 
 % TODO: Paul
 \subsection{Sensor Data Acquisition and Communication}
+In order to reliably acquire data from various sensors in real time, a few methods existed within the Contiki operating system that could be chosen from. Each option had its benefits and downsides, and many different methods and approaches were taken before the final method was selected.
 
 \subsubsection{Design Criteria}
+As outlined in the requirements section, the sensors need to output data in a way that preserves battery life on the order of months or years. In addition, sensor data must be reliable, accurate, and have a clear way to be passed from one sensor to another.
 
 \subsubsection{Design Alternatives}
+Each design alternative was based off of an example for the CC2650 SensorTag provided by the Contiki operating system. The simplest design alternative, which was implemented first, was outputting sensor data over UART (Universal Asynchronous Receiver/Transmitter). The example was modified to output a stream of data where each set of data contained the machine ID number and gyroscope and accelerometer data for each of the coordinate axes. With this example, each SensorTag had to be connected to a Raspberry Pi, but the success of this design alternative showed proof of concept in that a working system could be designed from the bottom to the top (sensors to the user interface).
+
+Many other design alternatives were tried with varying degrees of success. These included modifying the various examples in the Contiki operating system and flashing them onto the SensorTags for testing. Some methods implemented UDP or TCP over 6LoWPAN, others implemented other versions of IPv6, and still others consisted of modifying examples written for other devices, but each example used 6LoWPAN mesh networking to pass data between the SensorTags and the ultimate destination, the Raspberry Pi. Multiple methods were attempted in gathering data from the SensorTags, including a USB dongle that could be configured in multiple ways, such as a packet sniffer or a slip radio.
+
+The last design alternative that was tried was developing and modifying the code for the CC26xx web demo, provided by the Contiki operating system. This web demo supported multiple ways of transferring sensor data between devices and an ultimate destination using the 6LoWPAN mesh network, including network UART, a 6lbr client, a CoAP server, HTTPD, and an IBM Quickstart/MQTT Client. A SensorTag was used as an antenna to receive 6LoWPAN packets for the Raspberry Pi, and this example provided basic functionality in terms of gather sensor data from each SensorTag.
 
 \subsubsection{Design Decisions}
+The web demo example provided by the Contiki operating system was the final design chosen to be used for the project. A few configuration changes were made to the example to better suit the application of the demo in this specific project, such as turning off certain sensors and modifying the network address prefix. The demo passes reliable sensor data and device ID information from various SensorTags to the Raspberry Pi in real time using mesh networking, which fulfills all of the requirements and design criteria for this part of the project. Once collected, a short Python script implements some signal processing to determine whether or not each machine is in use, and this information is then passed on to the server.
+% TODO: explain this design decision in more detail once you've gotten it to work better
 
 % TODO: Ryan
 \subsection{Display Software and Communication}
