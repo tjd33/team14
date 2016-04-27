@@ -54,7 +54,7 @@ var locations = []
 
 function draw_machines(elem){
     // TODO: Get the width and height of the canvas dynamically
-    var height = 700, width = 700, radius = 25;
+    var height = 500, width = 500, radius = 20;
     var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
 
     // Create a list to hold all of the locations of the centers of the machines
@@ -192,11 +192,11 @@ function status_popup(x,y){
                     `;
                     // cr for current reservation
                     for (var cr = 0; cr < result.reservations.length; cr++) {
-                        reservations_html += '<tr><td>' + 
+                        reservations_html += '<tr><td> ' + 
                             result.reservations[cr].start_time + 
-                            ' </td><td> ' +
+                            '  </td><td>  ' +
                             result.reservations[cr].end_time +
-                            '</td></tr>';
+                            ' </td></tr>';
                     }
                     reservations_html += '</ul>';
                     $('#machine_summary').html(

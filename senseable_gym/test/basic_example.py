@@ -46,9 +46,9 @@ def main(level, dbname):
     # Set the database logger to your own custom level
     db.logger.setLevel(getattr(logging, level.upper(), 'INFO'))
 
-    for machine_id in range(10):
+    for machine_id in range(21):
         # Just set a few differences in the objects so every one is not identical
-        if machine_id % 2 == 0:
+        if machine_id % 3 == 0 or machine_id % 5 == 0:
             m_type = MachineType.BICYCLE
             m_status = MachineStatus.BUSY
         else:
@@ -56,7 +56,13 @@ def main(level, dbname):
             m_status = MachineStatus.OPEN
 
         # Create a Machine Object
-        temp_machine = Machine(type=m_type, location=[machine_id, machine_id, 1])
+        if machine_id < 7:
+            y = 0
+        elif machine_id < 14:
+            y = 4
+        else:
+            y = 8
+        temp_machine = Machine(type=m_type, location=[(machine_id)%7, y, 1])
 
         # Set it to have a particular status
         temp_machine.status = m_status
@@ -102,7 +108,8 @@ def main(level, dbname):
     # Lets create a relationship between a user with id = 1 and
     #   a machine with location [1, 1, 1]
     user_1 = db.get_user(1)
-    machine_1 = db.get_machine_by_location([1, 1, 1])
+    # machine_1 = db.get_machine_by_location([1, 2, 1])
+    machine_1 = db.get_machine(1)
 
     # Indicate the a relationship has been made between these two objects
     try:
