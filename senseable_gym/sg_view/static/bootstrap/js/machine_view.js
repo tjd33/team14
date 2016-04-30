@@ -200,12 +200,13 @@ function status_popup(elem, x,y){
                         elem.fillStyle="#AAAAAA";
                         x = machine.x - radius;
                         y = machine.y + radius + 5;
-                        elem.fillRect(x, y, 143, 20 * result.reservations.length)
-                        elem.font = "15px Arial"
+                        elem.fillRect(x, y, 144, Math.max(20 * result.reservations.length, 20));
+                        elem.font = "15px Arial";
                         elem.fillStyle="#000000";
                         for (var cr = 0; cr < result.reservations.length; cr++) {
                             elem.fillText(result.reservations[cr].start_time + " to " + result.reservations[cr].end_time, x + 3, y + cr*20 + 15);
                         }
+                        if(result.reservations.length === 0) elem.fillText("No reservations soon", x + 2, y + cr*20 + 15);
                     }
                     draw_machines(elem)
                     
