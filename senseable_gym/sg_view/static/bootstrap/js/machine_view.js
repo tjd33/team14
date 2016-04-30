@@ -54,6 +54,7 @@ var locations = [];
 var width, height;
 var popup;
 var radius = 20;
+var mobileOffset = 0;
 
 function draw_machines(elem){
     
@@ -134,34 +135,35 @@ function setup_canvas(auth){
 
     draw_machines(elem, null);
     setInterval(function(){draw_machines(elem, null)}, 1000);
-
+    
     if(typeof window.orientation !== 'undefined'){ // if mobile
+        mobileOffset = 1;
         $('#machine_summary').html("test");
-        var pressTimer
+        var pressTimer;
         
-        X0 = canvas.getBoundingClientRect().left
-        Y0 = canvas.getBoundingClientRect().top
+        X0 = canvas.getBoundingClientRect().left;
+        Y0 = canvas.getBoundingClientRect().top;
         
         $('#current_machine_status').on('touchstart', function(e) {
             x = Math.round(e.originalEvent.touches[0].pageX) - X0;
             y = Math.round(e.originalEvent.touches[0].pageY) - Y0;
-            console.log(e.type + '/' + x + '/' + y)
+            console.log(e.type + '/' + x + '/' + y);
             pressTimer = window.setTimeout(function() {
                 reserve(x, y, auth);
             },500)
         }).on('click', function(e) {
             status_popup(elem, e.offsetX, e.offsetY);
         }).on('touchend', function(e) {
-            console.log('touchend')
-            clearTimeout(pressTimer)
+            console.log('touchend');
+            clearTimeout(pressTimer);
         });
     } else {
         $('#current_machine_status').on('dblclick', function(e) {
-            reserve(e.offsetX, e.offsetY, auth)
+            reserve(e.offsetX, e.offsetY, auth);
         });
         
         $('#current_machine_status').on('click', function(e) {
-            status_popup(elem, e.offsetX, e.offsetY)
+            status_popup(elem, e.offsetX, e.offsetY);
         });
     }  
 }
@@ -200,13 +202,20 @@ function status_popup(elem, x,y){
                         elem.fillStyle="#AAAAAA";
                         x = machine.x - radius;
                         y = machine.y + radius + 5;
-                        elem.fillRect(x, y, 144, Math.max(20 * result.reservations.length, 20));
-                        elem.font = "15px Arial";
-                        elem.fillStyle="#000000";
-                        for (var cr = 0; cr < result.reservations.length; cr++) {
-                            elem.fillText(result.reservations[cr].start_time + " to " + result.reservations[cr].end_time, x + 3, y + cr*20 + 15);
+                        
+                        if(result.reservations.length === 0){
+                            elem.fillRect(x, y, 147 + mobileOffset, Math.max(20 * result.reservations.length, 20));
+                            elem.font = "15px Arial";
+                            elem.fillStyle="#000000";
+                            elem.fillText("No reservations soon", x + 3, y + 15);
+                        } else {
+                            elem.fillRect(x, y, 143 + mobileOffset * 4, Math.max(20 * result.reservations.length, 20));
+                            elem.font = "15px Arial";
+                            elem.fillStyle="#000000";
+                            for (var cr = 0; cr < result.reservations.length; cr++) {
+                                elem.fillText(result.reservations[cr].start_time + " to " + result.reservations[cr].end_time, x + 3, y + cr*20 + 15);
+                            }
                         }
-                        if(result.reservations.length === 0) elem.fillText("No reservations soon", x + 2, y + cr*20 + 15);
                     }
                     draw_machines(elem)
                     
