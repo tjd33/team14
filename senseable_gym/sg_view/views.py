@@ -270,8 +270,8 @@ def get_reservation_dict(machine_id):
     res_dict = {'machine_id': int(machine_id)}
     res_dict['reservations'] = [
             {
-                'start_time': res.start_time.strftime("%d, %B %Y %I:%M%p"),
-                'end_time': res.end_time.strftime("%d, %B %Y %I:%M%p"),
+                'start_time': res.start_time.strftime("%I:%M%p"),
+                'end_time': res.end_time.strftime("%I:%M%p"),
             }
             for res in res_list
             ]

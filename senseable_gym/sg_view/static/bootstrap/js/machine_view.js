@@ -50,13 +50,14 @@ function machine_summary(machine) {
 
 
 var first = true;
-var locations = []
+var locations = [];
+var width, height;
+var popup;
+var radius = 20;
 
 function draw_machines(elem){
-    // TODO: Get the width and height of the canvas dynamically
-    var height = 500, width = 500, radius = 20;
+    
     var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
-
     // Create a list to hold all of the locations of the centers of the machines
     //var locations = [];
     
@@ -79,13 +80,17 @@ function draw_machines(elem){
             x_max++;
             y_max++;
             
+            
+            elem.clearRect(0, 0, width, height);
+            
+            
             for ( i = 0; i < machines.length; i++) {
                 if (machines[i].status == "BUSY") {
                     elem.fillStyle = "rgba(360, 77, 44, 1)";
                 } else if (machines[i].status == "RESERVED") {
                     elem.fillStyle = "rgba(0, 0, 200, 1)";
                 } else if (machines[i].status == "OPEN") {
-                    elem.fillStyle = "rgba(200, 200, 10, 0.6)";
+                    elem.fillStyle = "rgba(200, 200, 10, 1)";
                 } else {
                     elem.fillStyle = "rgba(0, 0, 0, 0.6)";
                 }
@@ -110,6 +115,11 @@ function draw_machines(elem){
                     });
                 }
             } 
+            
+            if(popup!=null){
+                popup()
+            }
+            
             first = false;
             
         }
@@ -118,10 +128,12 @@ function draw_machines(elem){
 
 function setup_canvas(auth){
     var canvas = document.getElementById("current_machine_status");
+    width = canvas.width;
+    height = canvas.height;
     var elem = canvas.getContext("2d");
 
-    draw_machines(elem);
-    setInterval(function(){draw_machines(elem)}, 1000);
+    draw_machines(elem, null);
+    setInterval(function(){draw_machines(elem, null)}, 1000);
 
     if(typeof window.orientation !== 'undefined'){ // if mobile
         $('#machine_summary').html("test");
@@ -138,7 +150,7 @@ function setup_canvas(auth){
                 reserve(x, y, auth);
             },500)
         }).on('click', function(e) {
-            status_popup(e.offsetX, e.offsetY);
+            status_popup(elem, e.offsetX, e.offsetY);
         }).on('touchend', function(e) {
             console.log('touchend')
             clearTimeout(pressTimer)
@@ -149,7 +161,7 @@ function setup_canvas(auth){
         });
         
         $('#current_machine_status').on('click', function(e) {
-            status_popup(e.offsetX, e.offsetY)
+            status_popup(elem, e.offsetX, e.offsetY)
         });
     }  
 }
@@ -171,7 +183,7 @@ function reserve(x,y, auth){
     }
 }
 
-function status_popup(x,y){
+function status_popup(elem, x,y){
     console.log('click: ' + x + '/' + y);
     var res = collides(locations, x, y);
     var machine = res[0];
@@ -181,9 +193,23 @@ function status_popup(x,y){
             console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
             set_current_machine_id(res[1]);
             $.ajax({
+                
                 url: "/_reservation_list/" + machine.machine_id,
                 success: function(result){
-                    var reservations_html = 
+                    popup = function() {
+                        elem.fillStyle="#AAAAAA";
+                        x = machine.x - radius;
+                        y = machine.y + radius + 5;
+                        elem.fillRect(x, y, 143, 20 * result.reservations.length)
+                        elem.font = "15px Arial"
+                        elem.fillStyle="#000000";
+                        for (var cr = 0; cr < result.reservations.length; cr++) {
+                            elem.fillText(result.reservations[cr].start_time + " to " + result.reservations[cr].end_time, x + 3, y + cr*20 + 15);
+                        }
+                    }
+                    draw_machines(elem)
+                    
+                    /*var reservations_html = 
                     `<table border=1>
                         <tr>
                             <th text-align=center>Start Time</th>
@@ -201,10 +227,13 @@ function status_popup(x,y){
                     reservations_html += '</ul>';
                     $('#machine_summary').html(
                         reservations_html
-                    );
+                    );*/
                 }
             });
             // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
         }
+    } else {
+        popup = null;
+        draw_machines(elem);
     }
 }
