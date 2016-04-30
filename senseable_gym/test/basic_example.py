@@ -126,10 +126,10 @@ def main(level, dbname):
     print(rel_1._user)
 
     # Set some reservations for in the future
-    time_1 = datetime.now() + timedelta(hours=1)
-    time_2 = datetime.now() + timedelta(hours=2)
-    time_3 = datetime.now() + timedelta(hours=3)
-    time_4 = datetime.now() + timedelta(hours=4)
+    time_1 = datetime.now() + timedelta(hours=2)
+    time_2 = datetime.now() + timedelta(hours=4)
+    time_3 = datetime.now() + timedelta(hours=5)
+    time_4 = datetime.now() + timedelta(hours=7)
     time_5 = datetime.now() + timedelta(hours=-4)
     time_6 = datetime.now() + timedelta(hours=-2)
 
