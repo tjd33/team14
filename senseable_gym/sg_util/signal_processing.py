@@ -1,11 +1,21 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
+import urllib
+import logging
+from html.parser import HTMLParser
+# from threading import BoundedSemaphore
 # from senseable_gym.sg_util.plot import plot_sensor_data
+
+# Senseable Gym Imports
+from senseable_gym import global_logger_name
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
 rowlength = 7
+
+logger = logging.getLogger(global_logger_name + '.database')
+
 
 def is_number(s):
     try:
@@ -14,12 +24,45 @@ def is_number(s):
     except ValueError:
         return False
 
+
 def is_int(s):
     try:
         int(s)
         return True
     except ValueError:
         return False
+
+
+class MyHTMLParser(HTMLParser):
+    def __init__(self):
+        self.inside_tbody = False
+        self.correct_data = False
+        self.current_attr = None
+        self.ip_addrs = []
+        super().__init__()
+
+    def handle_starttag(self, tag, attrs):
+        self.current_attr = attrs
+
+        if tag == 'tbody':
+            self.inside_tbody = True
+
+        # if self.inside_tbody and tag == 'a':
+        #     print("Start tag:", tag)
+
+    def handle_endtag(self, tag):
+        if tag == 'tbody':
+            self.inside_tbody = False
+
+        # if self.inside_tbody and tag == 'a':
+        #     print("End tag  :", tag)
+
+    def handle_data(self, data):
+        if self.inside_tbody and data == 'web':
+            # print("Data     :", data)
+            # print('Appending:', self.current_attr[0][1])
+            self.ip_addrs.append(self.current_attr[0][1])
+
 
 class Processor():
     def __init__(self):
@@ -37,7 +80,7 @@ class Processor():
         :returns: True if busy, else False
         """
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
-        acc_total = abs(data[3] + data[4] + data[5] - 1.13)
+        # acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
         if(gyro_total >= 4): # or (acc_total >= 0.11)):
             return True
@@ -109,6 +152,69 @@ class Processor():
             transformed[l[0]].append(l[1:])
 
         return transformed
+
+
+class HtmlProcessor(Processor):
+    def __init__(self, host_ip):
+        self.host_ip = host_ip
+        self.sensor_list = None
+
+    def get_page(self, url):
+        filehandle = urllib.urlopen(url)
+        return filehandle.read()
+
+    # TODO(tjdevries): Pass in the ID, so that it can place it at the front of the list?
+    #   This way it would do the same type of transofmration in read. Currently I'm not really
+    #   returning the correct thing as specified by our API.
+    def read_incremental(self, html):
+        lines = html.split('\n')
+
+        important_lines = False
+        result_gyro = []
+        result_acc = []
+        for line in lines:
+            if 'Acc X' in line:
+                important_lines = True
+
+            if important_lines:
+                if 'Gyro Z' in line:
+                    split_line = line.split('<')[0]
+                    result_gyro.append(float(split_line.split('=')[1][0:-12]))
+                elif 'Gyro' in line:
+                    result_gyro.append(float(line.split('=')[1][0:-12]))
+                elif 'Acc' in line:
+                    result_acc.append(float(line.split('=')[1][0:-2]))
+
+        return result_gyro + result_acc
+
+    def read(self, iterations, debug=False):
+        processed = {}
+
+        # TODO(tjdevries): Make sure this is the correct sensor html
+        logger.info('GET: {0}'.format(self.host_ip + '/sensors.html'))
+        self.sensor_list = self.update_sensor_list(self.host_ip + '/sensors.html')
+
+        # TODO(tjdevries): Make this threaded
+        for data_point in range(len(iterations)):
+            for sensor in self.sensor_list:
+                logger.debug('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
+                if processed[sensor] is None:
+                    processed[sensor] = []
+
+                # TODO(tjdevries): Is this the correct address?
+                html = self.get_page(sensor)
+
+                processed[sensor].append(self.read_incremental(html))
+                logger.debug('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
+
+        return processed
+
+    def update_sensor_list(self, sensor_info):
+        # TODO(tjdevries): Check if we have done this recently
+        parser = MyHTMLParser()
+        parser.feed(sensor_info)
+
+        return parser.ip_addrs
 
 
 class TextProcessor(Processor):
@@ -196,6 +302,7 @@ class TextProcessor(Processor):
     #         else:
     #             f.write(itemm)
     #             f.write('\r\n')
+
 
 class StreamProcessor(Processor):
     def __init__(self, port, baudrate):

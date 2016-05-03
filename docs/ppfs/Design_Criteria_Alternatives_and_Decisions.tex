@@ -5,7 +5,7 @@
 %--------------------------------------------------------------------------------
 \section{Design Criteria, Alternatives, and Decisions}
 
-The design criteria, alternatives, and decisions for the project were divided into four parts based on the four main components of the gym reservation system. These four main components are the sensor system, the display interfaces, the hub, and the server.
+The design criteria, alternatives, and decisions for the project were divided into many parts based on the main software and hardware components of the gym reservation system. These main components are described below.
 
 \subsection{Sensor Systems}
 
@@ -37,7 +37,6 @@ Another option for sensors are TI SensorTags, which contain all of the desired s
 
 As seen in the previous section, each one of the design alternatives lacked one of the three main characteristics desired for the sensors with the exception of the TI SensorTags. As can be seen in \refFig{fig:TISensorTag1} and \refFig{fig:TISensorTag2}, the TI SensorTags possess the desired sensors in addition to many other sensors. These include a 9-axis motion sensor, a temperature sensor, a humidity sensor, an altimeter/pressure sensor, and an ambient light sensor. In addition, the TI SensorTags have the ability to communicate in a mesh network using Bluetooth, Zigbee, or 6LoWPAN. The battery lifetime for these sensors is about one year, and the data collection rate from the sensors can be modified as desired. In addition, the price per SensorTag is \$29, which is much lower than some of the other design alternatives. Because the TI SensorTags satisfied the criteria of having the desired sensors, operating reliably in a mesh network at low power, and having a lower cost, they are chosen to be implemented in the design. Each of the other design alternatives lacks one of the desired design criteria, as demonstrated in the decision matrix in \textbf{Table \ref{tab:sensorsMatrix}}. \cite{SensorTag}
 
-% I will fill this in in a little while
 \begin{table}[H]
    	\begin{center}
    		\caption{Sensor Systems Decision Matrix}
@@ -173,7 +172,7 @@ There are multiple models of the Raspberry Pi boards, each one with improved spe
 The other aspect of the hub to be considered besides the single board computer is how it will communicate with the sensor and display network. The only connectivity built into the Raspberry Pi is an Ethernet port. This means that whatever wireless technology is used will need to be added through either the GPIO pins or a USB dongle. There are options for Bluetooth dongles \cite{AdaFruit}, Wi-Fi dongles \cite{RaspberryPi}, and Zigbee modules \cite{Zigbee} that a Pi can use. All of these options enable the Pis to connect to whichever network ends up being used. This is one area were the Edison board has an advantage, as it has Wi-Fi and Bluetooth connectivity built into the main chip and is primarily designed as an IoT board \cite{Intel}. However, since reliability is an important factor, the inclusion of an Ethernet port on the Pis is more important than the Edison Board's capability with Wi-Fi and Bluetooth. This is especially true since the network technology may be something besides Wi-Fi or Bluetooth, which would require an additional dongle to any chosen board, such as Zigbee or 6LoWPAN.
 
 \subsubsection{Design Decisions}
-The final board that was chosen was the Raspberry Pi 2 Model B. This board was chosen because for its price it had the most options. Primarily, it was chosen to accomadate for potential future design changes, like running Windows 10 on it. This board is available for \$35, has more than the needed requirements, and can use the Zigbee module via the GPIO pins as opposed to the USB through a breakout board, saving some money. However, the board that is currently being used as a prototype is a Raspberry Pi Model B+. This is because Calvin already had several older Pi models available for use and the small advantage that the Pi 2 would offer is not necessary unless for some future design change Windows 10 becomes necessary. This change from the initial design decision saved some money in the budget and enables the team, if necessary, to purchase an additional sensor or display later in the project. There is also enough money in the budget if the purchase of a different single board computer becomes necessary.
+The final board that was chosen was the Raspberry Pi 2 Model B. This board was chosen because for its price it had the most options. Primarily, it was chosen to accomadate for potential future design changes, such as running Windows 10 on it. This board is available for \$35, has more than the needed requirements, and can use the Zigbee module via the GPIO pins as opposed to the USB through a breakout board, saving some money. However, the board that is currently being used as a prototype is a Raspberry Pi Model B+. This is because Calvin already had several older Pi models available for use and the small advantage that the Pi 2 would offer is not necessary unless for some future design change Windows 10 becomes necessary. This change from the initial design decision saved some money in the budget and enables the team, if necessary, to purchase an additional sensor or display later in the project. There is also enough money in the budget if the purchase of a different single board computer becomes necessary.
 
        \begin{table}[h!]
        	\begin{center}
@@ -202,6 +201,7 @@ The final board that was chosen was the Raspberry Pi 2 Model B. This board was c
        \end{table}
 
 % TJ
+Flask was chosen because it was simple to start, easy to use, and provided very good documentation. Additionally, it interacted very well with our Python databse, written in SQLAlchemy, and when interacting with the native Python objects that represent machines, reservations, etc.
 \subsection{Server}
 The server will handle all connections requesting information about the current status of the machines, along with making and viewing reservations for the equipment. It will also handle sending historical data for administrators and personal historical data for individual users. It takes all the data from the server and stores it, creating these services for the client.
 
@@ -218,4 +218,100 @@ It was chosen to use Ubuntu 14.04 as the server. It provides the reliability req
 % Need exact date
 several more years. It also has the modern capabilities to use Python and other libraries to create secure and consistent connection with the Hub. Also because the hub is running Linux, it makes sense to continue to use the same operating system for ease of upkeep. It also aligns with the teams goal of transparency because Linux is an Open Source solution to the problem the team is faced with.
 
+% TODO: Paul & Ryan
+\subsection{SensorTag Network Type}
+% 6lowpan, bluetooth, zigbee, uart, etc.
+In order to pass information between SensorTags, a type of network protocol must be used. Each network protocol has various strengths and weaknesses, and some network types are better suited for the requirements and application of this project.
+
+\subsubsection{Design Criteria}
+As listed in the requirements section, each sensor must have network capabilities and have the ability to form a mesh network where the sensors can communicate with and pass data to one another. This communication must be reliable and timely in order to give the user real-time data about machine usage. In addition, the network type used must be capable of communicating over long distances so that information from a SensorTag at the edge of the gym is able to reach the hub, either directly or through a series of other sensors.
+
+\subsubsection{Design Alternatives}
+The design alternatives for the type of network used with the SensorTags was dependent on the kinds of networks that were compatible with the SensorTags and could be flashed onto them. One alternative was Bluetooth, which comes installed on the SensorTags and is easy to use. However, the Bluetooth option could primarily only be used with a mobile application, and Bluetooth does not support mesh networking. Another alternative was Zigbee, which does support mesh networking and can communicate over longer distances. However, very little to no documentation about using Zigbee with SensorTags is provided, and it was not obvious as to how to get Zigbee working properly in this context. The last alternative was 6LoWPAN, which also supports mesh networking and can communicate over longer distances than Zigbee. 6LoWPAN is relatively new, but enough documentation and open source code is provided for it to be implemented on the SensorTags. This open source code is Contiki, an operating system written for small sensor nodes such as a SensorTag.
+
+\subsubsection{Design Decisions}
+Contiki is an open source real time operating system that can run on the sensortags and utilizes 6lowpan wireless networking. Its website describes contiki as "The Open Source OS for the Internet of Things". The team decided to use contiki primarily becasue it was the only way found to use 6lowpan networking with the sensortags and it provides several examples and tutorials on how to use it and get started with it. Contiki is publicly available through a git repository and there are pre built .bin files that can be flashed to the sensortags using the debugger for several different examples. 
+
+Contiki also offers an easy way to get a development environment up and running with something they call instant contiki. This is a download from their site which is an ubuntu image made to run in VMWare and already has all the tools and library's needed to work with contiki. There are many more tools for contiki than what we used, some of which are meant to simulate a larger scale implementation of a sensor network and others made to just help in tweaking the code. The only thing that seemed to be missing from the contiki tool kit is a good debugger, but this is likely because they'd have to make a different debugger for each board contiki is available for, which is quite a few. This only impacted the project in that in order to test and changes to the contiki codes, it needed to be flashed to a sensortag and tested directly. 
+
+% TODO: Paul
+\subsection{Sensor Data Acquisition and Communication}
+In order to reliably acquire data from various sensors in real time, a few methods existed within the Contiki operating system that could be chosen from. Each option had its benefits and downsides, and many different methods and approaches were taken before the final method was selected.
+
+\subsubsection{Design Criteria}
+As outlined in the requirements section, the sensors need to output data in a way that preserves battery life on the order of months or years. In addition, sensor data must be reliable, accurate, and have a clear way to be passed from one sensor to another.
+
+\subsubsection{Design Alternatives}
+Each design alternative was based off of an example for the CC2650 SensorTag provided by the Contiki operating system. The simplest design alternative, which was implemented first, was outputting sensor data over UART (Universal Asynchronous Receiver/Transmitter). The example was modified to output a stream of data where each set of data contained the machine ID number and gyroscope and accelerometer data for each of the coordinate axes. With this example, each SensorTag had to be connected to a Raspberry Pi, but the success of this design alternative showed proof of concept in that a working system could be designed from the bottom to the top (sensors to the user interface).
+
+Many other design alternatives were tried with varying degrees of success. These included modifying the various examples in the Contiki operating system and flashing them onto the SensorTags for testing. Some methods implemented UDP or TCP over 6LoWPAN, others implemented other versions of IPv6, and still others consisted of modifying examples written for other devices, but each example used 6LoWPAN mesh networking to pass data between the SensorTags and the ultimate destination, the Raspberry Pi. Multiple methods were attempted in gathering data from the SensorTags, including a USB dongle that could be configured in multiple ways, such as a packet sniffer or a slip radio.
+
+The last design alternative that was tried was developing and modifying the code for the CC26xx web demo, provided by the Contiki operating system. This web demo supported multiple ways of transferring sensor data between devices and an ultimate destination using the 6LoWPAN mesh network, including network UART, a 6lbr client, a CoAP server, HTTPD, and an IBM Quickstart/MQTT Client. A SensorTag was used as an antenna to receive 6LoWPAN packets for the Raspberry Pi, and this example provided basic functionality in terms of gather sensor data from each SensorTag.
+
+\subsubsection{Design Decisions}
+The web demo example provided by the Contiki operating system was the final design chosen to be used for the project. A few configuration changes were made to the example to better suit the application of the demo in this specific project, such as turning off certain sensors and modifying the network address prefix. The demo passes reliable sensor data and device ID information from various SensorTags to the Raspberry Pi in real time using mesh networking, which fulfills all of the requirements and design criteria for this part of the project. Once collected, a short Python script implements some signal processing to determine whether or not each machine is in use, and this information is then passed on to the server.
+% TODO: explain this design decision in more detail once you've gotten it to work better
+
+% TODO: Ryan
+\subsection{Display Software and Communication}
+The sensortag displays can be utilized by a few different RTOS's or networking methods. The watch devpack display is used with the CC2650 sensortags from TI. 
+
+\subsubsection{Design Criteria}
+The display software and communication needs to be reliable, secure, and quick to update. It needs to also display the information in a way that is easily seen and understood by the user. 
+
+\subsubsection{Design Alternatives}
+The display software and communication has two different options. It could work with contiki using 6lowpan, which would be preferable as it would then share a network with the other sensortags that aren't acting as displays. However with this path there are no display driver's currently available with contiki so they would have to be completely re written from TI-RTOS to work on contiki. 
+
+The second option is to use the existing bluetooth phone app available from TI. With this option the sensortags would have the default TI-RTOS running on them, and just need an over the air (OTA) update from the app in order for the display to work with them. Once updated there is a textbox in the app, and whatever is entered their is then displayed on the sensortag. This wouldn't use a mesh network, but would require much less work to get functioning with our database to automatically read the reservation status of the machines. 
+
+\subsubsection{Design Decisions}
+Several weeks were spent trying to re write the device drivers to work on contiki. However after that time it was decided that the team would switch and add to the bluetooth app for the demo, as some of the files that the driver's interface with for TI-RTOS weren't available or found for contiki, primarily one to interface with the device pins (where the display attaches) and one providing power to peripheral devices (needed to power the display). The functionality that needs to be added to the android app is to automatically check the database or website for the reservation status of a specific machine. Using the bluetooth app for this is primarily for the senior design night demo, for a production scale system we would have a custom built and designed board and display, utilizing a mesh network technology. 
+
+% TODO: Dan & TJ
+\subsection{Hub to Server Communication}
+The server must communicate with the hub to determine the status of the machines and communicate reservations to the displays
+
+\subsubsection{Design Criteria}
+The communication between the hub and the server must be reliable, and fast enough to transfer all the required data.
+
+\subsubsection{Design Alternatives}
+One alternative is for the hub and the server to communicate via TCP sockets. The hub and the server would both setup sockets listening for updates. This has the advantage of being fast, reliable, and relatively easy to implement.
+
+A second alternative is for the hub to use http requests to send updates through the server's http server that delivers the website, and also use those requests to get updates from the server. This has the advantage of being simple, and streamlining the database access methods on the server. This option is slower than the TCP socket method.
+
+\subsubsection{Design Decisions}
+The http request method was chosen because the database was reporting errors when updated from multiple TCP socket transmissions, which could impede reliability. Because the http requests go through the http server, this thus reducing the threads accessing the database to one, the http request method does not present this problem. Any issues that may arise due to the slower speed of the HTTP method can be negated if the data transferred is aggregated before being sent, thus reducing the number of packets sent.
+
+% TODO: TJ
+\subsection{Database}
+The database must be able to scale with both large amounts of traffic and large records. The large amount of traffic scalability is required so that when the website has large amounts of visitors, they do not experience long wait times when attempting to view information. In terms of the large records scalability, the database needs to be able to handle queries on large amounts of data quickly so that when managers want to look at historical usage of machines over extended periods of time, they are able to without having to wait inordinate amounts of time between requests.
+
+\subsubsection{Design Criteria}
+The database must be well structured, easy to add features to, and well abstracted.
+
+\subsubsection{Design Alternatives}
+An alternative to the database would have been in memory storage or file storage for historical data. In memory storage, while fast, is not reliable and if the system were to go down or restart, all the data would be lost. While file storage is easy to set up, it is very slow to read through large files and parse them. This would not allow the database to be scalable as required.
+
+\subsubsection{Design Decisions}
+The team decided to use the SQLAlchemy framework in Python for a variety of reasons. The first reason was that our model was already well defined in Python, so to interact with the database in native Python is a large advantage. Also, SQLAlchemy provides an abstraction layer above the database, which allows us to easily switch between different database implementations. This allows us to test many different scenarios, as well as have a production version of the database that can be changed later if necessary.
+
+% TODO: Dan & TJ
+\subsection{Website}
+The website serves as an interfaces with the end users, including gym users wanting to check what machines are available or reserve machines, and gym administrators wanting to edit the system or view machine statistics 
+
+\subsubsection{Design Criteria}
+From a design standpoint, we wanted the website to easily be able to interact with both our database and our model. These are both written in Python, so it would follow to use a website that could take advantage of Python.
+
+The website needs to look good for the end user so that it will not detract from their experience using our system. We are also assuming that most gym users will be using the website on their phones, so mobile-friendliness is also essential.
+
+\subsubsection{Design Alternatives}
+A major alternative to Flask is Django. While Django is appealing, it has more setup and configuration options that the team was not familiar with how to set up.
+
+There are many front end packages intended to make beautiful and mobile friendly websites. The first alternative was using the same one used for our team website, called future imperfect.
+The second alternative considered is the bootstrap framework, a popular front-end framework which advertises itself as "the world's most popular HTML, CSS and JS framework for making responsive, mobile first projects on the web"
+
+\subsubsection{Design Decisions}
+Flask was chosen because it was simple to start, easy to use, and provided very good documentation. Additionally, it interacted very well with our Python database, written in SQLAlchemy, and when interacting with the native Python objects that represent machines, reservations, etc.
+
+The bootstrap framework was chosen because it was more general and allowed more features, whereas the future imperfect package is designed for making website centered around articles and posts.
 \end{document}

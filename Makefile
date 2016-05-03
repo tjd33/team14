@@ -14,5 +14,8 @@ python:
 website:
 	python3 -m senseable_gym.sg_view.run
 
+demo:
+	python3 -m senseable_gym.sg_run.html_tester
+
 clean:
 	find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf

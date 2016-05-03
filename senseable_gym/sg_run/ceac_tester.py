@@ -5,7 +5,7 @@ import configparser
 from senseable_gym.sg_util.signal_processing import StreamProcessor
 from senseable_gym.sg_run.machine_updater import send_update
 config = configparser.ConfigParser()
-config.read('./senseable_gym/sg_run/machine_updater.ini')
+config.read(['./senseable_gym/sg_run/default.ini', './senseable_gym/sg_run/ceac_updater.ini')
 
 '''
 try:

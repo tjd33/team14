@@ -43,7 +43,7 @@ class EditUserForm(Form):
     repeat_pass = PasswordField('Repeat Password', render_kw={"placeholder": "Confirm Password"})
     first_name = TextField('First Name', validators=[DataRequired()], render_kw={"placeholder": "First Name"})
     last_name = TextField('Last Name', validators=[DataRequired()], render_kw={"placeholder": "Last Name"})
-
+    
 class EditMachineForm(Form):
     machine_type = SelectField('Type', coerce=int)
     position_x = IntegerField('X Coordinate')

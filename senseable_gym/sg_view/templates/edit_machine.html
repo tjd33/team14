@@ -2,8 +2,26 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+    function delete_machine() {
+        if(confirm('Are you sure you want to delete this machine?') == true) {
+            
+            window.location.href = '/delete_machine/' + {{machine.machine_id}};         
+        }
+        else { 
+            return false;
+        }          
+    }
+</script>
 <form action="" method="post" name="register" class="form-signin">
-    <h1 class="form-signin-heading">Edit Machine {{machine.machine_id}}</h1>
+    
+    <h1 class="form-signin-heading">
+        {% if machine %}
+            Edit Machine {{machine.machine_id}}
+        {% else %}
+            New Machine
+        {% endif %}
+    </h1>
     {{ form.hidden_tag() }}
     {{ form.machine_type.label }}
     {% for error in form.machine_type.errors %}
@@ -25,9 +43,17 @@
         <p style="color: red;">[{{ error }}]</p>
     {% endfor %}
     {{ form.position_z(class_="form-control") }}
-    <button type="submit" class="btn btn-lg btn-primary btn-block">Save Changes</button>
+    <button type="submit" class="btn btn-lg btn-primary btn-block">
+        {% if machine %}
+            Save Changes
+        {% else %}
+            Add Machine
+        {% endif %}
+    </button>
 </form>
-
+{% if machine %}
+    <button onclick="delete_machine()" class="btn btn-lg btn-block btn-danger form-signin">Delete Machine</button>
+{% endif %}
 <a href = {{ url_for('admin_settings')}} class="btn btn-lg btn-block btn-info form-signin">Back</a>
 
 {% endblock %}

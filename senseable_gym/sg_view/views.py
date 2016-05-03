@@ -8,7 +8,7 @@ from flask.ext.login import login_user, current_user, logout_user, login_require
 from senseable_gym.sg_view import app, bcrypt
 from senseable_gym.sg_view.forms import *
 from senseable_gym.sg_database.database import DatabaseModel
-from senseable_gym.sg_util.machine import MachineType, MachineStatus
+from senseable_gym.sg_util.machine import MachineType, MachineStatus, Machine
 from senseable_gym.sg_util.user import User
 from senseable_gym.sg_util.reservation import Reservation
 from senseable_gym.sg_util.exception import ReservationError
@@ -173,6 +173,12 @@ def reserve_machine(machine_id=None):
     return render_template('reserve.html', form=form, user=current_user)
 
 
+@app.route('/login_before_reserve/<machine_id>', methods=['GET', 'POST'])
+def login_before_reserve(machine_id):
+    global previous_page
+    previous_page = '/reserve/' + machine_id
+    return redirect('/login')
+    
 @app.route('/settings')
 @login_required
 def settings():
@@ -257,8 +263,10 @@ def user_reservations():
 # {{{ AJAX Queries
 @app.route('/_reservation_list/<machine_id>')
 def get_reservation_dict(machine_id):
+    print(machine_id)
     machine = database.get_machine(machine_id)
     res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
+    print(len(res_list))
     res_dict = {'machine_id': int(machine_id)}
     res_dict['reservations'] = [
             {
@@ -268,6 +276,14 @@ def get_reservation_dict(machine_id):
             for res in res_list
             ]
     return jsonify(res_dict)
+    
+@app.route('/_machine_list')
+def get_machine_list():
+    machine_list = database.get_machines()
+    machines = {}
+    machines['machines'] = [{'location': machine.location, 'status': machine.status.name, 'machine_id':machine.machine_id} for machine in machine_list]
+    # print(machines)
+    return jsonify(machines)
 
 
 @app.route('/_update_status')
@@ -408,8 +424,53 @@ def edit_machine(machine_id=None):
         [form.position_x.data, form.position_y.data, form.position_z.data] = machine.location
     return render_template('edit_machine.html', user=user, machine=machine, form=form)
 
+@app.route('/add_machine', methods=['GET', 'POST'])
+@login_required
+def add_machine(machine_id=None):
+    user = current_user
+    if not user.administrator:
+        abort(403)
 
- 
+    form = EditMachineForm()
+    types = [(member.value, member.name) for member in list(MachineType)]
+    form.machine_type.choices = types
+
+    if form.validate_on_submit():
+        error = False
+        location = [form.position_x.data, form.position_y.data, form.position_z.data]
+        if location[0]<0:
+            form.position_x.errors.append('Coordinate must be positive')
+            error = True
+        if location[1]<0:
+            form.position_y.errors.append('Coordinate must be positive')
+            error = True
+        if location[2]<0:
+            form.position_z.errors.append('Coordinate must be positive')
+            error = True
+        try:
+            collision_machine = database.get_machine_by_location(location)
+            form.position_x.errors.append('Machine ' + str(collision_machine.machine_id) + ' is already in that position')
+            error = True
+        except:
+            pass
+        if not error:
+            machine = Machine(MachineType(form.machine_type.data), location)
+            machine.status = MachineStatus.OPEN
+            try:
+                database.add_machine(machine)
+                return redirect('/edit_machines')
+            except:
+                pass
+    return render_template('edit_machine.html', user=user, form=form)
+
+@app.route('/delete_machine/<machine_id>')
+def delete_machine(machine_id):
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    database.remove_machine(machine_id)
+    return redirect('/edit_machines')
+    
 @app.route('/edit_reservations', methods=['GET', 'POST'])
 @login_required
 def edit_reservations():
