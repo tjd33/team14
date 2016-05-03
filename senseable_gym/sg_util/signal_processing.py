@@ -1,14 +1,20 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
 import urllib
+import logging
 from html.parser import HTMLParser
 # from threading import BoundedSemaphore
 # from senseable_gym.sg_util.plot import plot_sensor_data
+
+# Senseable Gym Imports
+from senseable_gym import global_logger_name
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
 rowlength = 7
+
+logger = logging.getLogger(global_logger_name + '.database')
 
 
 def is_number(s):
@@ -157,6 +163,9 @@ class HtmlProcessor(Processor):
         filehandle = urllib.urlopen(url)
         return filehandle.read()
 
+    # TODO(tjdevries): Pass in the ID, so that it can place it at the front of the list?
+    #   This way it would do the same type of transofmration in read. Currently I'm not really
+    #   returning the correct thing as specified by our API.
     def read_incremental(self, html):
         lines = html.split('\n')
 
@@ -178,22 +187,25 @@ class HtmlProcessor(Processor):
 
         return result_gyro + result_acc
 
-    def read(self, iterations):
+    def read(self, iterations, debug=False):
         processed = {}
 
         # TODO(tjdevries): Make sure this is the correct sensor html
+        logger.info('GET: {0}'.format(self.host_ip + '/sensors.html'))
         self.sensor_list = self.update_sensor_list(self.host_ip + '/sensors.html')
 
         # TODO(tjdevries): Make this threaded
-        for _ in range(len(iterations)):
+        for data_point in range(len(iterations)):
             for sensor in self.sensor_list:
+                logger.debug('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
                 if processed[sensor] is None:
                     processed[sensor] = []
 
                 # TODO(tjdevries): Is this the correct address?
-                html = get_page(sensor)
+                html = self.get_page(sensor)
 
                 processed[sensor].append(self.read_incremental(html))
+                logger.debug('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
 
         return processed
 
@@ -203,7 +215,6 @@ class HtmlProcessor(Processor):
         parser.feed(sensor_info)
 
         return parser.ip_addrs
-
 
 
 class TextProcessor(Processor):
