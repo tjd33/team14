@@ -82,7 +82,7 @@ class Processor():
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
         # acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if(gyro_total >= 100):  # or (acc_total >= 0.11)):
+        if(gyro_total >= 4): # or (acc_total >= 0.11)):
             return True
         else:
             return False
@@ -377,5 +377,6 @@ if __name__ == '__main__':
     # mdata = tp.read()
     # plot_sensor_data(mdata)
     # sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
-    # print(sp.read(10))
+    # while(1):
+    #     print(sp.process_data(sp.read(10)))
     pass
