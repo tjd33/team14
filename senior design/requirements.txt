@@ -1,0 +1,13 @@
+# This is the requirements document for the senseable_gym python module
+sqlalchemy
+typing
+click
+flask
+flask-wtf
+pyenchant
+flask-login
+flask-bcrypt
+wtforms_components
+matplotlib
+pyserial
+requests
