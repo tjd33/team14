@@ -1,14 +1,21 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
 import urllib
+import requests
+import logging
 from html.parser import HTMLParser
 # from threading import BoundedSemaphore
 # from senseable_gym.sg_util.plot import plot_sensor_data
+
+# Senseable Gym Imports
+from senseable_gym import global_logger_name
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
 rowlength = 7
+
+logger = logging.getLogger(global_logger_name + '.database')
 
 
 def is_number(s):
@@ -76,7 +83,7 @@ class Processor():
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
         # acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if(gyro_total >= 100):  # or (acc_total >= 0.11)):
+        if(gyro_total >= 4): # or (acc_total >= 0.11)):
             return True
         else:
             return False
@@ -154,17 +161,30 @@ class HtmlProcessor(Processor):
         self.sensor_list = None
 
     def get_page(self, url):
-        filehandle = urllib.urlopen(url)
-        return filehandle.read()
+        MAX_RETRIES = 5
 
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+        # session.mount('https://', adapter)
+        session.mount('http://', adapter)
+
+        r = session.get(url)
+        return str(r.content)
+
+    # TODO(tjdevries): Pass in the ID, so that it can place it at the front of the list?
+    #   This way it would do the same type of transofmration in read. Currently I'm not really
+    #   returning the correct thing as specified by our API.
     def read_incremental(self, html):
         lines = html.split('\n')
 
         important_lines = False
         result_gyro = []
         result_acc = []
+        id_num = None
         for line in lines:
-            if 'Acc X' in line:
+            if 'aaaa::' in line and not id_num:
+                id_num =  line[line.index('aaaa::') - 8:line.index('index.html')]
+            elif 'Acc X' in line:
                 important_lines = True
 
             if important_lines:
@@ -176,34 +196,38 @@ class HtmlProcessor(Processor):
                 elif 'Acc' in line:
                     result_acc.append(float(line.split('=')[1][0:-2]))
 
-        return result_gyro + result_acc
+        return [id_num] + result_gyro + result_acc
 
-    def read(self, iterations):
-        processed = {}
+    def read(self, iterations, debug=False):
+        processed = []
 
         # TODO(tjdevries): Make sure this is the correct sensor html
-        self.sensor_list = self.update_sensor_list(self.host_ip + '/sensors.html')
+        logger.info('GET: {0}'.format(self.host_ip + '/sensors.html'))
+        self.sensor_list = self.update_sensor_list(self.get_page(self.host_ip + '/sensors.html'))
+        logger.info('New sensor_list: {0}'.format(self.sensor_list))
 
         # TODO(tjdevries): Make this threaded
-        for _ in range(len(iterations)):
+        for data_point in range(iterations):
             for sensor in self.sensor_list:
-                if processed[sensor] is None:
-                    processed[sensor] = []
+                logger.info('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
 
                 # TODO(tjdevries): Is this the correct address?
-                html = get_page(sensor)
+                logger.info('Sending GET request to: {0}'.format(sensor + 'index.html'))
+                html = self.get_page(sensor + 'index.html')
 
-                processed[sensor].append(self.read_incremental(html))
+                processed.append(self.read_incremental(html))
+                logger.info('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
 
-        return processed
+        transformed = self.transform(processed)
+        return transformed
 
     def update_sensor_list(self, sensor_info):
         # TODO(tjdevries): Check if we have done this recently
+        # TODO(tjdevries): Don't add a sensor if it is 'NR'
         parser = MyHTMLParser()
         parser.feed(sensor_info)
 
         return parser.ip_addrs
-
 
 
 class TextProcessor(Processor):
@@ -364,5 +388,6 @@ if __name__ == '__main__':
     # mdata = tp.read()
     # plot_sensor_data(mdata)
     # sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
-    # print(sp.read(10))
+    # while(1):
+    #     print(sp.process_data(sp.read(10)))
     pass
