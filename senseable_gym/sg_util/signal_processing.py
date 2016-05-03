@@ -1,6 +1,7 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
 import urllib
+import requests
 import logging
 from html.parser import HTMLParser
 # from threading import BoundedSemaphore
@@ -160,8 +161,15 @@ class HtmlProcessor(Processor):
         self.sensor_list = None
 
     def get_page(self, url):
-        filehandle = urllib.urlopen(url)
-        return filehandle.read()
+        MAX_RETRIES = 5
+
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+        # session.mount('https://', adapter)
+        session.mount('http://', adapter)
+
+        r = session.get(url)
+        return str(r.content)
 
     # TODO(tjdevries): Pass in the ID, so that it can place it at the front of the list?
     #   This way it would do the same type of transofmration in read. Currently I'm not really
@@ -195,24 +203,27 @@ class HtmlProcessor(Processor):
 
         # TODO(tjdevries): Make sure this is the correct sensor html
         logger.info('GET: {0}'.format(self.host_ip + '/sensors.html'))
-        self.sensor_list = self.update_sensor_list(self.host_ip + '/sensors.html')
+        self.sensor_list = self.update_sensor_list(self.get_page(self.host_ip + '/sensors.html'))
+        logger.info('New sensor_list: {0}'.format(self.sensor_list))
 
         # TODO(tjdevries): Make this threaded
-        for data_point in range(len(iterations)):
+        for data_point in range(iterations):
             for sensor in self.sensor_list:
-                logger.debug('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
+                logger.info('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
 
                 # TODO(tjdevries): Is this the correct address?
-                html = self.get_page(sensor)
+                logger.info('Sending GET request to: {0}'.format(sensor + 'index.html'))
+                html = self.get_page(sensor + 'index.html')
 
                 processed.append(self.read_incremental(html))
-                logger.debug('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
+                logger.info('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
 
         transformed = self.transform(processed)
         return transformed
 
     def update_sensor_list(self, sensor_info):
         # TODO(tjdevries): Check if we have done this recently
+        # TODO(tjdevries): Don't add a sensor if it is 'NR'
         parser = MyHTMLParser()
         parser.feed(sensor_info)
 

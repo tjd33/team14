@@ -13,6 +13,10 @@ s = HtmlProcessor(config['6LOWPAN']['host_ip'])
 # print(config['MACHINE_MAP']['http://[aaaa::212:4b00:a54:fd84]/'])
 
 
+print(s.read(1, debug=True))
+
+"""
+
 while True:
     result = s.read(3, debug=True)
 
@@ -24,7 +28,6 @@ while True:
             send_update(machine_id, 2)
         else:
             send_update(machine_id, 1)
-"""
 while (False):
     result = s.read(100, debug=True)
 
