@@ -53,13 +53,13 @@ class TestHtmlSignalProcessing(unittest.TestCase):
 
         res = html_proc.read_incremental(read_data)
 
-        self.assertEqual(res, [-0.71, -4.97, -5.65, 0.03, 0.08, 1.1])
+        self.assertEqual(res, ['http://[aaaa::212:4b00:a54:fd84]/', -0.71, -4.97, -5.65, 0.03, 0.08, 1.1])
 
         with open('./senseable_gym/test/data_html_files/Index2.html', 'r') as f:
             read_data = f.read()
 
         res = html_proc.read_incremental(read_data)
-        self.assertEqual(res, [4.79, 4.31, 1.59, 0.00, 0.01, 0.94])
+        self.assertEqual(res, ['http://[aaaa::212:4b00:7c9:4484]/', 4.79, 4.31, 1.59, 0.00, 0.01, 0.94])
 
     def test_update_sensor_list(self):
         html_proc = HtmlProcessor('[bbbb::100]')

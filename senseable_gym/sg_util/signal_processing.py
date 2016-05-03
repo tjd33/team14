@@ -172,8 +172,11 @@ class HtmlProcessor(Processor):
         important_lines = False
         result_gyro = []
         result_acc = []
+        id_num = None
         for line in lines:
-            if 'Acc X' in line:
+            if 'aaaa::' in line and not id_num:
+                id_num =  line[line.index('aaaa::') - 8:line.index('index.html')]
+            elif 'Acc X' in line:
                 important_lines = True
 
             if important_lines:
@@ -185,10 +188,10 @@ class HtmlProcessor(Processor):
                 elif 'Acc' in line:
                     result_acc.append(float(line.split('=')[1][0:-2]))
 
-        return result_gyro + result_acc
+        return [id_num] + result_gyro + result_acc
 
     def read(self, iterations, debug=False):
-        processed = {}
+        processed = []
 
         # TODO(tjdevries): Make sure this is the correct sensor html
         logger.info('GET: {0}'.format(self.host_ip + '/sensors.html'))
@@ -198,16 +201,15 @@ class HtmlProcessor(Processor):
         for data_point in range(len(iterations)):
             for sensor in self.sensor_list:
                 logger.debug('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
-                if processed[sensor] is None:
-                    processed[sensor] = []
 
                 # TODO(tjdevries): Is this the correct address?
                 html = self.get_page(sensor)
 
-                processed[sensor].append(self.read_incremental(html))
+                processed.append(self.read_incremental(html))
                 logger.debug('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
 
-        return processed
+        transformed = self.transform(processed)
+        return transformed
 
     def update_sensor_list(self, sensor_info):
         # TODO(tjdevries): Check if we have done this recently
