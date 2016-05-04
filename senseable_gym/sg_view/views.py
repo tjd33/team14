@@ -144,6 +144,9 @@ def reserve():
                 error = True
         if not error:
             return redirect('/machine_view')
+    else:
+        form.date.data = datetime.now()
+        form.start_time.data = datetime.now()
     return render_template('reserve.html', form=form, user=current_user)
 
 
@@ -170,6 +173,9 @@ def reserve_machine(machine_id=None):
             form.start_time.errors.append("Reservation time overlaps with existing reservation")
             return render_template('reserve.html', form=form, user=current_user)
         return redirect('/machine_view')
+    else:
+        form.date.data = datetime.now()
+        form.start_time.data = datetime.now()
     return render_template('reserve.html', form=form, user=current_user)
 
 
@@ -488,6 +494,7 @@ def edit_reservations():
             session['reservation_period_end']=end
             return redirect('/reservations_by_time')
     else:        
+        form.date.data = datetime.now()
         form.start_time.data = datetime.now()
         form.end_time.data = datetime.now()+timedelta(hours=1)
     return render_template('edit_reservations.html', user=user, form = form)
