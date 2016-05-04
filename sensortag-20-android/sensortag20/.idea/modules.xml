@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BleSensorTag/BleSensorTag.iml" filepath="$PROJECT_DIR$/BleSensorTag/BleSensorTag.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sensortag20.iml" filepath="$PROJECT_DIR$/sensortag20.iml" />
+    </modules>
+  </component>
+</project>
