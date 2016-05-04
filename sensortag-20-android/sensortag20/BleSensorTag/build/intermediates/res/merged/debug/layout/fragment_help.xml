@@ -9,4 +9,4 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent" />
 
-</RelativeLayout><!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/layout/fragment_help.xml -->
+</RelativeLayout>

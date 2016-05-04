@@ -22,4 +22,4 @@
         <Version>1.10</Version>
         <Filename>CC2650SensorTag_ZigBee_All.bin</Filename>
     </FirmwareEntry>
-</FirmwareEntries>      <!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/xml/firmware_list.xml -->
+</FirmwareEntries>      

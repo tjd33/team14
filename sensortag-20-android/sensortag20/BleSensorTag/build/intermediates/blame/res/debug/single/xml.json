@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\xml\\firmware_list.xml",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\xml\\firmware_list.xml"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\xml\\list_gradient.xml",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\xml\\list_gradient.xml"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\xml\\popup.xml",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\xml\\popup.xml"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\xml\\preferences.xml",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\xml\\preferences.xml"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\xml\\gatt_uuid.xml",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\xml\\gatt_uuid.xml"
+    }
+]

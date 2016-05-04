@@ -61,4 +61,4 @@
         android:padding="10dp"
         android:text="@string/button_scan" />
 
-</LinearLayout><!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/layout/fragment_scan.xml -->
+</LinearLayout>

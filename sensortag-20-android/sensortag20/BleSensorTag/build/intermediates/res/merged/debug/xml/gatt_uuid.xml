@@ -116,4 +116,4 @@
     <item uuid="0xFFF4">Simple Profile Characteristic 4</item>
     <item uuid="0xFFF5">Simple Profile Characteristic 5</item>
   </profile>
-</gattuuid><!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/xml/gatt_uuid.xml -->
+</gattuuid>

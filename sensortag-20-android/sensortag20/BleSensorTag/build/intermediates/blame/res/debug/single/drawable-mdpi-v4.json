@@ -1,0 +1,54 @@
+[
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ti_stk_2c_pos_rgb_png.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\ti_stk_2c_pos_rgb_png.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\buttonsoffoff.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\buttonsoffoff.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\buttonsoffon.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\buttonsoffon.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\reed_open.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\reed_open.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\tible.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\tible.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ic_action_refresh.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\ic_action_refresh.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ic_action_cancel.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\ic_action_cancel.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\buttonsonon.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\buttonsonon.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ic_action_bluetooth.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\ic_action_bluetooth.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ic_action_about.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\ic_action_about.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\ic_action_settings.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\ic_action_settings.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\reed_closed.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\reed_closed.png"
+    },
+    {
+        "merged": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\buttonsonoff.png",
+        "source": "C:\\Users\\lerobyte\\senior design\\sensortag-20-android\\sensortag20\\BleSensorTag\\src\\main\\res\\drawable-mdpi\\buttonsonoff.png"
+    }
+]

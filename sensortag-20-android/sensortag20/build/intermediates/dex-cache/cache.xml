@@ -2,25 +2,39 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\lerobyte\sd\sensortag-20-android\sensortag20\BleSensorTag\libs\org.eclipse.paho.android.service-1.0.2.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="3b8420e57139cc627a55be0c17b6687e92d7460f">
-        <dex dex="C:\Users\lerobyte\sd\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\pre-dexed\debug\org.eclipse.paho.android.service-1.0.2-98e1fef766738ccc90397cd2941e461ed2c5413e.jar" />
-    </item>
-    <item
         jar="C:\Users\lerobyte\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
-        jumboMode="false"
+        jumboMode="true"
         revision="21.1.2"
         sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
-        <dex dex="C:\Users\lerobyte\sd\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\pre-dexed\debug\support-v4-19.1.0-1c4180b39004dcd1ffaa36989c943c71b0ade6e3.jar" />
+        <dex dex="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\transforms\dex\debug\folders\1000\10\support-v4-19.1.0_1c4180b39004dcd1ffaa36989c943c71b0ade6e3\classes.dex" />
     </item>
     <item
-        jar="C:\Users\lerobyte\sd\sensortag-20-android\sensortag20\BleSensorTag\libs\org.eclipse.paho.client.mqttv3-1.0.2.jar"
-        jumboMode="false"
+        jar="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="fadec3fed13efa359a0e6e1e8c5e76828ae44c6f">
+        <dex dex="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_8bd2f25b3b8ea505c8f3c2f9b651bf80eab15977\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="233da8ec735e9f56892abe226030f11a882407f4">
+        <dex dex="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_ba187b2c347f6611504bc8453ace10eceeb759f1\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\libs\org.eclipse.paho.android.service-1.0.2.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="3b8420e57139cc627a55be0c17b6687e92d7460f">
+        <dex dex="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\transforms\dex\debug\folders\1000\2\org.eclipse.paho.android.service-1.0.2_9b3518ca11555d45cd67a1a8f0b75484847a26c8\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\libs\org.eclipse.paho.client.mqttv3-1.0.2.jar"
+        jumboMode="true"
         revision="21.1.2"
         sha1="02e433eb0fda11fe7170cf8214ba2f4d165c29b6">
-        <dex dex="C:\Users\lerobyte\sd\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\pre-dexed\debug\org.eclipse.paho.client.mqttv3-1.0.2-0bd3238bb275426d3cfb8304c8307fa064ede3b9.jar" />
+        <dex dex="C:\Users\lerobyte\senior design\sensortag-20-android\sensortag20\BleSensorTag\build\intermediates\transforms\dex\debug\folders\1000\2\org.eclipse.paho.client.mqttv3-1.0.2_3bf77b75a881474f3640a17a493dadc02f090bc1\classes.dex" />
     </item>
 
 </items>

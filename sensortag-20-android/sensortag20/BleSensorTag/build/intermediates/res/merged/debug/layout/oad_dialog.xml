@@ -40,4 +40,4 @@
         android:id="@+id/oad_browse_button"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp" />
-</LinearLayout><!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/layout/oad_dialog.xml -->
+</LinearLayout>

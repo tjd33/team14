@@ -140,4 +140,4 @@
         android:onClick="onStart"
         android:text="@string/start_prog" />
 
-</LinearLayout><!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/layout/activity_fwupdate.xml -->
+</LinearLayout>

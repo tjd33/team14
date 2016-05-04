@@ -18,4 +18,4 @@
         android:id="@+id/colorIntensitySeekBar"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp" />
-</LinearLayout><!-- From: file:/C:/Users/lerobyte/sd/sensortag-20-android/sensortag20/BleSensorTag/src/main/res/layout/lamp_control.xml -->
+</LinearLayout>
