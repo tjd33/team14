@@ -17,6 +17,7 @@ function collides(machines, x, y) {
     for (var i = 0, len = machines.length; i < len; i++) {
         var x_machine = machines[i].x, y_machine = machines[i].y, radius = machines[i].r;
         // console.log(Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)));
+        console.log(Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)));
         if (Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)) < radius) {
             return [machines[i], i];
         }
@@ -53,8 +54,9 @@ var first = true;
 var locations = [];
 var width, height;
 var popup;
-var radius = 20;
+var radius = 25;
 var mobileOffset = 0;
+var icons = [];
 
 function draw_machines(elem){
     
@@ -86,29 +88,25 @@ function draw_machines(elem){
             
             
             for ( i = 0; i < machines.length; i++) {
+                
+                x_loc = machines[i].location[0];
+                y_loc = machines[i].location[1];
+                x_norm = n(x_loc, x_max, width)-25;
+                y_norm = n(y_loc, y_max, height)-25;
                 if (machines[i].status == "BUSY") {
-                    elem.fillStyle = "rgba(360, 77, 44, 1)";
+                    elem.drawImage(icons[machines[i].type * 2 + 1], x_norm, y_norm);
                 } else if (machines[i].status == "RESERVED") {
                     elem.fillStyle = "rgba(0, 0, 200, 1)";
                 } else if (machines[i].status == "OPEN") {
-                    elem.fillStyle = "rgba(200, 200, 10, 1)";
+                    elem.drawImage(icons[machines[i].type * 2], x_norm, y_norm);
                 } else {
                     elem.fillStyle = "rgba(0, 0, 0, 0.6)";
                 }
-                elem.beginPath();
-                x_loc = machines[i].location[0];
-                y_loc = machines[i].location[1];
-                x_norm = n(x_loc, x_max, width);
-                y_norm = n(y_loc, y_max, height);
-                elem.arc(x_norm,
-                        y_norm,
-                        radius, 50 , 0, Math.PI*2);
-                elem.closePath();
-                elem.fill();
+
 
                 if(first){
-                    locations.push({'x': x_norm,
-                                    'y': y_norm,
+                    locations.push({'x': x_norm + 25,
+                                    'y': y_norm + 25,
                                     'r': radius,
                                     'machine_id': machines[i].machine_id,
                                     'status': machines[i].status,
@@ -166,6 +164,20 @@ function setup_canvas(auth){
             status_popup(elem, e.offsetX, e.offsetY);
         });
     }  
+    
+    var img;
+    img = new Image();
+    img.src = '/static/images/treadmill_free.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/treadmill_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/bicycle_free.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/bicycle_busy.png';
+    icons.push(img);
 }
 
 function reserve(x,y, auth){

@@ -281,7 +281,7 @@ def get_reservation_dict(machine_id):
 def get_machine_list():
     machine_list = database.get_machines()
     machines = {}
-    machines['machines'] = [{'location': machine.location, 'status': machine.status.name, 'machine_id':machine.machine_id} for machine in machine_list]
+    machines['machines'] = [{'location': machine.location, 'type':machine.type.value-1, 'status': machine.status.name, 'machine_id':machine.machine_id} for machine in machine_list]
     # print(machines)
     return jsonify(machines)
 

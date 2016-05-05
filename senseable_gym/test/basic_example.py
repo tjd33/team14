@@ -49,19 +49,20 @@ def main(level, dbname):
     for machine_id in range(21):
         # Just set a few differences in the objects so every one is not identical
         if machine_id % 3 == 0 or machine_id % 5 == 0:
-            m_type = MachineType.BICYCLE
             m_status = MachineStatus.BUSY
         else:
-            m_type = MachineType.TREADMILL
             m_status = MachineStatus.OPEN
 
         # Create a Machine Object
         if machine_id < 7:
             y = 0
+            m_type = MachineType.BICYCLE
         elif machine_id < 14:
             y = 4
+            m_type = MachineType.TREADMILL
         else:
             y = 8
+            m_type = MachineType.TREADMILL
         temp_machine = Machine(type=m_type, location=[(machine_id)%7, y, 1])
 
         # Set it to have a particular status
