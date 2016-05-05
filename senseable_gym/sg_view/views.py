@@ -635,6 +635,15 @@ def machine_history(machine_id):
     return render_template('machine_history.html', user=user, machine=machine, reservations=reservations, reservation_data = reservation_data)
     
     
+@app.route('/machine_display_message/<machine_id>')
+def machine_dispaly_message(machine_id):
+    machine = database.get_machine(machine_id)
+    res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
+    if len(res_list)>0:
+        return "Next reservation at " + res_list[0].start_time.strftime("%I:%M %p")
+    else:
+        return "No upcomming reservations"
+    
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404

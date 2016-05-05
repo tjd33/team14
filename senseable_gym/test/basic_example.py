@@ -158,9 +158,9 @@ def main(level, dbname):
     res_4 = Reservation(machine_2, user_3, time_5, time_6)
     
     try:
-        db.add_reservation(res_1)
-        db.add_reservation(res_2)
         db.add_reservation(res_3)
+        db.add_reservation(res_2)
+        db.add_reservation(res_1)
         db.add_reservation(res_4)
     except ReservationError as e:
         print(e)
