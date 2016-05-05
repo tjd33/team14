@@ -137,6 +137,9 @@ class MachineStatus(Enum):
 class MachineType(Enum):
     TREADMILL = 1
     BICYCLE = 2
+    ELLIPTICAL = 3
+    WEIGHT_MACHINE = 4
+    ROWING_MACHINE = 5
 
     def __str__(self):
         return self.name.capitalize()

@@ -46,7 +46,7 @@ def main(level, dbname):
     # Set the database logger to your own custom level
     db.logger.setLevel(getattr(logging, level.upper(), 'INFO'))
 
-    for machine_id in range(21):
+    for machine_id in range(35):
         # Just set a few differences in the objects so every one is not identical
         if machine_id % 3 == 0 or machine_id % 5 == 0:
             m_status = MachineStatus.BUSY
@@ -58,11 +58,17 @@ def main(level, dbname):
             y = 0
             m_type = MachineType.BICYCLE
         elif machine_id < 14:
-            y = 4
+            y = 1
             m_type = MachineType.TREADMILL
+        elif machine_id < 21:
+            y = 2
+            m_type = MachineType.ELLIPTICAL
+        elif machine_id < 28:
+            y = 3
+            m_type = MachineType.ROWING_MACHINE
         else:
-            y = 8
-            m_type = MachineType.TREADMILL
+            y = 4
+            m_type = MachineType.WEIGHT_MACHINE
         temp_machine = Machine(type=m_type, location=[(machine_id)%7, y, 1])
 
         # Set it to have a particular status
