@@ -123,16 +123,15 @@ def main(level, dbname):
     #   a machine with location [1, 1, 1]
     user_1 = db.get_user(1)
     # machine_1 = db.get_machine_by_location([1, 2, 1])
-    machine_1 = db.get_machine(1)
-
+    machine_12 = db.get_machine(12)
     # Indicate the a relationship has been made between these two objects
     try:
-        db.get_machine_user_relationships(machine_1)
+        db.get_machine_user_relationships(machine_12)
     except:
-        db.set_user_machine_status(machine_1, user_1)
+        db.set_user_machine_status(machine_12, user_1)
 
     # Find out what the status of the machine is (we already know it)
-    rel_1 = db.get_machine_user_relationships(machine_1)
+    rel_1 = db.get_machine_user_relationships(machine_12)
 
     print('---------- Relationships -----')
     print(rel_1)
@@ -169,6 +168,8 @@ def main(level, dbname):
     res_list = db.get_reservations()
     [print(res) for res in res_list]
 
+
+    
     return db
 
 if __name__ == "__main__":
