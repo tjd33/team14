@@ -477,6 +477,14 @@ def delete_machine(machine_id):
     database.remove_machine(machine_id)
     return redirect('/edit_machines')
     
+@app.route('/edit_machine_layout')
+def edit_machine_layout():
+    user = current_user
+    if not user.administrator:
+        abort(403)
+    machines = get_machine_list()
+    return render_template('edit_machine_layout.html', user = user)
+    
 @app.route('/edit_reservations', methods=['GET', 'POST'])
 @login_required
 def edit_reservations():
@@ -625,11 +633,14 @@ def machine_history(machine_id):
         data = [date, start, end, user_name]
         reservation_data[reservation.reservation_id] = data
     return render_template('machine_history.html', user=user, machine=machine, reservations=reservations, reservation_data = reservation_data)
-
+    
+    
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
 
+    
+    
 if __name__ == '__main__':
     # Go to "localhost:5000/" to view pages
     app.debug = True

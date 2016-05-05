@@ -3,7 +3,7 @@
 
 
 {% block content %}
-    <script src="{{ url_for('static', filename='bootstrap/js/jquery-2.2.1.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/jquery-2.2.1.js') }}" ></script>
     <script>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
         var machines = [
@@ -55,7 +55,7 @@
     </div>
     -->
     <!-- Run the script for creating the machine view in the canvas -->
-    <script src="{{ url_for('static', filename='bootstrap/js/machine_view.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/machine_view.js') }}" ></script>
     <script type='text/javascript'>
         setup_canvas("{{user.authenticated}}")
     </script>

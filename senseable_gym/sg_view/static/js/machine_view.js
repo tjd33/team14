@@ -178,22 +178,22 @@ function setup_canvas(auth){
     img.src = '/static/images/bicycle_busy.png';
     icons.push(img);
     img = new Image();
-    img.src = '/static/images/elliptical_busy.png';
-    icons.push(img);
-    img = new Image();
     img.src = '/static/images/elliptical_free.png';
     icons.push(img);
     img = new Image();
-    img.src = '/static/images/weightmachine_busy.png';
+    img.src = '/static/images/elliptical_busy.png';
     icons.push(img);
     img = new Image();
     img.src = '/static/images/weightmachine_free.png';
     icons.push(img);
     img = new Image();
-    img.src = '/static/images/rowingmachine_busy.png';
+    img.src = '/static/images/weightmachine_busy.png';
     icons.push(img);
     img = new Image();
     img.src = '/static/images/rowingmachine_free.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/rowingmachine_busy.png';
     icons.push(img);
 }
 
