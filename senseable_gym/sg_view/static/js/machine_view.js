@@ -9,7 +9,8 @@ var set_current_machine_id = function(i) {
 };
 
 function n(num, max, multiplier) {
-    return 15 + (num) / max * (multiplier - 30 - size);
+    border = 10 + width/100 
+    return border + (num) / max * (multiplier - border * 2 - size);
 }
 
 function collides(machines, x, y) {
@@ -58,7 +59,7 @@ var radius = size/2;
 var mobileOffset = 0;
 var icons = [];
 
-function draw_machines(elem){
+function draw_machines(elem, canvas){
     
     var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
     // Create a list to hold all of the locations of the centers of the machines
@@ -80,9 +81,12 @@ function draw_machines(elem){
                     y_max = machines[i].location[1];
                 }
             }
+            
             //x_max++;
             //y_max++;
-            
+            width = canvas.width = Math.max(x_max*size*1.3, width);
+            height = canvas.height = Math.max(y_max*size*1.4, height);
+            console.log(height);
             
             elem.clearRect(0, 0, width, height);
             
@@ -131,8 +135,19 @@ function setup_canvas(auth){
     height = canvas.height;
     var elem = canvas.getContext("2d");
 
-    draw_machines(elem, null);
-    setInterval(function(){draw_machines(elem, null)}, 1000);
+    window.addEventListener('resize', resizeCanvas, false);
+    function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight - 51; // would use $('#navbar').height()) but it seems inconsistant
+        /*console.log("width: " + width);
+        console.log("height: " + height);
+        console.log("navbar: " + $('#navbar').height());*/
+        
+        draw_machines(elem, canvas);
+    }
+    
+    resizeCanvas();
+    setInterval(function(){draw_machines(elem, canvas)}, 1000);
     
     if(typeof window.orientation !== 'undefined'){ // if mobile
         mobileOffset = 1;
@@ -247,7 +262,7 @@ function status_popup(elem, x,y){
                             }
                         }
                     }
-                    draw_machines(elem)
+                    draw_machines(elem, canvas)
                     
                     /*var reservations_html = 
                     `<table border=1>

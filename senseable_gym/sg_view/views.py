@@ -313,6 +313,24 @@ def update_status():
 
     return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, MachineStatus(new_status))
     
+@app.route('/_update_battery')
+def update_battery():
+    if request.args.get('pass', '')!='ajax_update':
+        return "Authentication failed"
+    machine_id = request.args.get('id', '')
+    new_status = request.args.get('battery', '')
+    machine = database.get_machine(machine_id)
+    old_status = machine.status
+
+    try:
+        battery = int(battery)
+    except ValueError:
+        return 'Error: battery level must be an int'
+
+    machine.battery = battery
+
+    return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, MachineStatus(new_status))
+    
 # }}}
 
 
