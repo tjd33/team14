@@ -48,7 +48,7 @@ def main(level, dbname):
 
     for machine_id in range(35):
         # Just set a few differences in the objects so every one is not identical
-        if machine_id % 3 == 0 or machine_id % 5 == 0:
+        if (machine_id % 3 == 0 or machine_id % 5 == 0) and machine_id > 6:
             m_status = MachineStatus.BUSY
         else:
             m_status = MachineStatus.OPEN
@@ -93,14 +93,21 @@ def main(level, dbname):
     for user_id in range(4):
         temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id), bcrypt.generate_password_hash('password'+ str(user_id)))
         
-        if user_id == 2:
-            temp_user.administrator = True
+
         # Add the users to the database
         try:
             db.add_user(temp_user)
         except:
             pass
             # already contains user
+    
+    
+    user = User('team14','Senseable','Gym', bcrypt.generate_password_hash('SeniorDesign'))
+    user.administrator = True
+    try:
+        db.add_user(user)
+    except:
+        pass
     
     user_list = db.get_users()
 
@@ -116,16 +123,15 @@ def main(level, dbname):
     #   a machine with location [1, 1, 1]
     user_1 = db.get_user(1)
     # machine_1 = db.get_machine_by_location([1, 2, 1])
-    machine_1 = db.get_machine(1)
-
+    machine_12 = db.get_machine(12)
     # Indicate the a relationship has been made between these two objects
     try:
-        db.get_machine_user_relationships(machine_1)
+        db.get_machine_user_relationships(machine_12)
     except:
-        db.set_user_machine_status(machine_1, user_1)
+        db.set_user_machine_status(machine_12, user_1)
 
     # Find out what the status of the machine is (we already know it)
-    rel_1 = db.get_machine_user_relationships(machine_1)
+    rel_1 = db.get_machine_user_relationships(machine_12)
 
     print('---------- Relationships -----')
     print(rel_1)
@@ -162,6 +168,8 @@ def main(level, dbname):
     res_list = db.get_reservations()
     [print(res) for res in res_list]
 
+
+    
     return db
 
 if __name__ == "__main__":
