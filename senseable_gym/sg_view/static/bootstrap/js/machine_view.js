@@ -136,7 +136,6 @@ function setup_canvas(auth){
     
     if(typeof window.orientation !== 'undefined'){ // if mobile
         mobileOffset = 1;
-        $('#machine_summary').html("test");
         var pressTimer;
         
         X0 = canvas.getBoundingClientRect().left;
@@ -181,14 +180,15 @@ function setup_canvas(auth){
 }
 
 function reserve(x,y, auth){
-    if (auth != "True"){
-        window.location.href = '/login_before_reserve/1';
-        return false;
-    }
+    
     console.log('double or long click: ' + x + '/' + y);
     var res = collides(locations, x, y);
     var machine = res[0];
     if (machine) {
+        if (auth != "True"){
+            window.location.href = '/login_before_reserve/1';
+            return false;
+        }
         console.log('collision {' + res[1] + '}: ' + machine.x + '/' + machine.y);
         // TODO: Only allow users to reserve somethinhg if they are logged in.
         window.location.href = $SCRIPT_ROOT + "/reserve/" + res[0].machine_id;
@@ -203,8 +203,8 @@ function status_popup(elem, x,y){
     var machine = res[0];
     var c_m_id = get_current_machine_id();
     if (machine) {
+        console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
         if (res[1] != c_m_id) {
-            console.log('(Current Machine, Machine): ' + c_m_id + ', ' + machine.machine_id);
             set_current_machine_id(res[1]);
             $.ajax({
                 
@@ -257,5 +257,6 @@ function status_popup(elem, x,y){
     } else {
         popup = null;
         draw_machines(elem);
+        set_current_machine_id(-1);
     }
 }
