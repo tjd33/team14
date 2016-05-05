@@ -33,6 +33,12 @@ def is_int(s):
     except ValueError:
         return False
 
+def is_mac(s):
+    if s.count(':'0 == 5):
+        return True
+    else:
+        return False
+
 
 class MyHTMLParser(HTMLParser):
     def __init__(self):
@@ -382,6 +388,110 @@ class StreamProcessor(Processor):
         self.ser.close()
         transformed = self.transform(data)
         return transformed
+
+
+def WirelessStreamProcessor(Processor):
+    def __init__(self, port, baudrate, machine_map, data_size=8):
+        self.port = port
+        self.baudrate = int(baudrate)
+        self.machine_map = machine_map
+        self.data_size = data_size
+
+        self.ser = serial.Serial()
+        self.ser.port = self.port
+        self.ser.baudrate = self.baudrate
+
+    def read_incremental(self, stream=None, debug=False):
+        """
+        Read one data packet from the stream
+
+        Returns the standard packet protocol
+        """
+        # TODO: Abstract this section
+        data = []
+        counter = 0
+
+        stream_passed = True
+        if not stream:
+            stream_passed = False
+            stream = self.ser
+            stream.open()
+
+        while(1):
+            num = str(stream.readline().strip())
+            if debug:
+                print('Reading: {0}'.format(num))
+            # For non blank lines, put a number into the data
+            if((num != "b''") and (counter < self.data_size)):
+                num2 = num[2:-1]
+                if((counter != 0) and (is_number(num2))):
+                    data.append(float(num2))
+                    counter += 1
+                elif((counter == 0) and (is_mac(num2))):
+                    data.append(num2)
+                    counter += 1
+            # If we've collected enough data, return the data
+            elif(counter == self.data_size):
+                if not stream_passed:
+                    stream.close()
+                return data
+            # If we read a packet that was too small or too large, try again
+            else:
+                data = []
+                counter = 0
+
+    def read(self, num_data, debug=False):
+        data = []
+        self.ser.open()
+        for i in range(num_data):
+            data.append(self.read_incremental(stream=self.ser, debug=debug))
+        self.ser.close()
+        transformed = self.transform(data)
+        return transformed
+
+    def transform(self, data: list) -> dict:
+        """
+        Takes a list of lists, of the form:
+        [
+            [MAC, gyro_x, ... ]
+            [MAC, gyro_x, ... ]
+            [MAC, gyro_x, ... ]
+        ]
+
+        and turns it into the form:
+        {
+            machine_id_1: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            machine_id_2: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            ...
+        }
+
+        It skips data points if the MAC Address is not found in the machine_map
+        """
+        transformed = {}
+        for l in data:
+            current_mac = l[0]
+            try:
+                machine_id = self.machine_map[current_mac]
+            except KeyError:
+                logger.info('MAC Address `{0}` not in config. Skipping Data'.format(current_mac))
+                continue
+
+            if machine_id not in transformed.keys():
+                transformed[machine_id] = []
+
+            transformed[machine_id].append(l[1:])
+
+        return transformed
+
+
 
 if __name__ == '__main__':
     # tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
