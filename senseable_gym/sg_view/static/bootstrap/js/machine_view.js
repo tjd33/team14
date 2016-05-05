@@ -9,7 +9,7 @@ var set_current_machine_id = function(i) {
 };
 
 function n(num, max, multiplier) {
-    return (num + 1) / max * multiplier;
+    return 15 + (num) / max * (multiplier - 30 - size);
 }
 
 function collides(machines, x, y) {
@@ -50,11 +50,11 @@ function machine_summary(machine) {
 }
 
 
-var first = true;
 var locations = [];
 var width, height;
 var popup;
-var radius = 25;
+var size = 50;
+var radius = size/2;
 var mobileOffset = 0;
 var icons = [];
 
@@ -73,26 +73,27 @@ function draw_machines(elem){
         success: function(result){
             machines = result.machines;
             for ( var i = 0; i < machines.length; i++) {
-                if (x_max < machines[i].location[0] + 1) {
-                    x_max = machines[i].location[0] + 1;
+                if (x_max < machines[i].location[0]) {
+                    x_max = machines[i].location[0];
                 }
-                if (y_max < machines[i].location[1] + 1) {
-                    y_max = machines[i].location[1] + 1;
+                if (y_max < machines[i].location[1]) {
+                    y_max = machines[i].location[1];
                 }
             }
-            x_max++;
-            y_max++;
+            //x_max++;
+            //y_max++;
             
             
             elem.clearRect(0, 0, width, height);
             
+            locations = [];
             
             for ( i = 0; i < machines.length; i++) {
                 
                 x_loc = machines[i].location[0];
                 y_loc = machines[i].location[1];
-                x_norm = n(x_loc, x_max, width)-25;
-                y_norm = n(y_loc, y_max, height)-25;
+                x_norm = n(x_loc, x_max, width);
+                y_norm = n(y_loc, y_max, height);
                 if (machines[i].status == "BUSY") {
                     elem.drawImage(icons[machines[i].type * 2 + 1], x_norm, y_norm);
                 } else if (machines[i].status == "RESERVED") {
@@ -104,22 +105,21 @@ function draw_machines(elem){
                 }
 
 
-                if(first){
-                    locations.push({'x': x_norm + 25,
-                                    'y': y_norm + 25,
-                                    'r': radius,
-                                    'machine_id': machines[i].machine_id,
-                                    'status': machines[i].status,
-                                    'reservations': []
-                    });
-                }
+                
+                locations.push({'x': x_norm + 25,
+                                'y': y_norm + 25,
+                                'r': radius,
+                                'machine_id': machines[i].machine_id,
+                                'status': machines[i].status,
+                                'reservations': []
+                });
+                
             } 
             
             if(popup!=null){
                 popup()
             }
             
-            first = false;
             
         }
     });
@@ -176,6 +176,24 @@ function setup_canvas(auth){
     icons.push(img);
     img = new Image();
     img.src = '/static/images/bicycle_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/elliptical_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/elliptical_free.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/weightmachine_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/weightmachine_free.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/rowingmachine_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/rowingmachine_free.png';
     icons.push(img);
 }
 
