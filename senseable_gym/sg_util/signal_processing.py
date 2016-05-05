@@ -1,11 +1,22 @@
 import serial    # http://pyserial.readthedocs.org/en/latest/pyserial.html
 import math
+import urllib
+import requests
+import logging
+from html.parser import HTMLParser
+# from threading import BoundedSemaphore
 # from senseable_gym.sg_util.plot import plot_sensor_data
+
+# Senseable Gym Imports
+from senseable_gym import global_logger_name
 
 # Specify how many different kinds of data are in a data block
 # A data block is a group of data, with each data point being on a new line
 # Data blocks are separated by an empty line
 rowlength = 7
+
+logger = logging.getLogger(global_logger_name + '.database')
+
 
 def is_number(s):
     try:
@@ -14,12 +25,51 @@ def is_number(s):
     except ValueError:
         return False
 
+
 def is_int(s):
     try:
         int(s)
         return True
     except ValueError:
         return False
+
+def is_mac(s):
+    if s.count(':'0 == 5):
+        return True
+    else:
+        return False
+
+
+class MyHTMLParser(HTMLParser):
+    def __init__(self):
+        self.inside_tbody = False
+        self.correct_data = False
+        self.current_attr = None
+        self.ip_addrs = []
+        super().__init__()
+
+    def handle_starttag(self, tag, attrs):
+        self.current_attr = attrs
+
+        if tag == 'tbody':
+            self.inside_tbody = True
+
+        # if self.inside_tbody and tag == 'a':
+        #     print("Start tag:", tag)
+
+    def handle_endtag(self, tag):
+        if tag == 'tbody':
+            self.inside_tbody = False
+
+        # if self.inside_tbody and tag == 'a':
+        #     print("End tag  :", tag)
+
+    def handle_data(self, data):
+        if self.inside_tbody and data == 'web':
+            # print("Data     :", data)
+            # print('Appending:', self.current_attr[0][1])
+            self.ip_addrs.append(self.current_attr[0][1])
+
 
 class Processor():
     def __init__(self):
@@ -37,9 +87,9 @@ class Processor():
         :returns: True if busy, else False
         """
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
-        acc_total = abs(data[3] + data[4] + data[5] - 1.13)
+        # acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if(gyro_total >= 100): # or (acc_total >= 0.11)):
+        if(gyro_total >= 4): # or (acc_total >= 0.11)):
             return True
         else:
             return False
@@ -109,6 +159,81 @@ class Processor():
             transformed[l[0]].append(l[1:])
 
         return transformed
+
+
+class HtmlProcessor(Processor):
+    def __init__(self, host_ip):
+        self.host_ip = host_ip
+        self.sensor_list = None
+
+    def get_page(self, url):
+        MAX_RETRIES = 5
+
+        session = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+        # session.mount('https://', adapter)
+        session.mount('http://', adapter)
+
+        r = session.get(url)
+        return str(r.content)
+
+    # TODO(tjdevries): Pass in the ID, so that it can place it at the front of the list?
+    #   This way it would do the same type of transofmration in read. Currently I'm not really
+    #   returning the correct thing as specified by our API.
+    def read_incremental(self, html):
+        lines = html.split('\n')
+
+        important_lines = False
+        result_gyro = []
+        result_acc = []
+        id_num = None
+        for line in lines:
+            if 'aaaa::' in line and not id_num:
+                id_num =  line[line.index('aaaa::') - 8:line.index('index.html')]
+            elif 'Acc X' in line:
+                important_lines = True
+
+            if important_lines:
+                if 'Gyro Z' in line:
+                    split_line = line.split('<')[0]
+                    result_gyro.append(float(split_line.split('=')[1][0:-12]))
+                elif 'Gyro' in line:
+                    result_gyro.append(float(line.split('=')[1][0:-12]))
+                elif 'Acc' in line:
+                    result_acc.append(float(line.split('=')[1][0:-2]))
+
+        return [id_num] + result_gyro + result_acc
+
+    def read(self, iterations, debug=False):
+        processed = []
+
+        # TODO(tjdevries): Make sure this is the correct sensor html
+        logger.info('GET: {0}'.format(self.host_ip + '/sensors.html'))
+        self.sensor_list = self.update_sensor_list(self.get_page(self.host_ip + '/sensors.html'))
+        logger.info('New sensor_list: {0}'.format(self.sensor_list))
+
+        # TODO(tjdevries): Make this threaded
+        for data_point in range(iterations):
+            for sensor in self.sensor_list:
+                logger.info('Data point: {0}, Sensor: {1} -- Start'.format(data_point, sensor))
+
+                # TODO(tjdevries): Is this the correct address?
+                logger.info('Sending GET request to: {0}'.format(sensor + 'index.html'))
+                html = self.get_page(sensor + 'index.html')
+
+                processed.append(self.read_incremental(html))
+                logger.info('Data point: {0}, Sensor: {1} -- Finish'.format(data_point, sensor))
+
+        transformed = self.transform(processed)
+        return transformed
+
+    def update_sensor_list(self, sensor_info):
+        # TODO(tjdevries): Check if we have done this recently
+        # TODO(tjdevries): Don't add a sensor if it is 'NR'
+        parser = MyHTMLParser()
+        parser.feed(sensor_info)
+
+        return parser.ip_addrs
 
 
 class TextProcessor(Processor):
@@ -197,6 +322,7 @@ class TextProcessor(Processor):
     #             f.write(itemm)
     #             f.write('\r\n')
 
+
 class StreamProcessor(Processor):
     def __init__(self, port, baudrate):
         self.port = port
@@ -263,10 +389,115 @@ class StreamProcessor(Processor):
         transformed = self.transform(data)
         return transformed
 
+
+def WirelessStreamProcessor(Processor):
+    def __init__(self, port, baudrate, machine_map, data_size=8):
+        self.port = port
+        self.baudrate = int(baudrate)
+        self.machine_map = machine_map
+        self.data_size = data_size
+
+        self.ser = serial.Serial()
+        self.ser.port = self.port
+        self.ser.baudrate = self.baudrate
+
+    def read_incremental(self, stream=None, debug=False):
+        """
+        Read one data packet from the stream
+
+        Returns the standard packet protocol
+        """
+        # TODO: Abstract this section
+        data = []
+        counter = 0
+
+        stream_passed = True
+        if not stream:
+            stream_passed = False
+            stream = self.ser
+            stream.open()
+
+        while(1):
+            num = str(stream.readline().strip())
+            if debug:
+                print('Reading: {0}'.format(num))
+            # For non blank lines, put a number into the data
+            if((num != "b''") and (counter < self.data_size)):
+                num2 = num[2:-1]
+                if((counter != 0) and (is_number(num2))):
+                    data.append(float(num2))
+                    counter += 1
+                elif((counter == 0) and (is_mac(num2))):
+                    data.append(num2)
+                    counter += 1
+            # If we've collected enough data, return the data
+            elif(counter == self.data_size):
+                if not stream_passed:
+                    stream.close()
+                return data
+            # If we read a packet that was too small or too large, try again
+            else:
+                data = []
+                counter = 0
+
+    def read(self, num_data, debug=False):
+        data = []
+        self.ser.open()
+        for i in range(num_data):
+            data.append(self.read_incremental(stream=self.ser, debug=debug))
+        self.ser.close()
+        transformed = self.transform(data)
+        return transformed
+
+    def transform(self, data: list) -> dict:
+        """
+        Takes a list of lists, of the form:
+        [
+            [MAC, gyro_x, ... ]
+            [MAC, gyro_x, ... ]
+            [MAC, gyro_x, ... ]
+        ]
+
+        and turns it into the form:
+        {
+            machine_id_1: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            machine_id_2: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            ...
+        }
+
+        It skips data points if the MAC Address is not found in the machine_map
+        """
+        transformed = {}
+        for l in data:
+            current_mac = l[0]
+            try:
+                machine_id = self.machine_map[current_mac]
+            except KeyError:
+                logger.info('MAC Address `{0}` not in config. Skipping Data'.format(current_mac))
+                continue
+
+            if machine_id not in transformed.keys():
+                transformed[machine_id] = []
+
+            transformed[machine_id].append(l[1:])
+
+        return transformed
+
+
+
 if __name__ == '__main__':
     # tp = TextProcessor('../test/data_txt_files/Treadmill_Side')
     # mdata = tp.read()
     # plot_sensor_data(mdata)
     # sp = StreamProcessor('/dev/serial/by-id/usb-Texas_Instruments_XDS110__02.02.05.01__with_CMSIS-DAP_L3000408-if00', 115200)
-    # print(sp.read(10))
+    # while(1):
+    #     print(sp.process_data(sp.read(10)))
     pass
