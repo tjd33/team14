@@ -334,7 +334,7 @@ class DatabaseModel():
                      # TODO: Not sure about the start time and end time ideas here
                      Reservation.start_time >= datetime.now(),
                      Reservation.end_time <= cut_off_time)
-                ).all()
+                ).order_by(Reservation.start_time).all()
 
     def get_current_reservation_by_machine(self, machine: Machine) -> Reservation or None:
         all_reservations = self.get_reservations_by_machine(machine)
