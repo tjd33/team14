@@ -48,7 +48,7 @@ def main(level, dbname):
 
     for machine_id in range(21):
         # Just set a few differences in the objects so every one is not identical
-        if machine_id % 3 == 0 or machine_id % 5 == 0:
+        if (machine_id % 3 == 0 or machine_id % 5 == 0) and machine_id > 6:
             m_status = MachineStatus.BUSY
         else:
             m_status = MachineStatus.OPEN
@@ -87,14 +87,21 @@ def main(level, dbname):
     for user_id in range(4):
         temp_user = User(str(user_id), 'first' + str(user_id), 'last' + str(user_id), bcrypt.generate_password_hash('password'+ str(user_id)))
         
-        if user_id == 2:
-            temp_user.administrator = True
+
         # Add the users to the database
         try:
             db.add_user(temp_user)
         except:
             pass
             # already contains user
+    
+    
+    user = User('team14','Senseable','Gym', bcrypt.generate_password_hash('SeniorDesign'))
+    user.administrator = True
+    try:
+        db.add_user(user)
+    except:
+        pass
     
     user_list = db.get_users()
 
