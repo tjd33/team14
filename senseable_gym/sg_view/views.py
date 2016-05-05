@@ -318,9 +318,9 @@ def update_battery():
     if request.args.get('pass', '')!='ajax_update':
         return "Authentication failed"
     machine_id = request.args.get('id', '')
-    new_status = request.args.get('battery', '')
+    battery = request.args.get('battery', '')
     machine = database.get_machine(machine_id)
-    old_status = machine.status
+    old_battery = machine.battery
 
     try:
         battery = int(battery)
@@ -329,7 +329,7 @@ def update_battery():
 
     machine.battery = battery
 
-    return 'Old status: `{0}`, New Stats: `{1}`'.format(old_status, MachineStatus(new_status))
+    return 'Old battery: `{0}`, New battery: `{1}`'.format(old_battery, battery)
     
 # }}}
 

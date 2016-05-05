@@ -16,6 +16,7 @@ class Machine(Base):
     machine_id = Column(Integer, Sequence('machine_id_seq'), primary_key=True)
     _type = Column(Integer)
     _status = Column(Integer)
+    _battery = Column(Integer)
     color = Column(Boolean)
 
     # TODO: See if this is the easiest way to store these in ANY database
@@ -69,6 +70,7 @@ class Machine(Base):
         self._location_z = value[2]
 
         self._location = value
+        self._battery = 3000
 
     @property
     def status(self):
@@ -80,6 +82,14 @@ class Machine(Base):
             self._status = value.value
         else:
             self._status = value
+            
+    @property
+    def battery(self):
+        return self._battery
+        
+    @battery.setter
+    def battery(self, value):
+        this._battery = value
 
     # String representation
     def __str__(self):
