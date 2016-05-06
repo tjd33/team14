@@ -453,9 +453,9 @@ def WirelessStreamProcessor(Processor):
         """
         Takes a list of lists, of the form:
         [
-            [MAC, gyro_x, ... ]
-            [MAC, gyro_x, ... ]
-            [MAC, gyro_x, ... ]
+            [IPv6, gyro_x, ... ]
+            [IPv6, gyro_x, ... ]
+            [IPv6, gyro_x, ... ]
         ]
 
         and turns it into the form:
