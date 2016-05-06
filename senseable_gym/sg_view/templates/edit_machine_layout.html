@@ -5,18 +5,21 @@
 {% block content %}    
    
     Horizontal size:
-    <input type="number" min="1" max = "50">
+    <input id="xmax" type="number" min="1" max = "50">
     Vertical size:
-    <input type="number" min="1" max = "50">
-    <button>Apply</button>
+    <input id="ymax" type="number" min="1" max = "50">
+    <button id= "apply">Apply</button>
     <script src="{{ url_for('static', filename='js/jquery-2.2.1.js') }}" ></script>
     <br/>
     <br/>
-    <div id="canvas">
-        <canvas id ="current_machine_status" width="500" height="500" style="-webkit-touch-callout: none; -webkit-user-select: none;"></canvas>
+    <div>
+        <canvas id ="canvas" width="500" height="500" style="-webkit-touch-callout: none; -webkit-user-select: none;"></canvas>
     </div>
     <div id="machine_summary">
-        <p>Please click on a machine to view information</p>
+        <p>
+            Please drag a machine to move it to a new location
+            <button id="save"> Save </button>
+        </p>
     </div>
 
     <!-- Run the script for creating the machine view in the canvas -->

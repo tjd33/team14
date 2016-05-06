@@ -3,6 +3,8 @@
 {% block content %}
 <div class="form-signin">
     <h1 class="form-signin form-signin-heading">Machines</h1>
+    <a href = {{ url_for('add_machine')}} class="btn btn-lg btn-block btn-success form-signin">Add Machine</a>
+    <a href = {{ url_for('edit_machine_layout')}} class="btn btn-lg btn-block btn-info form-signin">Edit Machine Layout</a>
     {% if machines %}
         
         {% for machine in machines %}
@@ -16,7 +18,7 @@
     {% endif %}
     
     
-    <a href = {{ url_for('add_machine')}} class="btn btn-lg btn-block btn-success form-signin">Add Machine</a>
+    
     <a href = {{ url_for('admin_settings')}} class="btn btn-lg btn-block btn-info form-signin">Back</a>
 </div>
 {% endblock content %}

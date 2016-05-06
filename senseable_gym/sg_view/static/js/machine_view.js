@@ -17,8 +17,6 @@ function collides(machines, x, y) {
     var isCollision = false;
     for (var i = 0, len = machines.length; i < len; i++) {
         var x_machine = machines[i].x, y_machine = machines[i].y, radius = machines[i].r;
-        // console.log(Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)));
-        console.log(Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)));
         if (Math.sqrt(Math.pow(x_machine - x, 2) + Math.pow(y_machine - y, 2)) < radius) {
             return [machines[i], i];
         }
@@ -26,29 +24,6 @@ function collides(machines, x, y) {
     return isCollision;
 }
 
-function machine_summary(machine) {
-    var reservation_schedule = [new Date($.now())];
-    /* var summary = `<ul>
-        <li>ID: ${machine.machine_id}</li>
-        <li>Status: ${machine.status}</li>
-        <li>Reservation Schedule:
-            <ul>
-                <li>${reservation_schedule[0]}</li>
-            </ul>
-            </li>
-    </ul>`;
-    */
-
-    var summary = 'hello';
-
-    $.ajax({url: "_reservation_list/" + machine.machine_id, success: function(result){
-        var summary = result;
-        }}
-    );
-
-
-    return summary;
-}
 
 
 var locations = [];
@@ -110,8 +85,8 @@ function draw_machines(elem, canvas){
 
 
                 
-                locations.push({'x': x_norm + 25,
-                                'y': y_norm + 25,
+                locations.push({'x': x_norm + radius,
+                                'y': y_norm + radius,
                                 'r': radius,
                                 'machine_id': machines[i].machine_id,
                                 'status': machines[i].status,
@@ -165,7 +140,7 @@ function setup_canvas(auth){
                 reserve(x, y, auth);
             },500)
         }).on('click', function(e) {
-            status_popup(elem, e.offsetX, e.offsetY);
+            status_popup(elem, e.offsetX, e.offsetY, canvas);
         }).on('touchend', function(e) {
             console.log('touchend');
             clearTimeout(pressTimer);
@@ -176,7 +151,7 @@ function setup_canvas(auth){
         });
         
         $('#current_machine_status').on('click', function(e) {
-            status_popup(elem, e.offsetX, e.offsetY);
+            status_popup(elem, e.offsetX, e.offsetY, canvas);
         });
     }  
     
@@ -231,7 +206,7 @@ function reserve(x,y, auth){
     }
 }
 
-function status_popup(elem, x,y){
+function status_popup(elem, x,y, canvas){
     console.log('click: ' + x + '/' + y);
     var res = collides(locations, x, y);
     var machine = res[0];
@@ -250,10 +225,10 @@ function status_popup(elem, x,y){
                         y = machine.y + radius + 5;
                         
                         if(result.reservations.length === 0){
-                            elem.fillRect(x, y, 147 + mobileOffset, Math.max(20 * result.reservations.length, 20));
+                            elem.fillRect(x, y, 108 + mobileOffset, Math.max(20 * result.reservations.length, 20));
                             elem.font = "15px Arial";
                             elem.fillStyle="#000000";
-                            elem.fillText("No reservations soon", x + 3, y + 15);
+                            elem.fillText("No reservations", x + 3, y + 15);
                         } else {
                             elem.fillRect(x, y, 143 + mobileOffset * 4, Math.max(20 * result.reservations.length, 20));
                             elem.font = "15px Arial";
@@ -265,32 +240,13 @@ function status_popup(elem, x,y){
                     }
                     draw_machines(elem, canvas)
                     
-                    /*var reservations_html = 
-                    `<table border=1>
-                        <tr>
-                            <th text-align=center>Start Time</th>
-                            <th>End Time </th>
-                        </tr>
-                    `;
-                    // cr for current reservation
-                    for (var cr = 0; cr < result.reservations.length; cr++) {
-                        reservations_html += '<tr><td> ' + 
-                            result.reservations[cr].start_time + 
-                            '  </td><td>  ' +
-                            result.reservations[cr].end_time +
-                            ' </td></tr>';
-                    }
-                    reservations_html += '</ul>';
-                    $('#machine_summary').html(
-                        reservations_html
-                    );*/
                 }
             });
             // window.location.href = $SCRIPT_ROOT + "/reserve/" + res[1];
         }
     } else {
         popup = null;
-        draw_machines(elem);
+        draw_machines(elem, canvas);
         set_current_machine_id(-1);
     }
 }

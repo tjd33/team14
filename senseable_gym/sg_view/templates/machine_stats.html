@@ -11,6 +11,7 @@
                 <td>Machine</td>
                 <td>Usage in past month</td>
                 <td>Overall usage</td>
+                <td>Battery level (V)<td>
             </tr>
             </thead>
             <tbody>
@@ -19,6 +20,7 @@
                     <td>{{ machine.machine_id }}: location: {{machine.location}} - {{ machine.type }}</td>
                     <td> {{ machine_data[machine.machine_id][0]}} </td>
                     <td> {{ machine_data[machine.machine_id][1]}} </td>
+                    <td> {{ machine.battery/1000 }} </td>
                 </tr>
             <tbody> 
             {% endfor %}

@@ -34,6 +34,7 @@ class Machine(Base):
         self._location_y = location[1]
         self._location_z = location[2]
         self._status = MachineStatus.UNKNOWN.value
+        self._battery = 3000
 
         # Our variable that holds whether we will print in color or not
         self.color = color
@@ -70,7 +71,6 @@ class Machine(Base):
         self._location_z = value[2]
 
         self._location = value
-        self._battery = 3000
 
     @property
     def status(self):

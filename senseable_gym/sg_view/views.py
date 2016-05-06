@@ -291,6 +291,17 @@ def get_machine_list():
     # print(machines)
     return jsonify(machines)
 
+@app.route('/_save_machine_list', methods=['GET', 'POST'])
+def save_machine_list():
+    print('test')
+    print(request.mimetype)
+    machines = request.get_json()
+    for machine in machines:
+        print (machine)
+        db_machine = database.get_machine(machine['machine_id'])
+        db_machine.location = machine['location']
+    database.session.commit()
+    return "success"
 
 @app.route('/_update_status')
 def update_status():
