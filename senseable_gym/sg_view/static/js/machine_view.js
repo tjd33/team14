@@ -1,4 +1,5 @@
 var current_machine_id = -1;
+var border
 
 var get_current_machine_id = function() {
     return current_machine_id;
@@ -9,7 +10,6 @@ var set_current_machine_id = function(i) {
 };
 
 function n(num, max, multiplier) {
-    border = 10 + width/100 
     return border + (num) / max * (multiplier - border * 2 - size);
 }
 
@@ -84,12 +84,12 @@ function draw_machines(elem, canvas){
             
             //x_max++;
             //y_max++;
+            size = Math.max(Math.min((width-2*border)/(x_max+1), (height-2*border)/(y_max+1))-border/2, 40);
+            radius = size/2;
             width = canvas.width = Math.max(x_max*size*1.3, width);
             height = canvas.height = Math.max(y_max*size*1.4, height);
-            console.log(height);
             
             elem.clearRect(0, 0, width, height);
-            
             locations = [];
             
             for ( i = 0; i < machines.length; i++) {
@@ -99,11 +99,11 @@ function draw_machines(elem, canvas){
                 x_norm = n(x_loc, x_max, width);
                 y_norm = n(y_loc, y_max, height);
                 if (machines[i].status == "BUSY") {
-                    elem.drawImage(icons[machines[i].type * 2 + 1], x_norm, y_norm);
+                    elem.drawImage(icons[machines[i].type * 2 + 1], x_norm, y_norm, size, size);
                 } else if (machines[i].status == "RESERVED") {
                     elem.fillStyle = "rgba(0, 0, 200, 1)";
                 } else if (machines[i].status == "OPEN") {
-                    elem.drawImage(icons[machines[i].type * 2], x_norm, y_norm);
+                    elem.drawImage(icons[machines[i].type * 2], x_norm, y_norm, size, size);
                 } else {
                     elem.fillStyle = "rgba(0, 0, 0, 0.6)";
                 }
@@ -139,6 +139,7 @@ function setup_canvas(auth){
     function resizeCanvas() {
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight - 51; // would use $('#navbar').height()) but it seems inconsistant
+        border = 10 + width/100 
         /*console.log("width: " + width);
         console.log("height: " + height);
         console.log("navbar: " + $('#navbar').height());*/
