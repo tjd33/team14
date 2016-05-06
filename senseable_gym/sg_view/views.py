@@ -671,7 +671,7 @@ def machine_dispaly_message(machine_id):
     if len(res_list)>0:
         return "Next reservation at " + res_list[0].start_time.strftime("%I:%M %p")
     else:
-        return "No upcomming reservations"
+        return "No upcoming reservations"
     
 @app.errorhandler(404)
 def page_not_found(error):
