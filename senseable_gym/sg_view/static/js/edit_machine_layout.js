@@ -1,19 +1,15 @@
-var current_machine_id = -1;
 
-var get_current_machine_id = function() {
-    return current_machine_id;
-};
-
-var set_current_machine_id = function(i) {
-    current_machine_id = i;
-};
 
 function n(num, max, multiplier) {
-    return 15 + (num) / max * (multiplier - 30 - size);
+    return border + (num) / max * (multiplier - border * 2 - size);
+}
+
+function n(num, max, multiplier) {
+    return border + (num) / max * (multiplier - border * 2 - size);
 }
 
 function reverse_n(num, max, multiplier) {
-    return (num - 15) * max / (multiplier - 30 - size);
+    return (num - border) * max / (multiplier - border * 2 - size);
 }
 
 function collides(x, y) {
@@ -43,9 +39,11 @@ function calculate_locations(){
     } 
 }
 
-
+var border
+var canvas
 var locations = [];
 var width, height;
+var screenWidth, screenHeight;
 var size = 50;
 var radius = size/2;
 var mobileOffset = 0;
@@ -61,6 +59,11 @@ function draw_machines(elem, machines){
     var x_loc = 0,  y_loc = 0, x_norm = 0, y_norm = 0;
     // Create a list to hold all of the locations of the centers of the machines
 
+    size = Math.max(Math.min((screenWidth-2*border)/(x_max+1), (screenHeight-2*border)/(y_max+1))-border, 40);
+    radius = size/2;
+    width = canvas.width = Math.max(x_max*(size+border), width);
+    height = canvas.height = Math.max(y_max*(size+border), height);
+    
     elem.clearRect(0, 0, width, height);
 
     for ( i = 0; i < machines.length; i++) {  
@@ -82,11 +85,23 @@ function draw_machines(elem, machines){
 }
 
 function setup_canvas(auth){
-    var canvas = document.getElementById("canvas");
+    canvas = document.getElementById("canvas");
     width = canvas.width;
     height = canvas.height;
     var elem = canvas.getContext("2d");
 
+    window.addEventListener('resize', resizeCanvas, false);
+    function resizeCanvas() {
+        screenWidth = width = canvas.width = window.innerWidth;
+        screenHeight = height = canvas.height = window.innerHeight - 110; // would use $('#navbar').height()) but it seems inconsistant
+        // border = 10 + width/100 
+        border = 15;
+        
+        draw_machines(elem, machines);
+        calculate_locations()
+    }
+    
+    
     $.ajax({
             url: "/_machine_list",
             success: function(result){
@@ -112,6 +127,8 @@ function setup_canvas(auth){
                     draw_machines(elem, machines);
                 }
             }
+            
+            resizeCanvas();
             
         }
     });
@@ -147,8 +164,8 @@ function setup_canvas(auth){
             new_x = n(line, x_max, width);
             new_y = n(row, y_max, height);
             if (collides(new_x+radius, new_y+radius)){
-                new_x = -1;
-                new_y = -1;
+                new_x = selectedMachine.x - radius;
+                new_y = selectedMachine.y - radius;
             }
             draw_machines(elem, machines);
         }

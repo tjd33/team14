@@ -1,5 +1,4 @@
-var current_machine_id = -1;
-var border
+
 
 var get_current_machine_id = function() {
     return current_machine_id;
@@ -25,9 +24,11 @@ function collides(machines, x, y) {
 }
 
 
-
+var current_machine_id = -1;
+var border
 var locations = [];
 var width, height;
+var screenWidth, screenHeight;
 var popup;
 var size = 50;
 var radius = size/2;
@@ -59,10 +60,10 @@ function draw_machines(elem, canvas){
             
             //x_max++;
             //y_max++;
-            size = Math.max(Math.min((width-2*border)/(x_max+1), (height-2*border)/(y_max+1))-border/2, 40);
+            size = Math.max(Math.min((screenWidth-2*border)/(x_max+1), (screenHeight-2*border)/(y_max+1))-border, 40);
             radius = size/2;
-            width = canvas.width = Math.max(x_max*size*1.3, width);
-            height = canvas.height = Math.max(y_max*size*1.4, height);
+            width = canvas.width = Math.max(x_max*(size+border), width);
+            height = canvas.height = Math.max(y_max*(size+border), height);
             
             elem.clearRect(0, 0, width, height);
             locations = [];
@@ -112,9 +113,9 @@ function setup_canvas(auth){
 
     window.addEventListener('resize', resizeCanvas, false);
     function resizeCanvas() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight - 51; // would use $('#navbar').height()) but it seems inconsistant
-        border = 10 + width/100 
+        screenWidth = width = canvas.width = window.innerWidth;
+        screenHeight = height = canvas.height = window.innerHeight - 51; // would use $('#navbar').height()) but it seems inconsistant
+        border = 15; 
         /*console.log("width: " + width);
         console.log("height: " + height);
         console.log("navbar: " + $('#navbar').height());*/
