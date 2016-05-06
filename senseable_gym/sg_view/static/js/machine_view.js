@@ -222,15 +222,19 @@ function status_popup(elem, x,y, canvas){
                 success: function(result){
                     popup = function() {
                         elem.fillStyle="#AAAAAA";
-                        x = machine.x - radius;
-                        y = machine.y + radius + 5;
+                        
+                        y = Math.min(machine.y + radius + 5, height-20);
                         
                         if(result.reservations.length === 0){
+                            x = machine.x - radius;
+                            y = Math.min(machine.y + radius + 5, height-20);
                             elem.fillRect(x, y, 108 + mobileOffset, Math.max(20 * result.reservations.length, 20));
                             elem.font = "15px Arial";
                             elem.fillStyle="#000000";
                             elem.fillText("No reservations", x + 3, y + 15);
                         } else {
+                            x = machine.x - radius * 1.5;
+                            y = Math.min(machine.y + radius + 5, height-20 * result.reservations.length);
                             elem.fillRect(x, y, 143 + mobileOffset * 4, Math.max(20 * result.reservations.length, 20));
                             elem.font = "15px Arial";
                             elem.fillStyle="#000000";
