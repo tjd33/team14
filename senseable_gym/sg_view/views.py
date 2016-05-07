@@ -666,9 +666,9 @@ def machine_dispaly_message(machine_id):
     machine = database.get_machine(machine_id)
     res_list = database.get_applicable_reservations_by_machine(machine, datetime.now() + timedelta(days=1))
     if len(res_list)>0:
-        return "Next reservation at " + res_list[0].start_time.strftime("%I:%M %p")
+        return "Reserved:" + res_list[0].start_time.strftime("%I:%M%p")
     else:
-        return "No upcoming reservations"
+        return "No Reservations"
     
 @app.errorhandler(404)
 def page_not_found(error):
