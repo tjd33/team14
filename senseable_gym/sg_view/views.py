@@ -253,7 +253,7 @@ def user_reservations():
     for reservation in reservations:
         date = reservation.start_time.strftime("%d. %B %Y")
         start = reservation.start_time.strftime("%I:%M%p")
-        end = reservation.start_time.strftime("%I:%M%p")
+        end = reservation.end_time.strftime("%I:%M%p")
         machine = reservation.machine_id
         data = [date, start, end, machine]
         reservation_data[reservation.reservation_id] = data
