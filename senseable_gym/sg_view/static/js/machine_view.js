@@ -75,13 +75,13 @@ function draw_machines(elem, canvas){
                 x_norm = n(x_loc, x_max, width);
                 y_norm = n(y_loc, y_max, height);
                 if (machines[i].status == "BUSY") {
-                    elem.drawImage(icons[machines[i].type * 2 + 1], x_norm, y_norm, size, size);
+                    elem.drawImage(icons[machines[i].type * 3 + 1], x_norm, y_norm, size, size);
                 } else if (machines[i].status == "RESERVED") {
                     elem.fillStyle = "rgba(0, 0, 200, 1)";
                 } else if (machines[i].status == "OPEN") {
-                    elem.drawImage(icons[machines[i].type * 2], x_norm, y_norm, size, size);
+                    elem.drawImage(icons[machines[i].type * 3], x_norm, y_norm, size, size);
                 } else {
-                    elem.fillStyle = "rgba(0, 0, 0, 0.6)";
+                    elem.drawImage(icons[machines[i].type * 3 + 2], x_norm, y_norm, size, size);
                 }
 
 
@@ -164,10 +164,16 @@ function setup_canvas(auth){
     img.src = '/static/images/treadmill_busy.png';
     icons.push(img);
     img = new Image();
+    img.src = '/static/images/treadmill_reserved.png';
+    icons.push(img);
+    img = new Image();
     img.src = '/static/images/bicycle_free.png';
     icons.push(img);
     img = new Image();
     img.src = '/static/images/bicycle_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/bicycle_reserved.png';
     icons.push(img);
     img = new Image();
     img.src = '/static/images/elliptical_free.png';
@@ -176,16 +182,25 @@ function setup_canvas(auth){
     img.src = '/static/images/elliptical_busy.png';
     icons.push(img);
     img = new Image();
+    img.src = '/static/images/elliptical_reserved.png';
+    icons.push(img);
+    img = new Image();
     img.src = '/static/images/weightmachine_free.png';
     icons.push(img);
     img = new Image();
     img.src = '/static/images/weightmachine_busy.png';
     icons.push(img);
     img = new Image();
+    img.src = '/static/images/weightmachine_reserved.png';
+    icons.push(img);
+    img = new Image();
     img.src = '/static/images/rowingmachine_free.png';
     icons.push(img);
     img = new Image();
     img.src = '/static/images/rowingmachine_busy.png';
+    icons.push(img);
+    img = new Image();
+    img.src = '/static/images/rowingmachine_reserved.png';
     icons.push(img);
 }
 
