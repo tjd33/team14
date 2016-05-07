@@ -23,21 +23,18 @@ previous_page = '/index'
 def machine_view(db=None):
     global previous_page
     previous_page = '/machine_view'
-    # database = DatabaseModel('webTest', 'team14')
-
-    machine_list = database.get_machines()
-    user_list = database.get_users()
-    print(len(user_list))
-
-    reservation_dict = {}
-    for machine in machine_list:
-        reservation_dict[machine.machine_id] = database.get_reservations_by_machine(machine)
     return render_template('machine_view.html',
-                           machines=machine_list,
-                           users=user_list,
-                           user=current_user,
-                           reservations=reservation_dict
-                           )
+                           user=current_user
+   )
+  
+@app.route('/machine_view_fs')
+def machine_view_fs(db=None):
+    global previous_page
+    previous_page = '/machine_view'
+    return render_template('machine_viewfs.html',
+                           user=current_user
+   )  
+   
 
 
 @app.route('/')

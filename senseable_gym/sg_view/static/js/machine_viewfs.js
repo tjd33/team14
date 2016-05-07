@@ -114,7 +114,7 @@ function setup_canvas(auth){
     window.addEventListener('resize', resizeCanvas, false);
     function resizeCanvas() {
         screenWidth = width = canvas.width = window.innerWidth;
-        screenHeight = height = canvas.height = window.innerHeight - 51; // would use $('#navbar').height()) but it seems inconsistant
+        screenHeight = height = canvas.height = window.innerHeight; // would use $('#navbar').height()) but it seems inconsistant
         border = 15; 
         /*console.log("width: " + width);
         console.log("height: " + height);

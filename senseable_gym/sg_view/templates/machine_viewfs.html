@@ -1,0 +1,32 @@
+{% extends "basefs.html" %}
+
+{% block content %}
+
+<style>
+    * { margin:0; padding:0; } /* to remove the top and left whitespace */
+    html, body { width:100%; height:100%; } /* just to be sure these are full screen*/
+    canvas { display:block; } /* To remove the scrollbars */
+</style>
+
+<script src="{{ url_for('static', filename='js/jquery-2.2.1.js') }}" ></script>
+<script>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    var machines = [
+        {% for machine in machines %}
+            {{ '{ machine_id: ' ~ machine.machine_id ~ ', location: ' ~ machine.location ~ ', status: "'|safe ~ machine.status ~ '" }, '|safe }}
+        {% endfor %}
+        ];
+</script>
+
+<canvas id ="current_machine_status" style="-webkit-touch-callout: none; -webkit-user-select: none;">
+</canvas>
+
+
+<!-- Run the script for creating the machine view in the canvas -->
+<script src="{{ url_for('static', filename='js/machine_viewfs.js') }}" ></script>
+<script type='text/javascript'>
+    setup_canvas("{{user.authenticated}}")
+</script>
+
+
+{% endblock content %}
