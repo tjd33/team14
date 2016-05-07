@@ -17,5 +17,8 @@ website:
 demo:
 	python3 -m senseable_gym.sg_run.html_tester
 
+design:
+	python3 -m senseable_gym.sg_run.design_night_tester
+
 clean:
 	find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf

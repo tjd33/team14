@@ -23,12 +23,22 @@ def send_update(ip: str, port: int, password: str,  machine_id: int, machine_sta
     if debug:
         print(r.text)
 
+def send_battery(ip, port, password, machine_id, battery_level, debug=False):
+    r = requests.get('http://{0}:{1}/_update_battery?id={2}&battery={3}&pass={4}'.format(
+        ip,
+        port,
+        machine_id,
+        battery_level,
+        password)
+    )
+
+    if debug:
+        print(r.text)
 
 if __name__ == "__main__":
     # s = Session()
     # login(s, 'machine_update_user', 'ajax_update')
-    send_update(1, 2, True)
-    send_update(2, 3, True)
-    send_update(3, 1, True)
-        
-        
+    # send_update(1, 2, True)
+    # send_update(2, 3, True)
+    # send_update(3, 1, True)
+    pass

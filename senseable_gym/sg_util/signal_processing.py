@@ -33,8 +33,8 @@ def is_int(s):
     except ValueError:
         return False
 
-def is_mac(s):
-    if s.count(':'0 == 5):
+def is_ipv6(s):
+    if s.count(':') == 5:
         return True
     else:
         return False
@@ -89,7 +89,8 @@ class Processor():
         gyro_total = abs(data[0]) + abs(data[1]) + abs(data[2])
         # acc_total = abs(data[3] + data[4] + data[5] - 1.13)
 
-        if(gyro_total >= 4): # or (acc_total >= 0.11)):
+        #if((gyro_total >= 4) or (acc_total >= 0.11)):
+        if(gyro_total >= 15):
             return True
         else:
             return False
@@ -115,17 +116,18 @@ class Processor():
         :returns: {machine_id_1: True, machine_id_2: False}
         """
         processed = {}
-        for machine_id in data_dict.keys():
-            num_busy = 0
-            for l in data_dict[machine_id]:
-                num_busy += self.process_single_data(l)
+        def process_data(self, data):
+            for machine_id in data_dict.keys():
+                num_busy = 0
+                for l in data_dict[machine_id]:
+                    num_busy += self.process_single_data(l)
 
-            if num_busy / len(data_dict[machine_id]) > 0.5:
-                processed[machine_id] = True
-            else:
-                processed[machine_id] = False
+                if num_busy / len(data_dict[machine_id]) > 0.5:
+                    processed[machine_id] = True
+                else:
+                    processed[machine_id] = False
 
-        return processed
+            return processed
 
     def transform(self, data: list) -> dict:
         """
@@ -390,7 +392,7 @@ class StreamProcessor(Processor):
         return transformed
 
 
-def WirelessStreamProcessor(Processor):
+class WirelessStreamProcessor(Processor):
     def __init__(self, port, baudrate, machine_map, data_size=8):
         self.port = port
         self.baudrate = int(baudrate)
@@ -400,6 +402,8 @@ def WirelessStreamProcessor(Processor):
         self.ser = serial.Serial()
         self.ser.port = self.port
         self.ser.baudrate = self.baudrate
+
+        self.old_values = {}
 
     def read_incremental(self, stream=None, debug=False):
         """
@@ -419,21 +423,22 @@ def WirelessStreamProcessor(Processor):
 
         while(1):
             num = str(stream.readline().strip())
-            if debug:
-                print('Reading: {0}'.format(num))
             # For non blank lines, put a number into the data
             if((num != "b''") and (counter < self.data_size)):
                 num2 = num[2:-1]
                 if((counter != 0) and (is_number(num2))):
                     data.append(float(num2))
                     counter += 1
-                elif((counter == 0) and (is_mac(num2))):
+                elif((counter == 0) and (is_ipv6(num2))):
                     data.append(num2)
                     counter += 1
             # If we've collected enough data, return the data
             elif(counter == self.data_size):
                 if not stream_passed:
                     stream.close()
+
+                # if debug:
+                #     logger.info('Data: {0}'.format(data))
                 return data
             # If we read a packet that was too small or too large, try again
             else:
@@ -441,12 +446,25 @@ def WirelessStreamProcessor(Processor):
                 counter = 0
 
     def read(self, num_data, debug=False):
-        data = []
+        data = self.old_values
         self.ser.open()
         for i in range(num_data):
-            data.append(self.read_incremental(stream=self.ser, debug=debug))
+            new_data = self.read_incremental(stream=self.ser, debug=debug)
+            cur_ip = new_data[0]
+
+            if cur_ip not in data.keys():
+                data[cur_ip] = []
+
+            data[cur_ip].append(new_data)
+
+            if len(data[cur_ip]) == num_data:
+                break
+
         self.ser.close()
-        transformed = self.transform(data)
+        transformed = self.transform(data[cur_ip])
+        
+        data[cur_ip] = []
+        self.old_values = data
         return transformed
 
     def transform(self, data: list) -> dict:
@@ -473,7 +491,7 @@ def WirelessStreamProcessor(Processor):
             ...
         }
 
-        It skips data points if the MAC Address is not found in the machine_map
+        It skips data points if the IPv6 Address is not found in the machine_map
         """
         transformed = {}
         for l in data:
@@ -481,7 +499,7 @@ def WirelessStreamProcessor(Processor):
             try:
                 machine_id = self.machine_map[current_mac]
             except KeyError:
-                logger.info('MAC Address `{0}` not in config. Skipping Data'.format(current_mac))
+                logger.info('IPv6 Address `{0}` not in config. Skipping Data'.format(current_mac))
                 continue
 
             if machine_id not in transformed.keys():
@@ -491,6 +509,147 @@ def WirelessStreamProcessor(Processor):
 
         return transformed
 
+
+class DistributedStreamProcessor(Processor):
+    def __init__(self, port, baudrate, machine_map, data_size=3):
+        self.port = port
+        self.baudrate = int(baudrate)
+        self.machine_map = machine_map
+        self.data_size = data_size
+
+        self.ser = serial.Serial()
+        self.ser.port = self.port
+        self.ser.baudrate = self.baudrate
+
+    def read_incremental(self, stream=None, debug=False):
+        """
+        Read one data packet from the stream
+
+        Returns the transformed packet
+        """
+        # TODO: Abstract this section
+        data = []
+        counter = 0
+
+        stream_passed = True
+        if not stream:
+            stream_passed = False
+            stream = self.ser
+            stream.open()
+
+        while(1):
+            num = str(stream.readline().strip())
+            # For non blank lines, put a number into the data
+            if (num != "b''") and (counter < self.data_size):
+                num2 = num[2:-1]
+                if((counter == 0) and (is_ipv6(num2))):
+                    data.append(num2)
+                    counter += 1
+                elif((counter != 0) and (is_number(num2))):
+                    data.append(float(num2))
+                    counter += 1
+            # If we've collected enough data, return the data
+            elif(counter == self.data_size):
+                if not stream_passed:
+                    stream.close()
+
+                if debug:
+                    logger.info('Data: {0}'.format(data))
+                return {data[0] : data[1:]}
+            # If we read a packet that was too small or too large, try again
+            else:
+                data = []
+                counter = 0
+
+    def process_data(self, data):
+        processed = {}
+        for machine_id in data.keys():
+            try:
+                processed_id = self.machine_map[machine_id]
+            except KeyError:
+                logger.info('Bad IP: {0}'.format(machine_id))
+                break
+
+            processed[processed_id] = {}
+            processed[processed_id]['battery'] = data[machine_id][1]
+
+            if data[machine_id][0] == 1:
+                processed[processed_id]['busy'] = True
+            else:
+                processed[processed_id]['busy'] = False
+
+        return processed
+
+    def read(self, num_data, debug=False):
+        # TODO: This does not work
+        data = self.old_values
+        self.ser.open()
+        for i in range(num_data):
+            data.append(self.read_incremental(stream=self.ser, debug=debug))
+
+    # def read(self, num_data, debug=False):
+    #     data = self.old_values
+    #     self.ser.open()
+    #     for i in range(num_data):
+    #         new_data = self.read_incremental(stream=self.ser, debug=debug)
+    #         cur_ip = new_data[0]
+
+    #         if cur_ip not in data.keys():
+    #             data[cur_ip] = []
+
+    #         data[cur_ip].append(new_data)
+
+    #         if len(data[cur_ip]) == num_data:
+    #             break
+
+    #     self.ser.close()
+    #     transformed = self.transform(data[cur_ip])
+        
+        # data[cur_ip] = []
+        # self.old_values = data
+        # return transformed
+
+    def transform(self, data: list) -> dict:
+        """
+        Takes a list of lists, of the form:
+        [
+            [IPv6, gyro_x, ... ]
+            [IPv6, gyro_x, ... ]
+            [IPv6, gyro_x, ... ]
+        ]
+
+        and turns it into the form:
+        {
+            machine_id_1: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            machine_id_2: [
+                single_data_1,
+                single_data_2,
+                single_data_3,
+            ]
+            ...
+        }
+
+        It skips data points if the IPv6 Address is not found in the machine_map
+        """
+        transformed = {}
+        for l in data:
+            current_mac = l[0]
+            try:
+                machine_id = self.machine_map[current_mac]
+            except KeyError:
+                logger.info('IPv6 Address `{0}` not in config. Skipping Data'.format(current_mac))
+                continue
+
+            if machine_id not in transformed.keys():
+                transformed[machine_id] = []
+
+            transformed[machine_id].append(l[1:])
+
+        return transformed
 
 
 if __name__ == '__main__':
