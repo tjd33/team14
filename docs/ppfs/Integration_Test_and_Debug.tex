@@ -7,24 +7,26 @@
 Testing is a crucial part of the design process, as it determines whether or not the system meets the design requirements.
 
 \subsection{Tests passed}
-The sensors have been tested to make sure they are sensitive enough to detect the vibrations of functioning equipment.  To do this, single sensors were installed on Calvin College gym equipment. The output from the sensors when the machine was in use as opposed to the noise were different enough to be distinguishable, so the sensors are sensitive enough. This test also determined that the physical connection of the sensor to the equipment can sufficient to endure normal use.
+The sensors were tested to make sure they were sensitive enough to detect the vibrations of functioning equipment.  To do this, single sensors were installed on Calvin College gym equipment. The output from the sensors when the machine was in use was distinguishable from the noise, so the sensors were sensitive enough, and the signal processing algorithm was modified to make use of this distinction. This test also determined that the physical connection of the sensor to the equipment is sufficient to endure normal use. The range of the sensors with respect to network communication was also tested, and it was determined that any two sensors could communicate with each other across a large parking lot and through multiple walls. This test demonstrated the robustness and strength of the network formed by the sensors. The network was also tested by activating multiple devices at a time, and each device connected to the network rapidly without disrupting the other devices' connections, verifying that each device communicated properly.
 
 The hub and server have been tested to make sure that information is properly propagated between the sensors, the display interfaces, and the server. It took take less than one minute for information to be transmitted from any device to any other device, including the server. In fact it usually only took a few seconds. This was tested by stimulating the sensors, recording the response time of the server detecting the change, and recording the response time of the displays to changes made on the server.
 
 The website was tested by verifying that current usage and reservation information were received without any communication errors and were displayed to the user correctly. Reservations made using the website were also be transmitted to the server without any errors.
 
 Unit tests were written for the software to verify that the code functions correctly at all times, and these tests pass.
+
 \subsection{Tests failed}
+
 The display interfaces were be tested to determine whether all the required information can be displayed while maintaining good visibility from a distance of about 7'. This test was failed, but that is made up for by the decision to include a large screen display which is easily visible at much more than 7'.
 
-Both the sensors and the displays were tested for battery life. During our development process, the batteries in the SensorTags had to be changed multiple times, which indicates that the battery life is not long enough.
+Both the sensors and the displays were tested for battery life. During the team's development process, the batteries in the SensorTags had to be changed once or twice, indicating that the battery life may not be long enough.
+
 \subsection{Future tests}
 
-The network will be tested to verify that all devices communicate properly and that the mesh network is working as expected. Multiple devices will be activated one at a time; each should connect to the network rapidly without disrupting the other devices' connection. Devices will be added outside the range of the central hub with intermediate devices in between to verify that the devices are properly forming a mesh network instead of all directly connecting to the hub. No data transmitted over this network should be corrupted.
+To test the reliability of the mesh network, devices will be added outside the range of the central hub with intermediate devices in between to verify that the devices are properly forming a mesh network instead of all directly connecting to the hub. No data transmitted over this network should be corrupted.
 
 All the equipment will be left running for multiple days with some occasional artificial activity (such as manually moving a sensor to simulate a running machine) during typical gym hours to verify that the system will work without crashing for at least 24 hours.
 
 Once all the single feature tests are completed, integration testing will be performed in order to determine that the system works properly in a real gym environment. This involves setting the system up in a gym and letting it run during a regular day. This will confirm or invalidate the results of the single feature tests as the integration test is a more realistic testing scenario. The same devices being used across different equipment will determine the generality of those devices. The status of the gym according to the sensors will be monitored and regularly cross-checked with actual gym usage to ensure that the gym usage information is correct.
-
 
 \end{document}
