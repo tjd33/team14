@@ -1,4 +1,5 @@
 *\.log
+*\.out
 *\.aux
 *_aux
 *\.swp

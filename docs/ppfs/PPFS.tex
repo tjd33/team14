@@ -14,7 +14,7 @@
 % I had all the rest of these automatically installed,
 %   Let me know if you guys don't. - TJ
 \usepackage{fancyhdr} % Required for custom headers
-\usepackage{template/lastpage} % Required to determine the last page for the footer
+\usepackage{lastpage} % Required to determine the last page for the footer
 \usepackage{extramarks} % Required for headers and footers
 \usepackage[usenames,dvipsnames]{color} % Required for custom colors
 \usepackage{graphicx} % Required to insert images
@@ -24,14 +24,14 @@
 \usepackage{template/subfiles} % This is used to create standalone sub files, so that we can compile them by themselves,
                         % but does not mess with the fact that we want to put them into one file
 \usepackage{float}  % Required to fix tables between specific lines of text
-%\usepackage{hyperref} % Required for hyperlinks
+\usepackage{hyperref} % Required for hyperlinks
 
-%\hypersetup{
-%	colorlinks,
-%	citecolor=black,
-%	linkcolor=black,
-%	urlcolor=black,
-%}
+\hypersetup{
+	colorlinks=false,
+	citecolor=black,
+	linkcolor=black,
+	urlcolor=blue,
+}
 \usepackage{titlesec}	% Code to allow subsubsubsections - command is \paragraph{}
 \setcounter{secnumdepth}{4}
 \titleformat{\paragraph}

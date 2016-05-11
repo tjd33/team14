@@ -1,0 +1,102 @@
+\BOOKMARK [1][-]{section.1}{Table of Figures}{}% 1
+\BOOKMARK [1][-]{section.2}{List of Tables}{}% 2
+\BOOKMARK [1][-]{section.3}{Introduction}{}% 3
+\BOOKMARK [1][-]{section.4}{Project Management}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Team Organization}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Schedule}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{Budget}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.4}{Method of Approach}{section.4}% 8
+\BOOKMARK [1][-]{section.5}{Project Justification}{}% 9
+\BOOKMARK [1][-]{section.6}{Requirements}{}% 10
+\BOOKMARK [2][-]{subsection.6.1}{System Requirements}{section.6}% 11
+\BOOKMARK [3][-]{subsubsection.6.1.1}{Generic}{subsection.6.1}% 12
+\BOOKMARK [3][-]{subsubsection.6.1.2}{General}{subsection.6.1}% 13
+\BOOKMARK [3][-]{subsubsection.6.1.3}{Accessibility}{subsection.6.1}% 14
+\BOOKMARK [3][-]{subsubsection.6.1.4}{User-Friendly}{subsection.6.1}% 15
+\BOOKMARK [3][-]{subsubsection.6.1.5}{Reservation System}{subsection.6.1}% 16
+\BOOKMARK [3][-]{subsubsection.6.1.6}{Real-Time Updates}{subsection.6.1}% 17
+\BOOKMARK [3][-]{subsubsection.6.1.7}{Central Management}{subsection.6.1}% 18
+\BOOKMARK [2][-]{subsection.6.2}{Hardware Requirements}{section.6}% 19
+\BOOKMARK [3][-]{subsubsection.6.2.1}{Sensors}{subsection.6.2}% 20
+\BOOKMARK [3][-]{subsubsection.6.2.2}{Display Interfaces}{subsection.6.2}% 21
+\BOOKMARK [3][-]{subsubsection.6.2.3}{Hub}{subsection.6.2}% 22
+\BOOKMARK [3][-]{subsubsection.6.2.4}{Server}{subsection.6.2}% 23
+\BOOKMARK [2][-]{subsection.6.3}{Class Requirements}{section.6}% 24
+\BOOKMARK [1][-]{section.7}{Task Specifications and Schedule}{}% 25
+\BOOKMARK [2][-]{subsection.7.1}{Organization of Tasks}{section.7}% 26
+\BOOKMARK [3][-]{subsubsection.7.1.1}{Fall Semester: PPFS}{subsection.7.1}% 27
+\BOOKMARK [3][-]{subsubsection.7.1.2}{Spring Semester: PPFS}{subsection.7.1}% 28
+\BOOKMARK [3][-]{subsubsection.7.1.3}{Fall Semester: Research}{subsection.7.1}% 29
+\BOOKMARK [3][-]{subsubsection.7.1.4}{Fall Semester: Hardware}{subsection.7.1}% 30
+\BOOKMARK [3][-]{subsubsection.7.1.5}{Spring Semester: Hardware}{subsection.7.1}% 31
+\BOOKMARK [3][-]{subsubsection.7.1.6}{Fall Semester: Software}{subsection.7.1}% 32
+\BOOKMARK [3][-]{subsubsection.7.1.7}{Spring Semester: Software}{subsection.7.1}% 33
+\BOOKMARK [3][-]{subsubsection.7.1.8}{Fall Semester: Oral Presentations}{subsection.7.1}% 34
+\BOOKMARK [3][-]{subsubsection.7.1.9}{Spring Semester: Oral Presentations}{subsection.7.1}% 35
+\BOOKMARK [3][-]{subsubsection.7.1.10}{Fall Semester: Website}{subsection.7.1}% 36
+\BOOKMARK [3][-]{subsubsection.7.1.11}{Spring Semester: Website}{subsection.7.1}% 37
+\BOOKMARK [3][-]{subsubsection.7.1.12}{Fall Semester: Management}{subsection.7.1}% 38
+\BOOKMARK [3][-]{subsubsection.7.1.13}{Spring Semester: Management}{subsection.7.1}% 39
+\BOOKMARK [2][-]{subsection.7.2}{Summary of Tasks}{section.7}% 40
+\BOOKMARK [3][-]{subsubsection.7.2.1}{Expected Hours By Month}{subsection.7.2}% 41
+\BOOKMARK [3][-]{subsubsection.7.2.2}{Actual Progress By Week}{subsection.7.2}% 42
+\BOOKMARK [1][-]{section.8}{System Architecture}{}% 43
+\BOOKMARK [2][-]{subsection.8.1}{Sensors}{section.8}% 44
+\BOOKMARK [2][-]{subsection.8.2}{Displays}{section.8}% 45
+\BOOKMARK [2][-]{subsection.8.3}{Hub}{section.8}% 46
+\BOOKMARK [2][-]{subsection.8.4}{Server}{section.8}% 47
+\BOOKMARK [1][-]{section.9}{Design Criteria, Alternatives, and Decisions}{}% 48
+\BOOKMARK [2][-]{subsection.9.1}{Sensor Systems}{section.9}% 49
+\BOOKMARK [3][-]{subsubsection.9.1.1}{Design Criteria}{subsection.9.1}% 50
+\BOOKMARK [3][-]{subsubsection.9.1.2}{Design Alternatives}{subsection.9.1}% 51
+\BOOKMARK [3][-]{subsubsection.9.1.3}{Design Decisions}{subsection.9.1}% 52
+\BOOKMARK [2][-]{subsection.9.2}{Display Interfaces}{section.9}% 53
+\BOOKMARK [3][-]{subsubsection.9.2.1}{Design Criteria}{subsection.9.2}% 54
+\BOOKMARK [3][-]{subsubsection.9.2.2}{Design Alternatives}{subsection.9.2}% 55
+\BOOKMARK [3][-]{subsubsection.9.2.3}{Design Decisions}{subsection.9.2}% 56
+\BOOKMARK [2][-]{subsection.9.3}{Hub}{section.9}% 57
+\BOOKMARK [3][-]{subsubsection.9.3.1}{Design Criteria}{subsection.9.3}% 58
+\BOOKMARK [3][-]{subsubsection.9.3.2}{Design Alternatives}{subsection.9.3}% 59
+\BOOKMARK [3][-]{subsubsection.9.3.3}{Design Decisions}{subsection.9.3}% 60
+\BOOKMARK [2][-]{subsection.9.4}{Server}{section.9}% 61
+\BOOKMARK [3][-]{subsubsection.9.4.1}{Design Criteria}{subsection.9.4}% 62
+\BOOKMARK [3][-]{subsubsection.9.4.2}{Design Alternatives}{subsection.9.4}% 63
+\BOOKMARK [3][-]{subsubsection.9.4.3}{Design Decisions}{subsection.9.4}% 64
+\BOOKMARK [2][-]{subsection.9.5}{SensorTag Network Type}{section.9}% 65
+\BOOKMARK [3][-]{subsubsection.9.5.1}{Design Criteria}{subsection.9.5}% 66
+\BOOKMARK [3][-]{subsubsection.9.5.2}{Design Alternatives}{subsection.9.5}% 67
+\BOOKMARK [3][-]{subsubsection.9.5.3}{Design Decisions}{subsection.9.5}% 68
+\BOOKMARK [2][-]{subsection.9.6}{Sensor Data Acquisition and Communication}{section.9}% 69
+\BOOKMARK [3][-]{subsubsection.9.6.1}{Design Criteria}{subsection.9.6}% 70
+\BOOKMARK [3][-]{subsubsection.9.6.2}{Design Alternatives}{subsection.9.6}% 71
+\BOOKMARK [3][-]{subsubsection.9.6.3}{Design Decisions}{subsection.9.6}% 72
+\BOOKMARK [2][-]{subsection.9.7}{Display Software and Communication}{section.9}% 73
+\BOOKMARK [3][-]{subsubsection.9.7.1}{Design Criteria}{subsection.9.7}% 74
+\BOOKMARK [3][-]{subsubsection.9.7.2}{Design Alternatives}{subsection.9.7}% 75
+\BOOKMARK [3][-]{subsubsection.9.7.3}{Design Decisions}{subsection.9.7}% 76
+\BOOKMARK [2][-]{subsection.9.8}{Hub to Server Communication}{section.9}% 77
+\BOOKMARK [3][-]{subsubsection.9.8.1}{Design Criteria}{subsection.9.8}% 78
+\BOOKMARK [3][-]{subsubsection.9.8.2}{Design Alternatives}{subsection.9.8}% 79
+\BOOKMARK [3][-]{subsubsection.9.8.3}{Design Decisions}{subsection.9.8}% 80
+\BOOKMARK [2][-]{subsection.9.9}{Database}{section.9}% 81
+\BOOKMARK [3][-]{subsubsection.9.9.1}{Design Criteria}{subsection.9.9}% 82
+\BOOKMARK [3][-]{subsubsection.9.9.2}{Design Alternatives}{subsection.9.9}% 83
+\BOOKMARK [3][-]{subsubsection.9.9.3}{Design Decisions}{subsection.9.9}% 84
+\BOOKMARK [2][-]{subsection.9.10}{Website}{section.9}% 85
+\BOOKMARK [3][-]{subsubsection.9.10.1}{Design Criteria}{subsection.9.10}% 86
+\BOOKMARK [3][-]{subsubsection.9.10.2}{Design Alternatives}{subsection.9.10}% 87
+\BOOKMARK [3][-]{subsubsection.9.10.3}{Design Decisions}{subsection.9.10}% 88
+\BOOKMARK [1][-]{section.10}{Integration, Test, and Debug}{}% 89
+\BOOKMARK [2][-]{subsection.10.1}{Tests passed}{section.10}% 90
+\BOOKMARK [2][-]{subsection.10.2}{Tests failed}{section.10}% 91
+\BOOKMARK [2][-]{subsection.10.3}{Future tests}{section.10}% 92
+\BOOKMARK [1][-]{section.11}{Business Plan}{}% 93
+\BOOKMARK [2][-]{subsection.11.1}{Marketing Study}{section.11}% 94
+\BOOKMARK [3][-]{subsubsection.11.1.1}{Competition}{subsection.11.1}% 95
+\BOOKMARK [3][-]{subsubsection.11.1.2}{Market Survey}{subsection.11.1}% 96
+\BOOKMARK [2][-]{subsection.11.2}{Cost estimate}{section.11}% 97
+\BOOKMARK [3][-]{subsubsection.11.2.1}{Development}{subsection.11.2}% 98
+\BOOKMARK [3][-]{subsubsection.11.2.2}{Production}{subsection.11.2}% 99
+\BOOKMARK [1][-]{section.12}{Conclusion}{}% 100
+\BOOKMARK [1][-]{section.13}{Acknowledgements}{}% 101
+\BOOKMARK [1][-]{section.14}{References}{}% 102
