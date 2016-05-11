@@ -295,21 +295,23 @@ The team decided to use the SQLAlchemy framework in Python for a variety of reas
 
 % TODO: Dan & TJ
 \subsection{Website}
-The website serves as an interfaces with the end users, including gym users wanting to check what machines are available or reserve machines, and gym administrators wanting to edit the system or view machine statistics 
+The website serves as an interfaces with the end users, including gym users wanting to check what machines are available or reserve machines, and gym administrators wanting to edit the system or view machine statistics.
+The website contains a front end, which is what the users interact with, and a back end that interacts with the database, provides the dynamic data that needs to be displayed and generates the web pages. 
 
 \subsubsection{Design Criteria}
-From a design standpoint, we wanted the website to easily be able to interact with both our database and our model. These are both written in Python, so it would follow to use a website that could take advantage of Python.
+From a design standpoint, we wanted the website back end to easily be able to interact with both our database and our model. These are both written in Python, so it would follow to use a website that could take advantage of Python.
 
-The website needs to look good for the end user so that it will not detract from their experience using our system. We are also assuming that most gym users will be using the website on their phones, so mobile friendliness is also essential.
+The website front end needs to look good for the end user so that it will not detract from their experience using our system. We are also assuming that most gym users will be using the website on their phones, so mobile friendliness is also essential.
 
 \subsubsection{Design Alternatives}
+A first alternative for our back end is Flask, which is a micro webdevelopment framework for Python.
 A major alternative to Flask is Django. While Django is appealing, it has more setup and configuration options that the team was not familiar with how to set up.
 
 There are many front end packages intended to make beautiful and mobile friendly websites. The first alternative was using the same one used for our team website, called future imperfect.
 The second alternative considered is the bootstrap framework, a popular front-end framework which advertises itself as "the world's most popular HTML, CSS and JS framework for making responsive, mobile first projects on the web."
 
 \subsubsection{Design Decisions}
-Flask was chosen because it was simple to start, easy to use, and provided very good documentation. Additionally, it interacted very well with our Python database, written in SQLAlchemy, and when interacting with the native Python objects that represent machines, reservations, etc.
+Flask was chosen as our back end framework because it was simple to start, easy to use, and provided very good documentation. Additionally, it interacted very well with our Python database, written in SQLAlchemy, and when interacting with the native Python objects that represent machines, reservations, etc.
 
-The bootstrap framework was chosen because it was more general and allowed more features, whereas the future imperfect package is designed for making website centered around articles and posts.
+The bootstrap framework was chosen for our front end because it was more general and allowed more features, whereas the future imperfect package is designed for making website centered around articles and posts.
 \end{document}
