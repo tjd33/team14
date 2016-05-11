@@ -9,15 +9,15 @@ Testing is a crucial part of the design process, as it determines whether or not
 \subsection{Tests passed}
 The sensors were tested to make sure they were sensitive enough to detect the vibrations of functioning equipment.  To do this, single sensors were installed on Calvin College gym equipment. The output from the sensors when the machine was in use was distinguishable from the noise, so the sensors were sensitive enough, and the signal processing algorithm was modified to make use of this distinction. This test also determined that the physical connection of the sensor to the equipment is sufficient to endure normal use. The range of the sensors with respect to network communication was also tested, and it was determined that any two sensors could communicate with each other across a large parking lot and through multiple walls. This test demonstrated the robustness and strength of the network formed by the sensors. The network was also tested by activating multiple devices at a time, and each device connected to the network rapidly without disrupting the other devices' connections, verifying that each device communicated properly.
 
-The hub and server have been tested to make sure that information is properly propagated between the sensors, the display interfaces, and the server. It took take less than one minute for information to be transmitted from any device to any other device, including the server. In fact it usually only took a few seconds. This was tested by stimulating the sensors, recording the response time of the server detecting the change, and recording the response time of the displays to changes made on the server.
+The hub and server have been tested to make sure that information is properly propagated between the sensors, the display interfaces, and the server. It took less than one minute for information to be transmitted from any device to any other device, including the server. In fact it usually only took a few seconds. This was tested by using the sensors, recording the response time of the server detecting the change, and recording the response time of the displays to changes made on the server.
 
-The website was tested by verifying that current usage and reservation information were received without any communication errors and were displayed to the user correctly. Reservations made using the website were also be transmitted to the server without any errors.
+The website was tested by verifying that current usage and reservation information was received without any communication errors and was displayed to the user correctly. Reservations made using the website were also transmitted to the server without any errors.
 
 Unit tests were written for the software to verify that the code functions correctly at all times, and these tests pass.
 
 \subsection{Tests failed}
 
-The display interfaces were be tested to determine whether all the required information can be displayed while maintaining good visibility from a distance of about 7'. This test was failed, but that is made up for by the decision to include a large screen display which is easily visible at much more than 7'.
+The display interfaces were tested to determine whether all the required information could be displayed while maintaining good visibility from a distance of about seven feet. This test was failed, but was offset by the decision to include a large screen display which is easily visible at much more than seven feet.
 
 Both the sensors and the displays were tested for battery life. During the team's development process, the batteries in the SensorTags had to be changed once or twice, indicating that the battery life may not be long enough.
 
