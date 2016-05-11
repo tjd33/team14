@@ -40,14 +40,14 @@ The system architecture is split into four main categories: Sensors, Displays, H
 
 The displays and sensors would be placed on individual gym equipment, so that the user would have a by-machine understanding of the reservations upcoming for a given machine. The sensors' main goal is to send information back to the hub, for collation by the server. The goal of the hub is to gather the data from the sensors and the display and send it to the server, as well as distribute remote reservation data to the displays. Finally, the server interacts with the user and sends information as requested to the user. It also handles any new reservation requests.
 
-One way the user interacts with the system via HTTP requests to the server, primarily for requesting information or setting reservations. Another way the user will interact with the system is using the gym equipment. By doing so, they will activate the sensors, who will update the hub. The final way the user interacts with the system is by reading from the displays and finding out the information about reservations for that machine.
+One way the user interacts with the system is via HTTP requests through the website to the server, primarily for requesting information or setting reservations. Another way the user will interact with the system is using the gym equipment. By doing so, they will activate the sensors, who will update the hub. The final way the user interacts with the system is by reading from the displays and finding out the information about reservations for that machine.
 
 \subsection{Sensors}
 
 To accomplish the goal of having a sensor network with a wide range, but long battery life, it was decided that a mesh network system would be necessary. In general, to make a signal have a longer range, more power is given to a bigger antenna. This was not an option for sensors where the expected battery life must be greater than one year. However, a small range was not acceptable to fulfill the requirement of a generic system that would fit most any gym, so it was out of the question to settle for a small range. Another option is to use sensors that are capable of communicating to each other and then funneling that information through the other sensors to a centralized hub that would collect this data: a mesh network.
 
 % This is a terrible intro to this
-The basic UML diagram in \refFig{fig:sensor_arch} details the connections between the sensors, between the sensor and the hub, and between the sensor and the user.
+The basic UML diagram in \refFig{fig:sensor_arch} details the connections between several sensors, between a sensor and the hub, and between a sensor and the user.
 
 \begin{figure}[H]
     \centering
@@ -98,7 +98,7 @@ The hub has three basic types of connections. The first type of connection is wh
 
 \subsection{Server}
 
-The server's main purpose is to track the information both from sensors and from remote users. It will take the information from the sensors, process the data, and then be able to represent what machines are currently in use. It will pass that information to three primary locations: \sn{Current Reservation Database}, \sn{Historical Use Database}, and \sn{Current Use Database}.
+The server's main purpose is to receive and track the information both from sensors and from remote users. It will take the information from the sensors, process the data, and then be able to represent what machines are currently in use. It will pass that information to three primary locations: \sn{Current Reservation Database}, \sn{Historical Use Database}, and \sn{Current Use Database}. It will also send any reservations received via HTTP requests to the hub.
 
 The \sn{Current Reservation Database} will contain recent reservations made both locally and remotely. Additionally, if a machine is currently in use the entity will prevent someone from reserving that piece of equipment for a set amount of time. This prevents a user from being kicked off a machine unexpectedly. Because of this, the database will be updated from HTTP requests (from the World Wide Web actor), local reservation requests (human actor in the gym), and from current status readings (made by sensors in the gym). The database will forward any new reservations to the machines by sending the information to the hub. The \sn{Current Reservation Database} will contain all the reservations that have not yet been completed for the machines. It was designed as a separate database so that sending information to the machines would be simpler and quicker, as a very large (and ever-growing) database would not have to be queried to send up-to-date information about reservations.
 
@@ -112,7 +112,5 @@ The \sn{Current Use Database} is a simpler version of the Historical Use Databas
     \caption{UML Diagram Detailing the Server Architecture}
     \label{fig:server_arch}
 \end{figure}
-
-The server's main purpose will be to capture and receive the current use from the hub, while sending any remote reservations gained via HTTP requests. It will also log and display current use of the machines for personal and administrative use.
 
 \end{document}
