@@ -1,0 +1,12 @@
+Soldermask color: Black
+Add PB free logo on the PCB
+Stack-up: See *Mech.pdf
+
+Min trace width: 0.15 mm
+Min copper spacing: 0.15 mm
+
+Change log
+rev: 1.3.0
+Added Telec/Giteki logo in silk screen
+Removed U11
+Change regulator U2
