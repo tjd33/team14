@@ -39,3 +39,4 @@ trash
 .project
 .pydevproject
 
+*_build*
