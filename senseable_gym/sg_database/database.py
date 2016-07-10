@@ -4,10 +4,8 @@
 # {{{ Docstring
 """
 This file contains the database functions necessary to be used by any aspect
-    of the senseable gym. It will try and abstract all the sql away from what
-    we are doing and provide python interfaces for them
-
-TJ DeVries
+of the senseable gym. It will try and abstract all the sql away from what
+we are doing and provide python interfaces for them.
 """
 # }}}
 # {{{ Imports
@@ -42,6 +40,16 @@ l = Lock()
 
 
 def enqueue_action(func):
+    """
+    Enqueue the action to be done by this function.
+    This is used as a decorator.
+
+    Args:
+        func (function): The function to return
+
+    Returns:
+        function: Function pointer
+    """
     l.acquire()
 
     def func_wrapper(*args, **kwargs):
@@ -52,10 +60,16 @@ def enqueue_action(func):
 
 
 class DatabaseModel():
+    """
+    Create a database model to interact with the senseable gym. Usese SQLAlchemy to interact with databases.
+
+    Args:
+        dbname (str): Url to access the database
+        user (str): Username for the database
+        password (str): Password to access the database
+    """
     # {{{ Initialization
     def __init__(self, dbname, user, password=None):
-        """TODO: Docstring for __init__.
-        """
         # Get the logger
         self.logger = logging.getLogger(global_logger_name + '.database')
 
@@ -88,9 +102,10 @@ class DatabaseModel():
     @enqueue_action
     def _empty_db(self):
         """
-        Empties the database of any current records.
-            Use with caution :D
-        :returns: None
+        Empties the database of any current records.  Use with caution :D
+
+        Returns:
+            None
         """
         time.sleep(.5)
         self.meta.drop_all()
@@ -121,6 +136,12 @@ class DatabaseModel():
         """
         A function to quickly print the contents of a table.
         Currently to just be used for debugging purposes.
+
+        Args:
+            table_name (str): Name of the database table
+
+        Returns:
+            str: The string representation of the table
         """
         table_str = '| '
 
@@ -142,16 +163,22 @@ class DatabaseModel():
     # {{{ Adders
     @enqueue_action
     def add_machine(self, machine):
+        """
+        Add a machine to the database and then commmit
+
+        Args:
+            machine (Machine): Machine object to add to the database
+        """
         # Make sure that we're actually getting a machine object passed in
         if not isinstance(machine, Machine):
             raise ValueError('Machine Objects Only')
 
         # Check to make sure machine is valid
-        result_loc = self.session.query(Machine).filter(and_(
-            Machine._location_x == machine._location_x,
-            Machine._location_y == machine._location_y,
-            Machine._location_z == machine._location_z)
-            ).all()
+        result_loc = self.session.query(Machine).filter(and_(Machine._location_x == machine._location_x,
+                                                             Machine._location_y == machine._location_y,
+                                                             Machine._location_z == machine._location_z
+                                                             )
+                                                        ).all()
 
         # TODO: This is not currently working as expected.
         if not result_loc:
@@ -192,35 +219,30 @@ class DatabaseModel():
         Adds a reservation to the database.
         Also checks for overlapping pertinent reservations.
         """
-        
-        self.check_reservation_conflict(res.machine_id, res.user_id, res.start_time, res.end_time)         
+
+        self.check_reservation_conflict(res.machine_id, res.user_id, res.start_time, res.end_time)
         self.session.add(res)
         self.session.commit()
-    
 
-                    
-    def check_reservation_conflict(self, machine_id, user_id, start_time, end_time, ignore_reservation = None) -> None:
-        machine_reservations = self.session.query(Reservation).filter(
-        Reservation.machine_id == machine_id).all()
-        self.logger.log(EXTRA_DEBUG, 'Machine {} Reservations: {}'.format(
-                            machine_id, machine_reservations)
-                        )
+    def check_reservation_conflict(self, machine_id, user_id, start_time, end_time, ignore_reservation=None) -> None:
+        machine_reservations = self.session.query(Reservation).filter(Reservation.machine_id == machine_id).all()
+        self.logger.log(EXTRA_DEBUG,
+                        'Machine {} Reservations: {}'.format(machine_id, machine_reservations))
 
         for m_r in machine_reservations:
-            if m_r.is_overlapping_reservation(start_time, end_time) and m_r!=ignore_reservation:
+            if m_r.is_overlapping_reservation(start_time, end_time) and m_r != ignore_reservation:
                 raise ReservationError('Overlapping Reservations with Machine {}'.format(
                     machine_id))
 
-        user_reservations = self.session.query(Reservation).filter(
-                Reservation.user_id == user_id).all()
+        user_reservations = self.session.query(Reservation).filter(Reservation.user_id == user_id).all()
         self.logger.debug('User {} Reservations: {}'.format(
             user_id, user_reservations))
 
         for u_r in user_reservations:
-            if u_r.is_overlapping_reservation(start_time, end_time) and not u_r==ignore_reservation:
+            if u_r.is_overlapping_reservation(start_time, end_time) and not u_r == ignore_reservation:
                 raise ReservationError('Overlapping Reservations with User {}'.format(
                     user_id))
-    
+
     # }}}
     # {{{ Removers
     def remove_machine(self, id):
@@ -237,6 +259,7 @@ class DatabaseModel():
         reservation = self.get_reservation(id)
         self.session.delete(reservation)
         self.session.commit()
+
     # }}}
     # {{{ Getters
     def get_machines(self) -> List[Machine]:
@@ -251,11 +274,9 @@ class DatabaseModel():
     def get_machine_by_location(self, location: List[int]) -> Machine:
         # This is used to get a machine by a specific location.
         #   This is useful because locations need to be unique
-        return self.session.query(Machine).filter(and_(
-            Machine._location_x == location[0],
-            Machine._location_y == location[1],
-            Machine._location_z == location[2])
-            ).one()
+        return self.session.query(Machine).filter(and_(Machine._location_x == location[0],
+                                                       Machine._location_y == location[1],
+                                                       Machine._location_z == location[2])).one()
 
     def get_machine_status(self, id) -> MachineStatus:
         current_machine = self.get_machine(id)
@@ -287,7 +308,12 @@ class DatabaseModel():
     def get_machine_user_relationships(self, machine) -> MachineCurrentUser:
         """
         Get the current machine and user relationships
-        :return: A list of MachineCurrentUser objects
+
+        Args:
+            machine (Machine): Users related to the machine
+
+        Returns:
+            list: A list of MachineCurrentUser objects
         """
         rel = self.session.query(MachineCurrentUser).filter(MachineCurrentUser.machine_id == machine.machine_id).one()
 
@@ -298,53 +324,46 @@ class DatabaseModel():
         rel._user = self.session.query(User).filter(User.user_id == rel.user_id).one()
 
         return rel
-    
+
     def get_reservation(self, reservation_id) -> Reservation:
         return self.session.query(Reservation).filter(Reservation.reservation_id == reservation_id).one()
-    
+
     def get_reservations(self) -> List[Reservation]:
         return self.session.query(Reservation).all()
 
     def get_reservations_by_machine(self, machine: Machine) -> List[Reservation]:
-        return self.session.query(Reservation).filter(
-                Reservation.machine_id == machine.machine_id).all()
-    def get_reservations_by_machine_and_time(self, machine: Machine, start_time = None, end_time = datetime.now()) -> List[Reservation]:
+        return self.session.query(Reservation).filter(Reservation.machine_id == machine.machine_id).all()
+
+    def get_reservations_by_machine_and_time(self, machine: Machine, start_time=None, end_time=datetime.now()) -> List[Reservation]:
         if start_time:
-            return self.session.query(Reservation).filter(
-                    and_(Reservation.machine_id == machine.machine_id,
-                        Reservation.start_time >= start_time,
-                         Reservation.start_time <= end_time)).all()
+            return self.session.query(Reservation).filter(and_(Reservation.machine_id == machine.machine_id,
+                                                               Reservation.start_time >= start_time,
+                                                               Reservation.start_time <= end_time)).all()
         else:
-            return self.session.query(Reservation).filter(
-                    and_(Reservation.machine_id == machine.machine_id,
-                         Reservation.start_time <= end_time)).all()
-        
+            return self.session.query(Reservation).filter(and_(Reservation.machine_id == machine.machine_id,
+                                                               Reservation.start_time <= end_time)).all()
 
     def get_reservations_by_user(self, user: User) -> List[Reservation]:
-        return self.session.query(Reservation).filter(
-                Reservation.user_id == user.user_id).all()
+        return self.session.query(Reservation).filter(Reservation.user_id == user.user_id).all()
 
     def get_reservations_by_machine_id(self, machine_id: int) -> List[Reservation]:
-        return self.session.query(Reservation).filter(
-                Reservation.machine_id == machine_id).all()
+        return self.session.query(Reservation).filter(Reservation.machine_id == machine_id).all()
 
     def get_applicable_reservations_by_machine(self, machine: Machine, cut_off_time: datetime) -> List[Reservation]:
-        return self.session.query(Reservation).filter(
-                and_(Reservation.machine_id == machine.machine_id,
-                     # TODO: Not sure about the start time and end time ideas here
-                     Reservation.start_time >= datetime.now(),
-                     Reservation.end_time <= cut_off_time)
-                ).order_by(Reservation.start_time).all()
+        # TODO: Not sure about the start time and end time ideas here
+        return self.session.query(Reservation).filter(and_(Reservation.machine_id == machine.machine_id,
+                                                           Reservation.start_time >= datetime.now(),
+                                                           Reservation.end_time <= cut_off_time)).order_by(Reservation.start_time).all()
 
     def get_current_reservation_by_machine(self, machine: Machine) -> Reservation or None:
         all_reservations = self.get_reservations_by_machine(machine)
 
         return any(res.start_time <= datetime.now() and res.end_time >= datetime.now() for res in all_reservations)
 
-    def get_reservations_by_time_period(self, start_time: datetime, end_time:datetime) -> List[Reservation]:
+    def get_reservations_by_time_period(self, start_time: datetime, end_time: datetime) -> List[Reservation]:
         return self.session.query(Reservation).filter(and_(Reservation.start_time >= start_time,
-                                                        Reservation.start_time <= end_time)).all()
-    
+                                                           Reservation.start_time <= end_time)).all()
+
     # }}}
     # {{{ Setters
     def set_machine_status(self, id, status):
