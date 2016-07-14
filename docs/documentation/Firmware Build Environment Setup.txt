@@ -1,0 +1,29 @@
+Contiki Setup and Demos/Startup
+
+0) Download and install Ubuntu 13.04
+http://old-releases.ubuntu.com/releases/13.04/
+
+1) Download Contiki and unzip the file to Home directory
+http://sourceforge.net/projects/contiki/files/Instant%20Contiki/
+
+2) Setup Contiki toolchain in Ubuntu 13.04 (must be Ubuntu 13.04)
+http://github.com/contiki-os/contiki/wiki/Setup-contiki-toolchain-in-ubuntu-13.04
+
+3) Setup simulation software (only follow steps 2-3 to start Cooja and run Contiki in a simulation)
+http://www.contiki-os.org/start.html
+
+4) Download arm-gcc-eabi- and unzip to Home directory
+http://launchpad.net/gcc-arm-embedded/+download
+
+5) Update the PATH variable in .bashrc (found in Home directory) to the path where you installed the arm-none-eabi- toolchain (e.g. /home/user/gcc-arm-none-eabi-4_9-2014q4/bin)
+
+6) Build example .bin files (follow steps 2 and 3)
+http://processors.wiki.ti.com/index.php/Contiki_setting_up_sw
+
+7) If you’re having problems building, it is probably due to running a 32-bit toolchain on a 64-bit system (download the Linux package to run 32-bit files on a 64-bit system)
+
+8) Transfer the .bin files to Windows, and use the RF Flash Programmer to flash them onto the SensorTag
+
+9) Demo/example info:
+http://processors.wiki.ti.com/index.php/Cc26xx_sw_examples
+http://processors.wiki.ti.com/index.php/Cc26xx_contiki_sw_apps

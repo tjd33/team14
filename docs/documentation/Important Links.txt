@@ -1,0 +1,34 @@
+CC2650 SensorTag User’s Guide
+http://processors.wiki.ti.com/index.php/CC2650_SensorTag_User's_Guide
+
+Debug DevPack User Guide
+http://processors.wiki.ti.com/index.php/Debug_DevPack_User_Guide
+
+Contiki-6LoWPAN Wiki
+http://processors.wiki.ti.com/index.php/Contiki-6LOWPAN
+
+Ubuntu 13.04
+http://old-releases.ubuntu.com/releases/13.04/
+
+SmartRF Flash Programmer 2
+http://www.ti.com/tool/flash-programmer
+
+Senior Design Demo Based Off This Example
+http://www.piratefache.ch/communication-ti-sensortag-and-zolertia-z1/
+
+OTA for Contiki
+http://marksolters.com/programming/2016/06/07/contiki-ota.html
+http://github.com/msolters/contiki/tree/master/examples/cc26xx-ota-bootloader
+http://github.com/msolters/ota-server
+
+Hardware Manufacturing and Product Design Advice
+http://processors.wiki.ti.com/index.php/Designing_a_Product_with_SimpleLink_CC26xx_or_CC13xx_Wireless_MCUs
+
+CC26xx Family SW Quickstart Guide
+http://processors.wiki.ti.com/index.php/CC26xx_Family_SW_Quickstart_Guide
+
+CC13xx CC26xx Tools Overview
+http://processors.wiki.ti.com/index.php/CC13xx_CC26xx_Tools_Overview
+
+Overview for 6LoWPAN
+http://www.ti.com/lsds/ti/wireless_connectivity/6lowpan/overview.page
